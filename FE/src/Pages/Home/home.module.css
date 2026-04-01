@@ -1,0 +1,172 @@
+/* ===== Main Container ===== */
+.container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 40px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+
+/* ===== Title ===== */
+.title {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 30px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: relative;
+}
+
+.title::after {
+  content: '';
+  display: block;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  margin: 15px auto 0;
+  border-radius: 2px;
+}
+
+/* ===== Search Input ===== */
+.container input[type="text"] {
+  display: block;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 40px;
+  padding: 15px 25px;
+  font-size: 1.5rem;
+  border: none;
+  border-radius: 50px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.container input[type="text"]:focus {
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  transform: translateY(-2px);
+}
+
+.container input[type="text"]::placeholder {
+  color: #aaa;
+}
+
+/* ===== Products Grid ===== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+  padding: 20px 0;
+}
+
+/* ===== Product Card ===== */
+.card {
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+/* ===== Card Details ===== */
+.details {
+  padding: 25px;
+}
+
+.name {
+  font-size: 1.4rem;
+  color: #2c3e50;
+  margin-bottom: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.price {
+  font-size: 1.6rem;
+  color: #667eea;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.price::before {
+  content: '₪';
+  font-size: 1rem;
+  vertical-align: top;
+  margin-right: 2px;
+}
+
+.description {
+  font-size: 0.95rem;
+  color: #7f8c8d;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.favoriteBtn {
+  background-color: #fff;       /* خلفية بيضاء */
+  border: 2px solid #667eea;    /* خط أزرق */
+  color: #667eea;               /* لون القلب */
+  padding: 8px 14px;            /* مساحة داخلية */
+  border-radius: 50px;          /* شكل دائري لطيف */
+  cursor: pointer;              /* مؤشر الفأرة */
+  font-size: 1.2rem;            /* حجم القلب */
+  transition: all 0.3s ease;    /* تأثير حركة سلس */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.favoriteBtn:hover {
+  background-color: #667eea;    /* خلفية أزرق عند المرور */
+  color: #fff;                  /* القلب أبيض */
+  transform: scale(1.1);        /* تكبير بسيط عند المرور */
+  border-color: #764ba2;        /* تغيير لون الإطار تدريجي */
+}
+
+
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.8rem;
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  .container {
+    padding: 20px 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+  }
+}
