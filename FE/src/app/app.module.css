@@ -5,6 +5,14 @@
   /* border: 2px solid blue; */
 }
 
+body {
+  background-image: url("../assets/project_background.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
 /* main content area */
 .mainContent {
   flex: 1; /* fills remaining space between header/footer */

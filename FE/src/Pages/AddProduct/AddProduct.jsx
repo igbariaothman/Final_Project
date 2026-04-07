@@ -8,6 +8,8 @@ function Product() {
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   const [message, setMessage] = useState("");
+  const [images, setImages] = useState([]);
+  const [preview, setPreview] = useState([]);
 
   //update Name
   function handleSetName(e) {
@@ -61,34 +63,40 @@ function Product() {
       return;
     }
 
-    console.log(id);
+    // console.log(id);
+  const formData = new FormData();
 
-    fetch("http://localhost:5000/products/addProduct", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        productName: name,
-        price: priceNumber,
-        category: category,
-        description: description,
-        userId: id,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setMessage(data.message);
-        setName("");
-        setPrice("");
-        setCategory("");
-        setDescription("");
-        setMessage("");
-      })
-      .catch((err) => {
-        console.error(err);
-        setMessage("Error adding Product");
-      });
+  formData.append("productName", name);
+  formData.append("price", priceNumber);
+  formData.append("category", category);
+  formData.append("description", description);
+  formData.append("userId", id);
+
+  // 📸 الصور
+  images.forEach((img) => {
+    formData.append("images", img);
+  });
+
+
+fetch("http://localhost:5000/products/addProduct", {
+  method: "POST",
+  body: formData, // 👈 مهم جدًا
+})
+  .then((res) => res.json())
+  .then((data) => {
+    setMessage(data.message);
+
+    setName("");
+    setPrice("");
+    setCategory("");
+    setDescription("");
+    setImages([]);
+    setPreview([]);
+  })
+  .catch((err) => {
+    console.error(err);
+    setMessage("Error adding Product");
+  });
   }
 
   return (
@@ -141,6 +149,27 @@ function Product() {
           onChange={handleDescription}
         />
         <label>Description</label>
+      </div>
+
+      <div className={classes.inputGroup}>
+        <input
+          type="file"
+          multiple
+          onChange={(e) => {
+            setImages([...e.target.files]);
+
+            const filesArray = Array.from(e.target.files).map((file) =>
+              URL.createObjectURL(file),
+            );
+            setPreview(filesArray);
+          }}
+        />
+      </div>
+
+      <div>
+        {preview.map((img, i) => (
+          <img key={i} src={img} width="100" />
+        ))}
       </div>
 
       <button className={classes.shareBtn} onClick={handleAddProduct}>

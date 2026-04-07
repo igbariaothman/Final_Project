@@ -1,66 +1,62 @@
 /* ===== Main Container ===== */
 .container {
   width: 100%;
-  max-width: 100%;
-  margin: 0;
-  padding: 40px;
+  padding: 40px 20px;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-
 
 /* ===== Title ===== */
 .title {
-  text-align: center;
-  font-size: 2.5rem;
-  color: #2c3e50;
-  margin-bottom: 30px;
-  font-weight: 700;
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #2d3436;
+  margin-bottom: 25px;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
+  text-align: center;
   position: relative;
 }
 
 .title::after {
-  content: '';
+  content: "";
+  width: 90px;
+  height: 5px;
+  background: linear-gradient(90deg, #6c5ce7, #a363d9);
   display: block;
-  width: 80px;
-  height: 4px;
-  background: linear-gradient(90deg, #667eea, #764ba2);
-  margin: 15px auto 0;
-  border-radius: 2px;
+  margin: 12px auto 0;
+  border-radius: 5px;
 }
 
 /* ===== Search Input ===== */
 .container input[type="text"] {
-  display: block;
   width: 100%;
-  max-width: 500px;
-  margin: 0 auto 40px;
+  max-width: 550px;
   padding: 15px 25px;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
+  border-radius: 40px;
   border: none;
-  border-radius: 50px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   outline: none;
-  transition: all 0.3s ease;
+  background: #fff;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  transition: 0.3s ease;
+  margin-bottom: 40px;
 }
 
 .container input[type="text"]:focus {
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 8px 25px rgba(108, 92, 231, 0.4);
   transform: translateY(-2px);
-}
-
-.container input[type="text"]::placeholder {
-  color: #aaa;
 }
 
 /* ===== Products Grid ===== */
 .grid {
+  width: 100%;
+  max-width: 1400px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 30px;
-  padding: 20px 0;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 35px;
 }
 
 /* ===== Product Card ===== */
@@ -68,96 +64,79 @@
   background: #ffffff;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  cursor: pointer;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+  transition: 0.3s ease;
   position: relative;
 }
 
 .card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 45px rgba(0,0,0,0.18);
 }
 
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
+.card img {
   width: 100%;
-  height: 5px;
-  background: linear-gradient(90deg, #667eea, #764ba2);
+  height: 200px;
+  object-fit: cover;
 }
 
 /* ===== Card Details ===== */
 .details {
-  padding: 25px;
+  padding: 22px;
 }
 
 .name {
   font-size: 1.4rem;
-  color: #2c3e50;
-  margin-bottom: 12px;
-  font-weight: 600;
-  line-height: 1.3;
+  font-weight: 700;
+  color: #2d3436;
+  margin-bottom: 10px;
 }
 
 .price {
   font-size: 1.6rem;
-  color: #667eea;
-  font-weight: 700;
-  margin-bottom: 15px;
+  font-weight: 800;
+  color: #6c5ce7;
+  margin-bottom: 12px;
 }
 
 .price::before {
-  content: '₪';
+  content: "₪";
+  margin-right: 4px;
   font-size: 1rem;
-  vertical-align: top;
-  margin-right: 2px;
 }
 
 .description {
-  font-size: 0.95rem;
-  color: #7f8c8d;
-  line-height: 1.6;
-  margin-bottom: 20px;
+  font-size: 1rem;
+  color: #636e72;
+  line-height: 1.5;
+  margin-bottom: 18px;
 }
 
+/* ===== Favorite Button ===== */
 .favoriteBtn {
-  background-color: #fff;       /* خلفية بيضاء */
-  border: 2px solid #667eea;    /* خط أزرق */
-  color: #667eea;               /* لون القلب */
-  padding: 8px 14px;            /* مساحة داخلية */
-  border-radius: 50px;          /* شكل دائري لطيف */
-  cursor: pointer;              /* مؤشر الفأرة */
-  font-size: 1.2rem;            /* حجم القلب */
-  transition: all 0.3s ease;    /* تأثير حركة سلس */
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  background: #fff;
+  border: 2px solid #6c5ce7;
+  color: #6c5ce7;
+  padding: 10px 16px;
+  border-radius: 50px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: 0.3s ease;
 }
 
 .favoriteBtn:hover {
-  background-color: #667eea;    /* خلفية أزرق عند المرور */
-  color: #fff;                  /* القلب أبيض */
-  transform: scale(1.1);        /* تكبير بسيط عند المرور */
-  border-color: #764ba2;        /* تغيير لون الإطار تدريجي */
+  background: #6c5ce7;
+  color: #fff;
+  transform: scale(1.12);
 }
 
-
-/* ===== Responsive Design ===== */
+/* ===== Responsive ===== */
 @media (max-width: 768px) {
   .title {
-    font-size: 1.8rem;
+    font-size: 2rem;
   }
-  
   .grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-  }
-  
-  .container {
-    padding: 20px 15px;
+    gap: 25px;
   }
 }
 
@@ -165,8 +144,7 @@
   .grid {
     grid-template-columns: 1fr;
   }
-  
   .title {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
   }
 }

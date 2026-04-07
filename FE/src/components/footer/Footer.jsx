@@ -11,7 +11,7 @@ export default function Footer() {
     <footer className={classes.footer}>
       <p className={classes.myP + ' ' + classes.temp}>
         {' '}
-        <span>&copy;</span> {date} Ahmad_Habashi && Othman Egbaria (class 50/2)
+        <span>&copy;</span> {date} Ahmad_Habashi && Othman Igbaria (class 50/2)
       </p>
     </footer>
   );

@@ -16,23 +16,46 @@ router.get("/", (req, res) => {
   });
 });
 
+// images 
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
+
 //Add Product
-router.post("/addProduct", (req, res) => {
+router.post("/addProduct", upload.array("images", 5), (req, res) => {
   const { productName, price, category, description, userId } = req.body;
+
+  const images = req.files.map((file) => `/uploads/${file.filename}`);
+
   const query =
-    "INSERT INTO products (productName, price, category ,description ,userId) VALUES (? ,? , ? ,?,?)";
+    "INSERT INTO products (productName, price, category, description, userId, images) VALUES (?, ?, ?, ?, ?, ?)";
+
   db.query(
     query,
-    [productName, price, category, description, userId],
+    [productName, price, category, description, userId, JSON.stringify(images)],
     (err, results) => {
       if (err) {
         res.status(500).send(err);
         return;
       }
-      res.json({ message: "Product added!", id: results.insertId });
+      res.json({
+        message: "Product added!",
+        id: results.insertId,
+        images,
+      });
     },
   );
 });
+
 
 //Update Product
 router.put("/:id", (req, res) => {
