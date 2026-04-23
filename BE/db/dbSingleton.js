@@ -1,38 +1,23 @@
-//dbSingleton.js
 const mysql = require("mysql2");
 
-let connection; // Variable for storing a single connection
+let pool;
 
 const dbSingleton = {
   getConnection: () => {
-    if (!connection) {
-      // Create a connection only once
-      connection = mysql.createConnection({
+    if (!pool) {
+      pool = mysql.createPool({
         host: "localhost",
         user: "root",
         password: "",
-        database: "nodePro",
+        database: "myproject",
+        waitForConnections: true,
+        connectionLimit: 10,
+        queueLimit: 0
       });
 
-      // Connect to the database
-      connection.connect((err) => {
-        if (err) {
-          console.error("Error connecting to database:", err);
-          throw err;
-        }
-        console.log("Connected to MySQL!");
-      });
-
-      // Handle connection errors
-      connection.on("error", (err) => {
-        console.error("Database connection error:", err);
-        if (err.code === "PROTOCOL_CONNECTION_LOST") {
-          connection = null; // Update the connection state
-        }
-      });
+      console.log("Database Pool created!");
     }
-
-    return connection; // Return the current connection
+    return pool;
   },
 };
 
