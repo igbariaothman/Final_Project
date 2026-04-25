@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import classes from "./header.module.css";
+import logo from "../../assets/logo.jpg";
 
 export default function Header({ setPage }) {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("id"));
@@ -16,39 +17,47 @@ export default function Header({ setPage }) {
     setPage("home");
   }
 
-  function handleGoLogin() {
-    setPage("login");
-  }
-
   return (
     <header className={classes.header}>
-      <h1 onClick={() => setPage("home")}>My Store</h1>
+      <div className={classes.container}>
+        <div className={classes.logoContainer} onClick={() => setPage("home")}>
+          <img
+            src={logo} 
+            alt="Logo"
+            className={classes.logoImage}
+          />
+        </div>
 
-      <nav className={classes.nav}>
-        <ul>
-          <li onClick={() => setPage("home")} className={classes.li}>
-            Home
-          </li>
+        <div className={classes.searchContainer}>
+          <input 
+            type="text" 
+            placeholder="חפש מוצרים..." 
+            className={classes.searchInput}
+          />
+        </div>
 
-          <li onClick={() => setPage("products")} className={classes.li}>
-            Add Product
-          </li>
-
-          <li onClick={() => setPage("Favorite")} className={classes.li}>
-            Favorites
-          </li>
-
-          {!isLoggedIn ? (
-            <li onClick={handleGoLogin} className={classes.li}>
-              Log In
+        <nav className={classes.nav}>
+          <ul className={classes.ul}>
+            <li onClick={() => setPage("products")} className={classes.li}>
+              הוספת מוצר
             </li>
-          ) : (
-            <li onClick={handleLogOut} className={classes.li}>
-              Log out
+
+            <li onClick={() => setPage("Favorite")} className={classes.li}>
+              מועדפים
             </li>
-          )}
-        </ul>
-      </nav>
+
+            {!isLoggedIn ? (
+              <li onClick={() => setPage("login")} className={`${classes.li} ${classes.loginBtn}`}>
+                התחברות
+              </li>
+            ) : (
+              <li onClick={handleLogOut} className={`${classes.li} ${classes.logoutBtn}`}>
+                התנתקות
+              </li>
+            )}
+          </ul>
+        </nav>
+      </div>
     </header>
   );
 }
