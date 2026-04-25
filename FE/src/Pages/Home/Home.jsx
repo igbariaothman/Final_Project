@@ -1,92 +1,65 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import classes from "./home.module.css";
 
 function Home() {
-  const navigate = useNavigate();
-
-  const [searchCategory, setSearchCategory] = useState("");
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
     fetch("http://localhost:5000/products")
       .then((res) => res.json())
       .then((data) => setProducts(data))
-      .catch((err) => console.error(err));
-  }, [navigate]);
+      .catch((err) => console.error("Error fetching products:", err));
+  }, []);
 
-  function filteredProduct() {
-    return products.filter((p) =>
-      p.category.toLowerCase().includes(searchCategory.toLowerCase())
-    );
+  function getImage(images) {
+    if (Array.isArray(images) && images.length > 0) {
+      const path = images[0]; 
+      return `http://localhost:5000${path}`;
+    }
+    return "https://via.placeholder.com/150";
   }
-
-  // add to favorite 
-function addFavorite (productId){
-  const userId = localStorage.getItem("id");
-
-    fetch("http://localhost:5000/favorite/addfavorite", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ userId, productId }),
-  })
-    .then((res) => res.json())
-    .catch((err) => console.error(err));
-}
-
-function getImageArray(images) {
-  if (!images) return [];
-  try {
-    return JSON.parse(images);
-  } catch {
-    return [];
-  }
-}
 
   return (
     <div className={classes.container}>
-      <h1 className={classes.title}>Products List</h1>
-
-      <input
-        type="text"
-        placeholder="Search by Category"
-        value={searchCategory}
-        onChange={(e) => setSearchCategory(e.target.value)}
-      />
-      {/* add to favorite */}
+      <h1 className={classes.mainTitle}>רשימת מוצרים</h1>
       <div className={classes.grid}>
-        {filteredProduct().map((p) => {
-          const imgs = getImageArray(p.images);
+        {products.map((p) => (
+          <div 
+            key={p.id} 
+            className={`${classes.card} ${p.listingType === 'donation' ? classes.donationBg : classes.saleBg}`}
+          >
+            <div className={classes.badge}>
+              {p.listingType === "donation" ? "תרומה" : "מכירה"}
+            </div>
 
-          return (
-            <div key={p.id} className={classes.card}>
-              <img
-                src={
-                  imgs.length > 0
-                    ? `http://localhost:5000${imgs[0]}`
-                    : "https://via.placeholder.com/150"
-                }
-                alt={p.productName}
-                className={classes.productImage}
-              />
-
-              <div className={classes.details}>
-                <h2 className={classes.name}>{p.productName}</h2>
-                <p className={classes.price}>{p.price}</p>
+            <div className={classes.contentWrapper}>
+              <div className={classes.imageContainer}>
+                <img 
+                  src={getImage(p.images)} 
+                  alt={p.productName} 
+                  className={classes.productImg} 
+                  onError={(e) => { e.target.src = "https://via.placeholder.com/150"; }}
+                />
+              </div>
+              
+              <div className={classes.textDetails}>
+                <h2 className={classes.productName}>{p.productName}</h2>
                 <p className={classes.description}>{p.description}</p>
-
-                <button
-                  onClick={() => addFavorite(p.id)}
-                  className={classes.favoriteBtn}
-                >
-                  ❤️
-                </button>
               </div>
             </div>
-          );
-        })}
+
+            <div className={classes.priceTag}>
+              {p.listingType === "donation" ? (
+                <span className={classes.freeText}>חינם</span>
+              ) : (
+                <div className={classes.priceContainer}>
+                  <span className={classes.priceVal}>{Number(p.price).toLocaleString()}</span>
+                  <span className={classes.currency}>₪</span>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -9,24 +9,29 @@ const messagesRouter = require("./Routers/messages.js");
 
 const app = express();
 const server = http.createServer(app);
-const port = process.env.PORT || 3000;
 
-//socket.io setup
+const port = 5000; 
+
+const FRONTEND_URL = "http://localhost:3000";
+
+
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: FRONTEND_URL,
     methods: ["GET", "POST"],
   },
 });
 
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors({ origin: FRONTEND_URL }));
 app.use(express.json());
+
+
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 app.use("/users", userRouter);
 app.use("/products", productsRouter);
 app.use("/messages", messagesRouter);
 
-//chat socket.io
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
 
@@ -38,7 +43,6 @@ io.on("connection", (socket) => {
 
   socket.on("send_message", (data) => {
     const roomName = `product_${data.productId}_chat_${data.roomSuffix}`;
-
     socket.to(roomName).emit("receive_message", data);
   });
 

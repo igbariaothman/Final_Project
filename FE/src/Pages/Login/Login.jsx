@@ -1,223 +1,128 @@
 import { useState } from "react";
 import classes from "./login.module.css";
-import Home from '../Home/Home'
+import Home from '../Home/Home';
 
 function LogIn() {
-  
+  const [isLoginMode, setIsLoginMode] = useState(true); 
+  const [loggedIn, setLoggedIn] = useState(false);
+
+
   const [logEmail, setLogEmail] = useState("");
   const [logPassword, setLogPassword] = useState("");
   const [logMessage, setLogMessage] = useState("");
+
+
   const [signUserName, setSignUseName] = useState("");
-  const [signEmail ,setSignEmail] = useState("")
-  const [signPassword , setSignPassword] = useState("")
-  const [confirmPasswod , setConfirmPasswoerd  ] = useState("")
-  const [signMessage , setSignMessage] = useState("")
-  const [loggedIn , setLoggedIn] = useState(false) 
+  const [signEmail, setSignEmail] = useState("");
+  const [signPassword, setSignPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [signMessage, setSignMessage] = useState("");
 
-
-// Update Email to log in 
-  function handleLogEmail(e) {
-    setLogEmail(e.target.value);
-  }
-
-  //Update Pass to login
-  function handleLogPassword(e) {
-    setLogPassword(e.target.value);
-  }
-
-  //Update Username to signUp
-  function handleUserName (e){
-    setSignUseName(e.target.value)
-  }
-
-  //Update Email toSignUp 
-  function handleSignEmail (e){
-    setSignEmail(e.target.value)
-  }
-
-  //Update Pass to signUp 
-  function handleSignPassword (e) {
-    setSignPassword(e.target.value)
-  }
-
-  //Update confirm Pass to signUp
-  function handleConfirmPassword (e) {
-    setConfirmPasswoerd(e.target.value)
-  }
-
-
-  // Log in function
-async function logIn() {
-  setLogMessage("");
-
-  // if email or pass is empty 
-  if (!logEmail || !logPassword) {
-    setLogMessage("Please fill email and password");
-    return;
-  }
-  try {
-    const res = await fetch("http://localhost:5000/users/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: logEmail, password: logPassword }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      // erros with express-validator
-      if (data.errors) {
-        setLogMessage(data.errors.map(e => e.msg || e).join(" • "));
-      } else {
-        setLogMessage(data.message || "Login failed");
-      }
+  async function logIn() {
+    setLogMessage("");
+    if (!logEmail || !logPassword) {
+      setLogMessage("נא למלא אימייל וסיסמה");
       return;
     }
-
-localStorage.setItem("id", data.user.id);
-window.dispatchEvent(new Event("authChanged"));
-setLoggedIn(true);
-
-    setLogEmail("");
-    setLogPassword("");
-  } catch (err) {
-    console.error(err);
-    setLogMessage("Error to log in");
-  }
-}
-
-
-
-  // Sign Up function
-async function signUp() {
-  setSignMessage("");
-
-  if (!signEmail || !signPassword || !signUserName || !confirmPasswod) {
-    setSignMessage("Please fill in all the fields");
-    return;
-  }
-
-  if (signPassword !== confirmPasswod) {
-    setSignMessage("Passwords do not match");
-    return;
-  }
-
-  try {
-    const res = await fetch("http://localhost:5000/users/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: signUserName,
-        email: signEmail,
-        password: signPassword,
-      }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      if (data.errors) {
-        setSignMessage(data.errors.map(e => e.msg || e).join(" • "));
-      } else {
-        setSignMessage(data.message || "Signup failed");
+    try {
+      const res = await fetch("http://localhost:5000/users/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: logEmail, password: logPassword }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setLogMessage(data.message || "שגיאה בהתחברות");
+        return;
       }
+      localStorage.setItem("id", data.user.id);
+      window.dispatchEvent(new Event("authChanged"));
+      setLoggedIn(true);
+    } catch (err) {
+      setLogMessage("שגיאה בחיבור לשרת");
+    }
+  }
+
+  async function signUp() {
+    setSignMessage("");
+    if (!signEmail || !signPassword || !signUserName || !confirmPassword) {
+      setSignMessage("נא למלא את כל השדות");
       return;
     }
-
-    // successful signup
-    setSignMessage(data.message || "User created!");
-    setSignUseName("");
-    setSignEmail("");
-    setSignPassword("");
-    setConfirmPasswoerd("");
-  } catch (err) {
-    console.error(err);
-    setSignMessage("Error to sign up");
+    if (signPassword !== confirmPassword) {
+      setSignMessage("הסיסמאות אינן תואמות");
+      return;
+    }
+    try {
+      const res = await fetch("http://localhost:5000/users/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: signUserName,
+          email: signEmail,
+          password: signPassword,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setSignMessage(data.message || "שגיאה בהרשמה");
+        return;
+      }
+      setSignMessage("החשבון נוצר בהצלחה! ניתן להתחבר כעת");
+      setIsLoginMode(true);
+    } catch (err) {
+      setSignMessage("שגיאה בחיבור לשרת");
+    }
   }
-}
 
-
-  if (loggedIn){
-    return <Home /> ;
-  }
+  if (loggedIn) return <Home />;
 
   return (
-    <div className={classes.container}>
-      {/* ======= Log in ======= */}
-      <div className={classes.logIn}>
-        <p>Log in </p>
-        <div className={classes.inputGroup}>
-          <input
-            type="email"
-            placeholder=" "
-            value={logEmail}
-            onChange={handleLogEmail}
-          />
-          <label>Email </label>
-        </div>
+    <div className={classes.wrapper}>
+      <div className={classes.authCard}>
+        <h2 className={classes.title}>{isLoginMode ? "התחברות" : "הרשמה למערכת"}</h2>
 
-        <div className={classes.inputGroup}>
-          <input
-            type="password"
-            placeholder=" "
-            value={logPassword}
-            onChange={handleLogPassword}
-          />
-          <label>Password</label>
-        </div>
-        <p className={classes.message}>{logMessage}</p>
-        <button onClick={logIn} className={classes.shareBtn}>
-          Log in{" "}
-        </button>
-      </div>
-
-      {/* ======== Sign Up ======== */}
-      <div className={classes.signUp}>
-        <p>Sign Up</p>
-
-        <div className={classes.inputGroup}>
-          <input
-            type="text"
-            placeholder=" "
-            value={signUserName}
-            onChange={handleUserName}
-          />
-          <label>UserName</label>
-        </div>
-
-        <div className={classes.inputGroup}>
-          <input
-            type="email"
-            placeholder=" "
-            value={signEmail}
-            onChange={handleSignEmail}
-          />
-          <label>Email</label>
-        </div>
-
-        <div className={classes.inputGroup}>
-          <input
-            type="password"
-            placeholder=" "
-            value={signPassword}
-            onChange={handleSignPassword}
-          />
-          <label>Password</label>
-        </div>
-
-        <div className={classes.inputGroup}>
-          <input
-            type="password"
-            placeholder=" "
-            value={confirmPasswod}
-            onChange={handleConfirmPassword}
-          />
-          <label>Confirm Passwod</label>
-        </div>
-        <p className={classes.message}>{signMessage}</p>
-        <button onClick={signUp} className={classes.shareBtn}>
-          Sign Up
-        </button>
+        {isLoginMode ? (
+          <div className={classes.formGroup}>
+            <div className={classes.inputBox}>
+              <input type="email" value={logEmail} onChange={(e) => setLogEmail(e.target.value)} required />
+              <label>אימייל</label>
+            </div>
+            <div className={classes.inputBox}>
+              <input type="password" value={logPassword} onChange={(e) => setLogPassword(e.target.value)} required />
+              <label>סיסמה</label>
+            </div>
+            {logMessage && <p className={classes.errorMessage}>{logMessage}</p>}
+            <button onClick={logIn} className={classes.actionBtn}>התחבר</button>
+            <p className={classes.switchText}>
+              אין לך חשבון? <span onClick={() => setIsLoginMode(false)}>הירשם כאן</span>
+            </p>
+          </div>
+        ) : (
+          <div className={classes.formGroup}>
+            <div className={classes.inputBox}>
+              <input type="text" value={signUserName} onChange={(e) => setSignUseName(e.target.value)} required />
+              <label>שם משתמש</label>
+            </div>
+            <div className={classes.inputBox}>
+              <input type="email" value={signEmail} onChange={(e) => setSignEmail(e.target.value)} required />
+              <label>אימייל</label>
+            </div>
+            <div className={classes.inputBox}>
+              <input type="password" value={signPassword} onChange={(e) => setSignPassword(e.target.value)} required />
+              <label>סיסמה</label>
+            </div>
+            <div className={classes.inputBox}>
+              <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+              <label>אימות סיסמה</label>
+            </div>
+            {signMessage && <p className={classes.infoMessage}>{signMessage}</p>}
+            <button onClick={signUp} className={classes.actionBtn}>צור חשבון</button>
+            <p className={classes.switchText}>
+              כבר יש לך חשבון? <span onClick={() => setIsLoginMode(true)}>התחבר כאן</span>
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
