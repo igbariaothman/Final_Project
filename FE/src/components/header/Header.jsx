@@ -21,37 +21,36 @@ export default function Header({ setPage }) {
     <header className={classes.header}>
       <div className={classes.container}>
         <div className={classes.logoContainer} onClick={() => setPage("home")}>
-          <img
-            src={logo} 
-            alt="Logo"
-            className={classes.logoImage}
-          />
+          <img src={logo} alt="Logo" className={classes.logoImage} />
+          <p className={classes.wepName}>יד שניה לסטודנטים</p>
         </div>
-        <p className={classes.wepName}>יד שניה לסטודנטים</p>
 
         <nav className={classes.nav}>
           <ul className={classes.ul}>
-
-            { isLoggedIn && (
+            {isLoggedIn && (
               <>
                 <li onClick={() => setPage("products")} className={classes.li}>
                   הוספת מוצר
                 </li>
-                
-                
+
                 <li onClick={() => setPage("Favorite")} className={classes.li}>
                   מועדפים
                 </li>
               </>
-            )
-          }
+            )}
 
             {!isLoggedIn ? (
-              <li onClick={() => setPage("login")} className={`${classes.li} ${classes.loginBtn}`}>
+              <li
+                onClick={() => setPage("login")}
+                className={`${classes.li} ${classes.loginBtn}`}
+              >
                 התחברות
               </li>
             ) : (
-              <li onClick={handleLogOut} className={`${classes.li} ${classes.logoutBtn}`}>
+              <li
+                onClick={handleLogOut}
+                className={`${classes.li} ${classes.logoutBtn}`}
+              >
                 התנתקות
               </li>
             )}

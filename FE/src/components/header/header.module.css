@@ -40,6 +40,11 @@
   object-fit: contain;
 }
 
+.wepName {
+font-size :1.5rem ;
+color : lightblue
+}
+
 .searchContainer {
   flex: 2;
   display: flex;
@@ -90,7 +95,7 @@
 }
 
 .li {
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.9);
   cursor: pointer;
@@ -112,7 +117,7 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   font-family: 'Assistant', sans-serif;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 1.2rem;
   transition: all 0.3s ease;
 }
 
