@@ -28,13 +28,13 @@ export default function Header({ setPage }) {
           />
         </div>
 
-        <div className={classes.searchContainer}>
+        {/* <div className={classes.searchContainer}>
           <input 
             type="text" 
             placeholder="חפש מוצרים..." 
             className={classes.searchInput}
           />
-        </div>
+        </div> */}
 
         <nav className={classes.nav}>
           <ul className={classes.ul}>

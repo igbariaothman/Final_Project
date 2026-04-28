@@ -3,6 +3,15 @@ import classes from "./home.module.css";
 
 function Home() {
   const [products, setProducts] = useState([]);
+  const [searchCategory, setSearchCategory] = useState("");
+
+
+  function filteredProduct() {
+    return products.filter((p) =>
+      p.category.toLowerCase().includes(searchCategory.toLowerCase()),
+    );
+  }
+
 
   useEffect(() => {
     fetch("http://localhost:5000/products")
@@ -10,6 +19,8 @@ function Home() {
       .then((data) => setProducts(data))
       .catch((err) => console.error("Error fetching products:", err));
   }, []);
+
+  
 
   function getImage(images) {
     if (Array.isArray(images) && images.length > 0) {
@@ -21,12 +32,22 @@ function Home() {
 
   return (
     <div className={classes.container}>
+      <div className={classes.searchContainer}>
+        <input
+          className={classes.searchInput}
+          type="text"
+          placeholder="Search by Category"
+          value={searchCategory}
+          onChange={(e) => setSearchCategory(e.target.value)}
+        />
+      </div>
+
       <h1 className={classes.mainTitle}>רשימת מוצרים</h1>
       <div className={classes.grid}>
-        {products.map((p) => (
-          <div 
-            key={p.id} 
-            className={`${classes.card} ${p.listingType === 'donation' ? classes.donationBg : classes.saleBg}`}
+        {filteredProduct().map((p) => (
+          <div
+            key={p.productId}
+            className={`${classes.card} ${p.listingType === "donation" ? classes.donationBg : classes.saleBg}`}
           >
             <div className={classes.badge}>
               {p.listingType === "donation" ? "תרומה" : "מכירה"}
@@ -34,14 +55,16 @@ function Home() {
 
             <div className={classes.contentWrapper}>
               <div className={classes.imageContainer}>
-                <img 
-                  src={getImage(p.images)} 
-                  alt={p.productName} 
-                  className={classes.productImg} 
-                  onError={(e) => { e.target.src = "https://via.placeholder.com/150"; }}
+                <img
+                  src={getImage(p.images)}
+                  alt={p.productName}
+                  className={classes.productImg}
+                  onError={(e) => {
+                    e.target.src = "https://via.placeholder.com/150";
+                  }}
                 />
               </div>
-              
+
               <div className={classes.textDetails}>
                 <h2 className={classes.productName}>{p.productName}</h2>
                 <p className={classes.description}>{p.description}</p>
@@ -53,7 +76,9 @@ function Home() {
                 <span className={classes.freeText}>חינם</span>
               ) : (
                 <div className={classes.priceContainer}>
-                  <span className={classes.priceVal}>{Number(p.price).toLocaleString()}</span>
+                  <span className={classes.priceVal}>
+                    {Number(p.price).toLocaleString()}
+                  </span>
                   <span className={classes.currency}>₪</span>
                 </div>
               )}
