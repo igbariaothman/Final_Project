@@ -27,6 +27,7 @@ export default function Header({ setPage }) {
             className={classes.logoImage}
           />
         </div>
+        <p className={classes.wepName}>יד שניה לסטודנטים</p>
 
         <nav className={classes.nav}>
           <ul className={classes.ul}>
