@@ -28,23 +28,22 @@ export default function Header({ setPage }) {
           />
         </div>
 
-        {/* <div className={classes.searchContainer}>
-          <input 
-            type="text" 
-            placeholder="חפש מוצרים..." 
-            className={classes.searchInput}
-          />
-        </div> */}
-
         <nav className={classes.nav}>
           <ul className={classes.ul}>
-            <li onClick={() => setPage("products")} className={classes.li}>
-              הוספת מוצר
-            </li>
 
-            <li onClick={() => setPage("Favorite")} className={classes.li}>
-              מועדפים
-            </li>
+            { isLoggedIn && (
+              <>
+                <li onClick={() => setPage("products")} className={classes.li}>
+                  הוספת מוצר
+                </li>
+                
+                
+                <li onClick={() => setPage("Favorite")} className={classes.li}>
+                  מועדפים
+                </li>
+              </>
+            )
+          }
 
             {!isLoggedIn ? (
               <li onClick={() => setPage("login")} className={`${classes.li} ${classes.loginBtn}`}>
