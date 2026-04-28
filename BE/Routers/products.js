@@ -71,6 +71,31 @@ router.get("/", (req, res) => {
   });
 });
 
+//Get one product 
+router.get("/:id", (req, res) => {
+  const id = req.params.id;
+
+  const query = "SELECT * FROM products WHERE productId = ?";
+
+  db.query(query, [id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: "Error fetching product" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // نفس فكرة images
+    const product = {
+      ...results[0],
+      images: JSON.parse(results[0].images || "[]"),
+    };
+
+    res.json(product);
+  });
+});
+
 
 // Add a new product with image upload
 router.post("/addProduct", upload.array("images", 5), productValidation, validate, (req, res) => {

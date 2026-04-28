@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import classes from "./home.module.css";
 
 function Home() {
   const [products, setProducts] = useState([]);
   const [searchCategory, setSearchCategory] = useState("");
-
+  const navigate = useNavigate() ;
 
   function filteredProduct() {
     return products.filter((p) =>
@@ -47,6 +48,7 @@ function Home() {
         {filteredProduct().map((p) => (
           <div
             key={p.productId}
+            onClick={() => navigate(`/productDetails/${p.productId}`)}
             className={`${classes.card} ${p.listingType === "donation" ? classes.donationBg : classes.saleBg}`}
           >
             <div className={classes.badge}>
