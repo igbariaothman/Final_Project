@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import classes from "./header.module.css";
 import logo from "../../assets/logo.jpg";
 import { useNavigate } from "react-router-dom";
-// import fa from ".../Pages/Favorites/Favorites.jsx"
 
 
 export default function Header() {
@@ -19,7 +18,7 @@ export default function Header() {
   function handleLogOut() {
     localStorage.removeItem("id");
     window.dispatchEvent(new Event("authChanged"));
-    setPage("home");
+    navigation("/");
   }
 
   return (

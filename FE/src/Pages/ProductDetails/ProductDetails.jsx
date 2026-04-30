@@ -21,7 +21,7 @@ function ProductDetails () {
   return (
     <div className={classes.container}>
       <div className={classes.card}>
-        <h1 className={classes.productName}>{product.productName}</h1>
+        <h1 className={classes.productName}>Producr Name : {product.productName}</h1>
 
         <div className={classes.imageContainer}>
           <img
@@ -31,7 +31,9 @@ function ProductDetails () {
           />
         </div>
 
-        <p className={classes.description}>{product.description}</p>
+        <p className={classes.description}>
+          Description : {product.description}
+        </p>
 
         <div className={classes.priceTag}>
           {product.listingType === "donation" ? (
@@ -39,9 +41,9 @@ function ProductDetails () {
           ) : (
             <div className={classes.priceContainer}>
               <span className={classes.priceVal}>
-                {Number(product.price).toLocaleString()}
+                Price : {Number(product.price).toLocaleString()}₪
               </span>
-              <span className={classes.currency}>₪</span>
+              {/* <span className={classes.currency}>₪</span> */}
             </div>
           )}
         </div>
