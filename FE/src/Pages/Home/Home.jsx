@@ -37,7 +37,7 @@ function Home() {
         <input
           className={classes.searchInput}
           type="text"
-          placeholder="Search by Category"
+          placeholder="חיפוש על קטגוריה"
           value={searchCategory}
           onChange={(e) => setSearchCategory(e.target.value)}
         />

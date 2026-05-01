@@ -1,91 +1,202 @@
-@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap');
 
+/* --- الحاوية الأساسية --- */
 .container {
   padding: 40px 20px;
   direction: rtl;
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
-  font-family: 'Assistant', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  align-items: center; /* لضمان توسط البطاقة */
+  font-family: 'Assistant', sans-serif;
 }
 
+/* --- البطاقة الشفافة --- */
 .card {
   width: 100%;
-  max-width: 700px;
+  max-width: 800px;
   border-radius: 20px;
   padding: 30px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  text-align: center;
-  transition: 0.3s;
+  background: rgba(40, 40, 40, 0.6); /* لون داكن قليلاً لإبراز البطاقة */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); /* لدعم متصفحات سفاري */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  position: relative; /* لمنع تداخل العناصر الخارجية */
+  z-index: 10;
 }
 
-.card:hover {
-  transform: translateY(-5px);
-}
-
+/* --- النصوص --- */
 .productName {
   font-size: 2.4rem;
-  font-weight: 700;
-  color: white;
-  margin-bottom: 20px;
+  font-weight: 800;
+  color: #fff;
+  text-align: right;
+  margin-bottom: 25px;
 }
 
-.imageContainer {
+/* --- شبكة الصور (التخطيط العمودي الجديد) --- */
+.imageGrid {
+  display: flex; /* تحويل إلى flex عمودي بدلاً من grid */
+  flex-direction: column;
+  gap: 12px;
   width: 100%;
-  height: 300px;
-  background: white;
-  border-radius: 20px;
+  margin-bottom: 25px;
+}
+
+.mainImage {
+  width: 100%;
+  height: 350px; /* ارتفاع الصورة الرئيسية */
+  border-radius: 15px;
   overflow: hidden;
+  cursor: pointer;
+}
+
+.sideGallery {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
+  flex-direction: row; /* جعل الصور الجانبية تصطف أفقياً أسفل الرئيسية */
+  gap: 12px;
+  height: 120px; /* ارتفاع ثابت للصور السفلية */
+  width: 100%;
+}
+
+.sideImgWrapper {
+  position: relative;
+  flex: 1; /* جعل الصور السفلية تتقاسم العرض بالتساوي */
+  height: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
 }
 
 .productImg {
-  width: 90%;
-  height: 90%;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.productImg:hover {
+  transform: scale(1.05);
+}
+
+/* --- طبقة "+ عرض المزيد" --- */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 800;
+  pointer-events: none; /* لتمرير النقر للصورة تحتها */
+}
+
+/* --- التفاصيل والسعر --- */
+.detailsSection {
+  text-align: right;
 }
 
 .description {
-  font-size: 1.2rem;
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 20px;
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.85);
   line-height: 1.6;
-}
-
-.priceTag {
-  margin-top: 10px;
+  margin-bottom: 20px;
 }
 
 .priceContainer {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  font-size: 2rem;
-  font-weight: 800;
-  color: white;
+  justify-content: flex-start; /* محاذاة السعر لليمين */
 }
 
 .priceVal {
-  letter-spacing: 1px;
-}
-
-.currency {
-  font-size: 1rem;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #fff;
 }
 
 .freeText {
-  background: white;
-  color: #4a00e0;
-  padding: 5px 15px;
-  border-radius: 10px;
-  font-weight: 800;
+  display: inline-block;
+  background: #00c853;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1.4rem;
+}
+
+/* --- نافذة التكبير والسلايدر (Modal) --- */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* ضمان ظهوره فوق كل شيء */
+}
+
+.modalContentWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.modalContent {
+  max-width: 85vw;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.imageCounter {
+  color: white;
+  margin-top: 15px;
   font-size: 1.2rem;
+  background: rgba(255,255,255,0.2);
+  padding: 5px 15px;
+  border-radius: 15px;
+}
+
+.navBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  font-size: 2rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.2s;
+}
+
+.navBtn:hover {
+  background: white;
+  color: black;
+}
+
+.prev { left: 20px; }
+.next { right: 20px; }
+
+.closeBtn {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: white;
+  font-size: 3rem;
+  cursor: pointer;
+  z-index: 10000;
 }

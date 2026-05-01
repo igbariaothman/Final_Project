@@ -4,7 +4,7 @@
   justify-content: center;
   align-items: center;
   direction: rtl;
-  font-family: 'Assistant', sans-serif;
+  font-family: "Assistant", sans-serif;
 }
 
 .authCard {
@@ -22,7 +22,7 @@
 .title {
   text-align: center;
   margin-bottom: 30px;
-  font-size: 2rem;
+  font-size: 20px;
   font-weight: 700;
 }
 
@@ -52,8 +52,8 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
-.inputBox input:focus~label,
-.inputBox input:valid~label {
+.inputBox input:focus ~ label,
+.inputBox input:valid ~ label {
   top: -15px;
   right: 0;
   font-size: 0.9rem;
