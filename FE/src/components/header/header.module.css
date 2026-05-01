@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap');
 
 .header {
   width: 100%;
@@ -6,16 +6,14 @@
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   color: #ffffff;
-  padding: 0.6rem 0;
+  padding: 0.5rem 0;
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
   direction: rtl;
   position: sticky;
   top: 0;
   z-index: 1000;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  font-family: 'Assistant', 'Segoe UI', Tahoma, sans-serif;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
+  font-family: 'Assistant', sans-serif;
 }
 
 .container {
@@ -25,89 +23,82 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 2rem;
+  width: 100%;
 }
 
 .logoContainer {
-  flex: 1;
   display: flex;
-  justify-content: flex-start;
+  align-items: center;
   cursor: pointer;
+  flex: 0 1 auto;
 }
 
 .logoImage {
-  height: 60px;
+  height: clamp(40px, 5vw, 60px);
   width: auto;
   object-fit: contain;
 }
 
 .wepName {
-font-size :2rem ;
-color : lightblue;
-margin-right: 5px;
-margin-top: 15px;
+  font-size: clamp(1.1rem, 2.5vw, 1.8rem);
+  color: lightblue;
+  margin-right: 12px;
+  white-space: nowrap;
+  font-weight: 800;
 }
 
-
 .nav {
-  flex: 1;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  flex: 0 1 auto;
 }
 
 .nav .ul {
   display: flex;
   list-style: none;
-  gap: 30px;
+  gap: clamp(10px, 2vw, 30px);
   margin: 0;
   padding: 0;
   align-items: center;
 }
 
 .li {
-  font-size: 1.5rem;
+  font-size: clamp(0.85rem, 1.3vw, 1.3rem);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.9);
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.3s ease;
-  letter-spacing: 0.2px;
-}
-
-.li:hover {
-  color: #ffffff;
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  transition: color 0.3s ease;
 }
 
 .loginBtn,
 .logoutBtn {
   background-color: rgba(255, 255, 255, 0.08);
-  padding: 9px 24px;
+  padding: 0.5rem clamp(1rem, 2vw, 1.5rem);
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  font-family: 'Assistant', sans-serif;
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: clamp(0.85rem, 1.3vw, 1.2rem);
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.loginBtn:hover {
-  background-color: #ffffff;
-  color: #1a1a1a;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
 
-@media (max-width: 992px) {
-  .searchContainer {
-    flex: 1.5;
+  .wepName {
+    margin-right: 8px;
   }
 }
 
-@media (max-width: 768px) {
-  .searchContainer {
+@media (max-width: 480px) {
+  .wepName {
     display: none;
   }
 
-  .container {
-    padding: 0 1rem;
+  .nav .ul {
+    gap: 12px;
   }
 }

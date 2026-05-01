@@ -59,10 +59,15 @@ const validate = (req, res, next) => {
 // --- 3. Routes ---
 // Get all products
 router.get("/", (req, res) => {
-  const query = "SELECT * FROM products ORDER BY created_at DESC";
+  const query = `
+    SELECT p.*, u.username 
+    FROM products p 
+    JOIN users u ON p.userId = u.id 
+    ORDER BY p.created_at DESC
+  `;
   db.query(query, (err, results) => {
     if (err) return res.status(500).json({ message: "Error fetching data" });
-    // Parse the images JSON string back into an array for the Frontend
+    
     const formattedResults = results.map(product => ({
       ...product,
       images: JSON.parse(product.images || "[]")
@@ -71,11 +76,16 @@ router.get("/", (req, res) => {
   });
 });
 
-//Get one product 
+// Get one product 
 router.get("/:id", (req, res) => {
   const id = req.params.id;
 
-  const query = "SELECT * FROM products WHERE productId = ?";
+  const query = `
+    SELECT p.*, u.username 
+    FROM products p 
+    JOIN users u ON p.userId = u.id 
+    WHERE p.productId = ?
+  `;
 
   db.query(query, [id], (err, results) => {
     if (err) {
@@ -86,7 +96,6 @@ router.get("/:id", (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // نفس فكرة images
     const product = {
       ...results[0],
       images: JSON.parse(results[0].images || "[]"),

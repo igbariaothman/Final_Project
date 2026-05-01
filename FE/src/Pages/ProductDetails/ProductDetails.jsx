@@ -5,7 +5,8 @@ import classes from "./productDetails.module.css";
 function ProductDetails() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
-  const [currentIndex, setCurrentIndex] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetch(`http://localhost:5000/products/${id}`)
@@ -16,82 +17,96 @@ function ProductDetails() {
 
   if (!product) return <h2 className={classes.loading}>Loading...</h2>;
 
-  const getImgUrl = (path) => path ? `http://localhost:5000${path}` : "https://placehold.co/400x300?text=No+Image";
+  const getImgUrl = (path) => path ? `http://localhost:5000${path}` : "https://via.placeholder.com/600x400";
 
-  const nextImage = (e) => {
-    e.stopPropagation();
+  const nextImage = () => {
     setCurrentIndex((prev) => (prev + 1) % product.images.length);
   };
 
-  const prevImage = (e) => {
-    e.stopPropagation();
+  const prevImage = () => {
     setCurrentIndex((prev) => (prev - 1 + product.images.length) % product.images.length);
   };
 
+  const sellerName = product.username || "משתמש";
+  const initialLetter = sellerName.charAt(0).toUpperCase();
+
   return (
     <>
-      <div className={classes.container}>
-        <div className={classes.card}>
-          <h1 className={classes.productName}>{product.productName}</h1>
-
-          <div className={classes.imageGrid}>
-            <div className={classes.mainImage} onClick={() => setCurrentIndex(0)}>
-              <img src={getImgUrl(product.images[0])} alt="Main" className={classes.productImg} />
+      <div className={classes.pageWrapper}>
+        <div className={classes.mainContent}>
+          <div className={classes.rightColumn}>
+            <div 
+              className={classes.imageMainWrapper} 
+              onClick={() => setIsModalOpen(true)}
+              style={{ cursor: 'zoom-in' }}
+            >
+              <img 
+                src={getImgUrl(product.images[currentIndex])} 
+                alt="Product" 
+                className={classes.mainDisplayImage} 
+              />
+              {product.images.length > 1 && (
+                <>
+                  <button className={classes.arrowLeft} onClick={(e) => { e.stopPropagation(); nextImage(); }}>❯</button>
+                  <button className={classes.arrowRight} onClick={(e) => { e.stopPropagation(); prevImage(); }}>❮</button>
+                </>
+              )}
             </div>
 
-            <div className={classes.sideGallery}>
-              {product.images.slice(1, 3).map((img, index) => (
+            <div className={classes.thumbnailBar}>
+              {product.images.map((img, index) => (
                 <div 
                   key={index} 
-                  className={classes.sideImgWrapper} 
-                  onClick={() => setCurrentIndex(index + 1)}
+                  className={`${classes.thumbWrapper} ${currentIndex === index ? classes.activeThumb : ""}`}
+                  onClick={() => setCurrentIndex(index)}
                 >
-                  <img src={getImgUrl(img)} alt="Side" className={classes.productImg} />
-                  
-                  {index === 1 && product.images.length > 3 && (
-                    <div className={classes.overlay}>
-                      <span>+{product.images.length - 3}</span>
-                    </div>
-                  )}
+                  <img src={getImgUrl(img)} alt="Thumb" />
                 </div>
               ))}
             </div>
+
+            <div className={classes.descriptionSection}>
+              <p className={classes.productCategory}>קטגוריה: {product.category}</p>
+              <h3 className={classes.sectionTitle}>על המוצר</h3>
+              <p className={classes.productDescription}>{product.description}</p>
+            </div>
           </div>
 
-          <div className={classes.detailsSection}>
-            <p className={classes.description}>{product.description}</p>
-            <div className={classes.priceTag}>
-              {product.listingType === "donation" ? (
-                <span className={classes.freeText}>חינם</span>
-              ) : (
-                <div className={classes.priceContainer}>
-                  <span className={classes.priceVal}>
-                    {Number(product.price).toLocaleString()} ₪
-                  </span>
+          <div className={classes.leftColumn}>
+            <div className={classes.actionCard}>
+              <h1 className={classes.productTitle}>{product.productName}</h1>
+              <div className={classes.priceSection}>
+                {product.listingType === "donation" ? (
+                  <span className={classes.freeText}>חינם</span>
+                ) : (
+                  <span className={classes.price}>₪{Number(product.price).toLocaleString()}</span>
+                )}
+              </div>
+              <button className={classes.messageBtn}>שליחת הודעה 💬</button>
+              <div className={classes.sellerInfo}>
+                <p className={classes.sellerLabel}>על המוכר</p>
+                <div className={classes.sellerRow}>
+                  <div className={classes.avatar}>{initialLetter}</div>
+                  <div className={classes.sellerMeta}>
+                    <p className={classes.sellerName}>{sellerName}</p>
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {currentIndex !== null && (
-        <div className={classes.modal} onClick={() => setCurrentIndex(null)}>
-          <button className={`${classes.navBtn} ${classes.prev}`} onClick={prevImage}>❮</button>
-          
-          <div className={classes.modalContentWrapper}>
-            <img 
-              className={classes.modalContent} 
-              src={getImgUrl(product.images[currentIndex])} 
-              alt="Enlarged" 
-            />
-            <div className={classes.imageCounter}>
-              {currentIndex + 1} / {product.images.length}
-            </div>
-          </div>
 
-          <button className={`${classes.navBtn} ${classes.next}`} onClick={nextImage}>❯</button>
-          <span className={classes.closeBtn}>&times;</span>
+      {isModalOpen && (
+        <div className={classes.imageModal} onClick={() => setIsModalOpen(false)}>
+          <span className={classes.closeModalBtn}>&times;</span>
+          <img 
+            src={getImgUrl(product.images[currentIndex])} 
+            className={classes.modalContent} 
+            alt="Full Size"
+            onClick={(e) => e.stopPropagation()} 
+          />
         </div>
       )}
     </>

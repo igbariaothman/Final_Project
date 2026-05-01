@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 25, 2026 at 12:18 PM
+-- Generation Time: May 01, 2026 at 07:16 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -66,6 +66,18 @@ CREATE TABLE `products` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `products`
+--
+
+INSERT INTO `products` (`productId`, `productName`, `price`, `category`, `description`, `userId`, `images`, `listingType`, `created_at`) VALUES
+(6, 'Ipad Pro 11', 2000.00, ' טאבלטים', 'iPad Pro 11 M4 (2024) 512GB Wi-Fi + Cellular למכירה מצב מצוין – כמו חדש כולל קופסה מקורית וכבל טעינה, דגם עם סים (Cellular) זיכרון: 512GB מסך: 11 אינץ\' מעבד: M4 האייפד עובד מצוין ללא בעיות. נמכר בגלל חוסר שימוש. כולל נרתיק ,כיסוי מגן ועט סטילוס', 1, '[\"/uploads/1777119639033-ipad pro 13.jpg\"]', 'sale', '2026-04-25 12:20:39'),
+(7, 'מק בוק אייר 13 אינץ 512 גיגה', 5000.00, ' מחשבים ניידים', 'מק בוק אייר חדש כמעט ולא היה בשימוש מוכרת מק בוק אייר במצב חדש לגמרי היה בשימוש רק 4 פעמים בודדות סוללה 100 אחוז נפח512 גיגה צבע מיוחד ויפה לא סטנדרטי מגיע עם עכבר מקורי של אפל נקנה באיי דיגיטל יבואן רשמי המחשב שמור ברמה גבוהה מאוד כמו חדש מהקופסה סיבה למכירהאין לי שימוש בו גמישה במחיר לרציניים בלבד כולל ביטוח למחשב +עכבר מקורי של אפל', 1, '[\"/uploads/1777119801715-MacBook13.jpg\"]', 'sale', '2026-04-25 12:23:21'),
+(8, 'ספרים פסיכומטרי', 0.00, 'ספרים', ' ספרי לימוד וחזרות העוסקים בחשיבה כמותית, חשיבה מילולית ואנגלית.\r\nספר לעבודה בכיתה\r\n3 חוברות סימולציות מלאות\r\nחוברת מבחן אמצע\r\nחוברת מבחני מרתון\r\nלומדות נוספות ומאגר השאלות מהקמפוס של יואל גבע.\r\n2 מקראות לתרגול קריאה בעברית', 1, '[\"/uploads/1777120037038-×¤×¡××××××¨× ×¡×¤×¨××.jpg\"]', 'donation', '2026-04-25 12:27:17'),
+(9, 'כיסא סטודנט איכותי', 0.00, 'כיסאות', 'כיסא סטודנט איכותי מתכוונן עם גב מתכוונן ומשענות ידיים נקי במצב מצויין', 1, '[\"/uploads/1777120301347-×××¡× ×¡×××× ×.jpg\"]', 'donation', '2026-04-25 12:31:41'),
+(10, 'תיק סטודנטים', 50.00, 'תיקים', 'תיק לסטודנטים במצב מצוין', 1, '[\"/uploads/1777120468860-×ª××§ ×¡×××× ×××.jpg\"]', 'sale', '2026-04-25 12:34:28'),
+(11, 'מחשב שולחני משרדי', 6000.00, 'מחשב', 'מחשב שולחני משרדי DELL Precision T3680  I9-14900K 32GB 1TB - כולל Windwos 11 Pro  ו- 3 שנות אחריות באתר הלקוח', 1, '[\"/uploads/1777120590886-pc.jpg\"]', 'sale', '2026-04-25 12:36:30');
+
 -- --------------------------------------------------------
 
 --
@@ -79,6 +91,13 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `username`, `email`, `password`, `created_at`) VALUES
+(1, 'ahmad123', 'ahmad123@gmail.com', '$2b$10$gUZj6JwjNPnyMUBkxagd7.9ac50OWtaQC.QXZENfldOzpNwxdceZa', '2026-04-25 11:53:30');
 
 --
 -- Indexes for dumped tables
@@ -134,13 +153,13 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `productId` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `productId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
