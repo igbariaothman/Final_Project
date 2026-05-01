@@ -1,0 +1,111 @@
+.wrapper {
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  direction: rtl;
+  font-family: 'Assistant', sans-serif;
+}
+
+.authCard {
+  width: 100%;
+  max-width: 450px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  color: white;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.inputBox {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.inputBox input {
+  width: 100%;
+  padding: 12px 10px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+  outline: none;
+  color: white;
+  font-size: 1.1rem;
+  transition: 0.3s;
+}
+
+.inputBox label {
+  position: absolute;
+  top: 12px;
+  right: 10px;
+  pointer-events: none;
+  transition: 0.3s;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.inputBox input:focus~label,
+.inputBox input:valid~label {
+  top: -15px;
+  right: 0;
+  font-size: 0.9rem;
+  color: #db00df;
+}
+
+.inputBox input:focus {
+  border-bottom: 2px solid #db00df;
+}
+
+.actionBtn {
+  width: 100%;
+  padding: 14px;
+  background: #db00df;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.actionBtn:hover {
+  background: #ff00fb;
+  box-shadow: 0 0 20px rgba(219, 0, 223, 0.4);
+}
+
+.switchText {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.switchText span {
+  color: #64d2ff;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.errorMessage {
+  color: #ff453a;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.infoMessage {
+  color: #00ff88;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  text-align: center;
+}

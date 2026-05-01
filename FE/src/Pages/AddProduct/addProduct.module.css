@@ -1,0 +1,91 @@
+.container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  direction: rtl;
+  font-family: 'Assistant', sans-serif;
+  color: white;
+}
+
+.title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 25px;
+  font-weight: 700;
+}
+
+.inputGroup {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.inputGroup label {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.inputGroup input,
+.inputGroup textarea,
+.select {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  outline: none;
+}
+
+.inputGroup input::placeholder,
+.inputGroup textarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.select option {
+  background: #333;
+  color: white;
+}
+
+.previewContainer {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.imgPreview {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #db00df;
+}
+
+.shareBtn {
+  width: 100%;
+  padding: 15px;
+  background: #db00df;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.shareBtn:hover {
+  background: #ff00fb;
+  box-shadow: 0 0 20px rgba(219, 0, 223, 0.4);
+}
+
+.message {
+  text-align: center;
+  margin-top: 15px;
+  font-weight: 600;
+  color: #ffda00;
+}
