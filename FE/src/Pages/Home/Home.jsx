@@ -7,9 +7,11 @@ function Home() {
   const [searchCategory, setSearchCategory] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
+  const admin = localStorage.getItem("role");
+  const isLoggedIn = localStorage.getItem("login");
 
   //number of products in page
-  const PRODUCTS_PER_PAGE = 16;
+  const PRODUCTS_PER_PAGE = 25;
 
   useEffect(() => {
     fetch("http://localhost:5000/products")
@@ -39,7 +41,10 @@ function Home() {
   const filtered = filteredProduct();
   const totalPages = Math.ceil(filtered.length / PRODUCTS_PER_PAGE);
   const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
-  const currentProducts = filtered.slice(startIndex, startIndex + PRODUCTS_PER_PAGE);
+  const currentProducts = filtered.slice(
+    startIndex,
+    startIndex + PRODUCTS_PER_PAGE,
+  );
 
   return (
     <div className={classes.container}>
@@ -54,7 +59,7 @@ function Home() {
       </div>
 
       <h1 className={classes.mainTitle}>רשימת מוצרים</h1>
-      
+
       <div className={classes.grid}>
         {currentProducts.map((p) => (
           <div
@@ -93,6 +98,12 @@ function Home() {
                     {Number(p.price).toLocaleString()}
                   </span>
                   <span className={classes.currency}>₪</span>
+                </div>
+              )}
+
+              {isLoggedIn && admin === "admin" && (
+                <div>
+                  <button className={classes.deletebutton}>delete</button>
                 </div>
               )}
             </div>
