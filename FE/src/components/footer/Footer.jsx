@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className={classes.footer}>
       <div className={classes.container}>
         <p className={classes.text}>
-          <span>&copy;</span> {date} יד שנייה של הסטודנטים. כל הזכויות שמורות.
+          <span>&copy;</span> {date} יד שנייה לסטודנטים. כל הזכויות שמורות.
         </p>
         <p className={classes.classInfo}>
           Class 50/2
