@@ -13,7 +13,7 @@
 
 .title {
   text-align: center;
-  font-size: 2rem;
+  font-size: 25px;
   margin-bottom: 25px;
   font-weight: 700;
 }
@@ -22,6 +22,7 @@
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;
+  font-size: 15px;
 }
 
 .inputGroup label {
@@ -88,4 +89,5 @@
   margin-top: 15px;
   font-weight: 600;
   color: #ffda00;
+  font-size: 15px;
 }

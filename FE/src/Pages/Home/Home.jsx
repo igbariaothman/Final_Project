@@ -5,14 +5,11 @@ import classes from "./home.module.css";
 function Home() {
   const [products, setProducts] = useState([]);
   const [searchCategory, setSearchCategory] = useState("");
-  const navigate = useNavigate() ;
+  const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
 
-  function filteredProduct() {
-    return products.filter((p) =>
-      p.category.toLowerCase().includes(searchCategory.toLowerCase()),
-    );
-  }
-
+  //number of products in page
+  const PRODUCTS_PER_PAGE = 16;
 
   useEffect(() => {
     fetch("http://localhost:5000/products")
@@ -21,15 +18,28 @@ function Home() {
       .catch((err) => console.error("Error fetching products:", err));
   }, []);
 
-  
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchCategory]);
+
+  function filteredProduct() {
+    return products.filter((p) =>
+      p.category.toLowerCase().includes(searchCategory.toLowerCase()),
+    );
+  }
 
   function getImage(images) {
     if (Array.isArray(images) && images.length > 0) {
-      const path = images[0]; 
+      const path = images[0];
       return `http://localhost:5000${path}`;
     }
     return "https://via.placeholder.com/150";
   }
+
+  const filtered = filteredProduct();
+  const totalPages = Math.ceil(filtered.length / PRODUCTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+  const currentProducts = filtered.slice(startIndex, startIndex + PRODUCTS_PER_PAGE);
 
   return (
     <div className={classes.container}>
@@ -37,15 +47,16 @@ function Home() {
         <input
           className={classes.searchInput}
           type="text"
-          placeholder="Search by Category"
+          placeholder="חיפוש על קטגוריה"
           value={searchCategory}
           onChange={(e) => setSearchCategory(e.target.value)}
         />
       </div>
 
       <h1 className={classes.mainTitle}>רשימת מוצרים</h1>
+      
       <div className={classes.grid}>
-        {filteredProduct().map((p) => (
+        {currentProducts.map((p) => (
           <div
             key={p.productId}
             onClick={() => navigate(`/productDetails/${p.productId}`)}
@@ -88,6 +99,20 @@ function Home() {
           </div>
         ))}
       </div>
+
+      {totalPages > 1 && (
+        <div className={classes.pagination}>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index + 1}
+              onClick={() => setCurrentPage(index + 1)}
+              className={`${classes.pageBtn} ${currentPage === index + 1 ? classes.activePage : ""}`}
+            >
+              {index + 1}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
