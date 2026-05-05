@@ -5,14 +5,12 @@ const { body, validationResult } = require('express-validator');
 
 const db = dbSingleton.getConnection();
 
-// --- 1. Validation Rules ---
 const messageValidation = [
   body("senderId").isInt().withMessage("Invalid Sender ID"),
   body("receiverId").isInt().withMessage("Invalid Receiver ID"),
   body("productId").isInt().withMessage("Invalid Product ID"),
   body("messageText").trim().notEmpty().withMessage("Message cannot be empty")
 ];
-
 
 const validate = (req, res, next) => {
   const errors = validationResult(req);
@@ -22,12 +20,8 @@ const validate = (req, res, next) => {
   next();
 };
 
-// --- 2. Routes ---
-
-// A. Send a message
 router.post("/send", messageValidation, validate, (req, res) => {
   const { senderId, receiverId, productId, messageText } = req.body;
-
   const query = "INSERT INTO messages (senderId, receiverId, productId, messageText) VALUES (?, ?, ?, ?)";
 
   db.query(query, [senderId, receiverId, productId, messageText], (err, results) => {
@@ -36,10 +30,8 @@ router.post("/send", messageValidation, validate, (req, res) => {
   });
 });
 
-// B. Get Chat History between two users for a specific product
 router.get("/history/:productId/:user1/:user2", (req, res) => {
   const { productId, user1, user2 } = req.params;
-
   const query = `
     SELECT * FROM messages 
     WHERE productId = ? 
@@ -52,11 +44,8 @@ router.get("/history/:productId/:user1/:user2", (req, res) => {
   });
 });
 
-// C. Get Inbox (All active conversations for a user)
-// This query returns the last message from each conversation
 router.get("/inbox/:userId", (req, res) => {
   const { userId } = req.params;
-
   const query = `
     SELECT m.*, u.username AS contactName, p.productName 
     FROM messages m
@@ -74,7 +63,6 @@ router.get("/inbox/:userId", (req, res) => {
   });
 });
 
-// D. Mark messages as Read
 router.put("/read/:productId/:senderId/:receiverId", (req, res) => {
   const { productId, senderId, receiverId } = req.params;
   const query = "UPDATE messages SET isRead = 1 WHERE productId = ? AND senderId = ? AND receiverId = ?";
