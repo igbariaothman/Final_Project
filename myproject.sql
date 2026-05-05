@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 01, 2026 at 07:16 PM
+-- Generation Time: May 05, 2026 at 04:16 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -89,15 +89,18 @@ CREATE TABLE `users` (
   `username` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `role` varchar(10) DEFAULT 'user'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `email`, `password`, `created_at`) VALUES
-(1, 'ahmad123', 'ahmad123@gmail.com', '$2b$10$gUZj6JwjNPnyMUBkxagd7.9ac50OWtaQC.QXZENfldOzpNwxdceZa', '2026-04-25 11:53:30');
+INSERT INTO `users` (`id`, `username`, `email`, `password`, `created_at`, `role`) VALUES
+(1, 'ahmad123', 'ahmad123@gmail.com', '$2b$10$gUZj6JwjNPnyMUBkxagd7.9ac50OWtaQC.QXZENfldOzpNwxdceZa', '2026-04-25 11:53:30', 'user'),
+(6, 'm7md', 'm7md@gmail.com', '$2b$10$CxWZ9eV3noGXL6599wWPze70A3NjDwflu7EJeXh4fmFcoZB6UsomC', '2026-05-05 12:01:34', 'user'),
+(8, 'OthmanIgb', 'othman@gmail.com', '$2b$10$LxPcij4eCu9Z52smnnAQBOfPCw7VmIfc.bW5u.YD0NgP1WabPWLwK', '2026-05-05 12:03:18', 'admin');
 
 --
 -- Indexes for dumped tables
@@ -159,7 +162,7 @@ ALTER TABLE `products`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Constraints for dumped tables
