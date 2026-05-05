@@ -1,22 +1,23 @@
 import { useState } from "react";
 import classes from "./login.module.css";
-import Home from '../Home/Home';
+import Home from "../Home/Home";
+import { data } from "react-router-dom";
 
 function LogIn() {
-  const [isLoginMode, setIsLoginMode] = useState(true); 
+  const [isLoginMode, setIsLoginMode] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
-
 
   const [logEmail, setLogEmail] = useState("");
   const [logPassword, setLogPassword] = useState("");
   const [logMessage, setLogMessage] = useState("");
-
 
   const [signUserName, setSignUseName] = useState("");
   const [signEmail, setSignEmail] = useState("");
   const [signPassword, setSignPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [signMessage, setSignMessage] = useState("");
+
+  // const [role , setRole ] = useState("user") ;
 
   async function logIn() {
     setLogMessage("");
@@ -31,11 +32,14 @@ function LogIn() {
         body: JSON.stringify({ email: logEmail, password: logPassword }),
       });
       const data = await res.json();
+
       if (!res.ok) {
         setLogMessage(data.message || "שגיאה בהתחברות");
         return;
       }
       localStorage.setItem("id", data.user.id);
+      localStorage.setItem("role", data.user.role);
+      localStorage.setItem("login", true);
       window.dispatchEvent(new Event("authChanged"));
       setLoggedIn(true);
     } catch (err) {
@@ -80,46 +84,87 @@ function LogIn() {
   return (
     <div className={classes.wrapper}>
       <div className={classes.authCard}>
-        <h2 className={classes.title}>{isLoginMode ? "התחברות" : "הרשמה למערכת"}</h2>
+        <h2 className={classes.title}>
+          {isLoginMode ? "התחברות" : "הרשמה למערכת"}
+        </h2>
 
         {isLoginMode ? (
           <div className={classes.formGroup}>
             <div className={classes.inputBox}>
-              <input type="email" value={logEmail} onChange={(e) => setLogEmail(e.target.value)} required />
+              <input
+                type="email"
+                value={logEmail}
+                onChange={(e) => setLogEmail(e.target.value)}
+                required
+              />
               <label>אימייל</label>
             </div>
             <div className={classes.inputBox}>
-              <input type="password" value={logPassword} onChange={(e) => setLogPassword(e.target.value)} required />
+              <input
+                type="password"
+                value={logPassword}
+                onChange={(e) => setLogPassword(e.target.value)}
+                required
+              />
               <label>סיסמה</label>
             </div>
             {logMessage && <p className={classes.errorMessage}>{logMessage}</p>}
-            <button onClick={logIn} className={classes.actionBtn}>התחבר</button>
+            <button onClick={logIn} className={classes.actionBtn}>
+              התחבר
+            </button>
             <p className={classes.switchText}>
-              אין לך חשבון? <span onClick={() => setIsLoginMode(false)}>הירשם כאן</span>
+              אין לך חשבון?{" "}
+              <span onClick={() => setIsLoginMode(false)}>הירשם כאן</span>
             </p>
           </div>
         ) : (
           <div className={classes.formGroup}>
             <div className={classes.inputBox}>
-              <input type="text" value={signUserName} onChange={(e) => setSignUseName(e.target.value)} required />
+              <input
+                type="text"
+                value={signUserName}
+                onChange={(e) => setSignUseName(e.target.value)}
+                required
+              />
               <label>שם משתמש</label>
             </div>
             <div className={classes.inputBox}>
-              <input type="email" value={signEmail} onChange={(e) => setSignEmail(e.target.value)} required />
+              <input
+                type="email"
+                value={signEmail}
+                onChange={(e) => setSignEmail(e.target.value)}
+                required
+              />
               <label>אימייל</label>
             </div>
             <div className={classes.inputBox}>
-              <input type="password" value={signPassword} onChange={(e) => setSignPassword(e.target.value)} required />
+              <input
+                type="password"
+                value={signPassword}
+                onChange={(e) => setSignPassword(e.target.value)}
+                required
+              />
               <label>סיסמה</label>
             </div>
             <div className={classes.inputBox}>
-              <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
               <label>אימות סיסמה</label>
             </div>
-            {signMessage && <p className={classes.infoMessage}>{signMessage}</p>}
-            <button onClick={signUp} className={classes.actionBtn}>צור חשבון</button>
+
+            {signMessage && (
+              <p className={classes.infoMessage}>{signMessage}</p>
+            )}
+            <button onClick={signUp} className={classes.actionBtn}>
+              צור חשבון
+            </button>
             <p className={classes.switchText}>
-              כבר יש לך חשבון? <span onClick={() => setIsLoginMode(true)}>התחבר כאן</span>
+              כבר יש לך חשבון?{" "}
+              <span onClick={() => setIsLoginMode(true)}>התחבר כאן</span>
             </p>
           </div>
         )}

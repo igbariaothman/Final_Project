@@ -3,11 +3,10 @@ import classes from "./header.module.css";
 import logo from "../../assets/logo.jpg";
 import { useNavigate } from "react-router-dom";
 
-
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("id"));
-  const navigation = useNavigate() ;
 
+  const navigation = useNavigate();
 
   useEffect(() => {
     const check = () => setIsLoggedIn(!!localStorage.getItem("id"));
@@ -16,7 +15,9 @@ export default function Header() {
   }, []);
 
   function handleLogOut() {
-    localStorage.removeItem("id");
+    // localStorage.removeItem("id");
+    // localStorage.removeItem("loggedIn");
+    localStorage.clear();
     window.dispatchEvent(new Event("authChanged"));
     navigation("/");
   }
@@ -24,10 +25,7 @@ export default function Header() {
   return (
     <header className={classes.header}>
       <div className={classes.container}>
-        <div
-          className={classes.logoContainer}
-          onClick={() => navigation("/")}
-        >
+        <div className={classes.logoContainer} onClick={() => navigation("/")}>
           <img src={logo} alt="Logo" className={classes.logoImage} />
           <p className={classes.wepName}>יד שניה לסטודנטים</p>
         </div>
@@ -42,7 +40,6 @@ export default function Header() {
                 >
                   הוספת מוצר
                 </li>
-
                 <li
                   onClick={() => navigation("favorites")}
                   className={classes.li}

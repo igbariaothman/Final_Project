@@ -58,12 +58,12 @@ router.get("/", (req, res) => {
 
 // User Signup
 router.post("/signup", signupValidation, validate, async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password} = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const query = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
+    const query = "INSERT INTO users (username, email, password ,role) VALUES (?, ?, ? ,?)";
 
-    db.query(query, [username, email, hashedPassword], (err, results) => {
+    db.query(query, [username, email, hashedPassword , "user"], (err, results) => {
       if (err) {
         if (err.code === "ER_DUP_ENTRY") {
           const field = err.sqlMessage.includes("email") ? "Email" : "Username";
@@ -81,7 +81,7 @@ router.post("/signup", signupValidation, validate, async (req, res) => {
 // User Login
 router.post("/login", loginValidation, validate, (req, res) => {
   const { email, password } = req.body;
-  const query = "SELECT id, username, email, password FROM users WHERE email = ? LIMIT 1";
+  const query = "SELECT id, username, email, password ,role FROM users WHERE email = ? LIMIT 1";
 
   db.query(query, [email], async (err, results) => {
     if (err) return res.status(500).json({ message: "Server error" });
@@ -99,7 +99,7 @@ router.post("/login", loginValidation, validate, (req, res) => {
 
     res.json({
       message: "Login successful",
-      user: { id: user.id, username: user.username, email: user.email }
+      user: { id: user.id, username: user.username, email: user.email , role : user.role}
     });
   });
 });

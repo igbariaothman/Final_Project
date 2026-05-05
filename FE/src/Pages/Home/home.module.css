@@ -134,6 +134,10 @@
 .priceTag {
   padding: 20px;
   margin-top: auto;
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  gap: 10px;
 }
 
 .priceContainer {
@@ -181,6 +185,23 @@
   gap: 12px;
   margin-top: 50px;
   width: 100%;
+}
+
+
+.deletebutton {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 10px;
+  background: #ff3b3b;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+  white-space: nowrap;
+}
+
+.deletebutton:hover {
+  background: #ff1f1f;
 }
 
 .pageBtn {
