@@ -1,12 +1,13 @@
 import { useState } from "react";
 import classes from "./login.module.css";
 import Home from '../Home/Home';
+import ProductDetails from "../ProductDetails/ProductDetails";
 
 function LogIn() {
   const [isLoginMode, setIsLoginMode] = useState(true); 
   const [loggedIn, setLoggedIn] = useState(false);
 
-
+  
   const [logEmail, setLogEmail] = useState("");
   const [logPassword, setLogPassword] = useState("");
   const [logMessage, setLogMessage] = useState("");
