@@ -1,15 +1,12 @@
 import { useState } from "react";
 import classes from "./login.module.css";
-import Home from '../Home/Home';
-import ProductDetails from "../ProductDetails/ProductDetails";
 import Home from "../Home/Home";
+import ProductDetails from "../ProductDetails/ProductDetails";
 import { data } from "react-router-dom";
 
 function LogIn() {
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
-
-  
 
   const [logEmail, setLogEmail] = useState("");
   const [logPassword, setLogPassword] = useState("");
