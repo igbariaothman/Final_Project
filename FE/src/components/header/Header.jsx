@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("id"));
-
   const navigation = useNavigate();
 
   useEffect(() => {
@@ -15,8 +14,6 @@ export default function Header() {
   }, []);
 
   function handleLogOut() {
-    // localStorage.removeItem("id");
-    // localStorage.removeItem("loggedIn");
     localStorage.clear();
     window.dispatchEvent(new Event("authChanged"));
     navigation("/");
@@ -32,6 +29,10 @@ export default function Header() {
 
         <nav className={classes.nav}>
           <ul className={classes.ul}>
+            <li onClick={() => navigation("/")} className={classes.li}>
+              דף הבית
+            </li>
+
             {isLoggedIn && (
               <>
                 <li

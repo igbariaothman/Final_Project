@@ -4,13 +4,12 @@ import classes from "./home.module.css";
 
 function Home() {
   const [products, setProducts] = useState([]);
-  const [searchCategory, setSearchCategory] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
   const admin = localStorage.getItem("role");
   const isLoggedIn = localStorage.getItem("login");
 
-  //number of products in page
   const PRODUCTS_PER_PAGE = 25;
 
   useEffect(() => {
@@ -22,12 +21,22 @@ function Home() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchCategory]);
+  }, [searchTerm]);
 
   function filteredProduct() {
-    return products.filter((p) =>
-      p.category.toLowerCase().includes(searchCategory.toLowerCase()),
-    );
+    const searchLower = searchTerm.toLowerCase().trim();
+    if (!searchLower) return products;
+
+    const keywords = searchLower.split(/\s+/);
+
+    return products.filter((p) => {
+      const productName = (p.productName || "").toLowerCase();
+      const category = (p.category || "").toLowerCase();
+      
+      return keywords.every(key => 
+        productName.includes(key) || category.includes(key)
+      );
+    });
   }
 
   function getImage(images) {
@@ -52,9 +61,9 @@ function Home() {
         <input
           className={classes.searchInput}
           type="text"
-          placeholder="חיפוש על קטגוריה"
-          value={searchCategory}
-          onChange={(e) => setSearchCategory(e.target.value)}
+          placeholder="חיפוש לפי שם מוצר או קטגוריה..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
@@ -103,7 +112,14 @@ function Home() {
 
               {isLoggedIn && admin === "admin" && (
                 <div>
-                  <button className={classes.deletebutton}>delete</button>
+                  <button 
+                    className={classes.deletebutton}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
+                    delete
+                  </button>
                 </div>
               )}
             </div>

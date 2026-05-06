@@ -1,7 +1,4 @@
-
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
-import { useState } from "react";
+import { Routes, Route } from "react-router-dom";
 import Header from "../components/header/Header";
 import Footer from "../components/footer/Footer";
 import Home from "../Pages/Home/Home";
@@ -12,11 +9,10 @@ import Favorites from "../Pages/Favorites/Favorites"
 import classes from "./app.module.css";
 
 export default function App() {
-
   return (
-    <div>
+    <div className={classes.app}>
       <Header />
-      <main>
+      <main >
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/add-product" element={<AddProduct />} />

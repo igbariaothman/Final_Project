@@ -2,94 +2,126 @@
 
 .header {
   width: 100%;
-  background: rgba(30, 30, 30, 0.4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  color: #ffffff;
-  padding: 0.5rem 0;
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+  padding: 1rem 0;
   direction: rtl;
   position: sticky;
   top: 0;
   z-index: 1000;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   font-family: 'Assistant', sans-serif;
+  transition: all 0.4s ease;
 }
 
+
 .container {
-  max-width: 1400px;
+  max-width: 1350px;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2rem;
-  width: 100%;
+  padding: 0.7rem 2.5rem;
+  background: rgba(20, 20, 20, 0.6);
+  backdrop-filter: blur(15px) saturate(180%);
+  -webkit-backdrop-filter: blur(15px) saturate(180%);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  width: 95%;
 }
+
 
 .logoContainer {
   display: flex;
   align-items: center;
   cursor: pointer;
-  flex: 0 1 auto;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.logoContainer:hover {
+  transform: scale(1.05);
 }
 
 .logoImage {
-  height: clamp(40px, 5vw, 60px);
-  width: auto;
-  object-fit: contain;
+  height: clamp(45px, 5vw, 65px);
+  filter: drop-shadow(0 0 8px rgba(0, 137, 255, 0.5));
 }
 
 .wepName {
-  font-size: clamp(1.1rem, 2.5vw, 1.8rem);
-  color: lightblue;
-  margin-right: 12px;
-  white-space: nowrap;
+  font-size: clamp(1.2rem, 2.5vw, 1.9rem);
+  background: linear-gradient(135deg, #00d2ff 0%, #db00df 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-right: 15px;
   font-weight: 800;
+  letter-spacing: -0.5px;
 }
-
-.nav {
-  display: flex;
-  align-items: center;
-  flex: 0 1 auto;
-}
-
 .nav .ul {
   display: flex;
   list-style: none;
-  gap: clamp(10px, 2vw, 30px);
+  gap: clamp(15px, 3vw, 40px);
   margin: 0;
   padding: 0;
   align-items: center;
 }
 
 .li {
-  font-size: clamp(0.85rem, 1.3vw, 1.3rem);
+  font-size: clamp(0.9rem, 1.3vw, 1.25rem);
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.8);
+  position: relative;
   cursor: pointer;
-  white-space: nowrap;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
+  padding: 5px 0;
+}
+
+.li::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00d2ff, #db00df);
+  transition: width 0.3s ease;
+}
+
+.li:hover {
+  color: #fff;
+}
+
+.li:hover::after {
+  width: 100%;
 }
 
 .loginBtn,
 .logoutBtn {
-  background-color: rgba(255, 255, 255, 0.08);
-  padding: 0.5rem clamp(1rem, 2vw, 1.5rem);
-  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(0, 210, 255, 0.2), rgba(219, 0, 223, 0.2));
+  padding: 0.6rem 1.8rem;
+  border-radius: 15px;
   border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
   font-weight: 700;
-  font-size: clamp(0.85rem, 1.3vw, 1.2rem);
+  font-size: clamp(0.9rem, 1.2vw, 1.1rem);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.loginBtn:hover,
+.logoutBtn:hover {
+  background: linear-gradient(135deg, #00d2ff 0%, #db00df 100%);
+  border-color: transparent;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(219, 0, 223, 0.4);
 }
 
 @media (max-width: 768px) {
   .container {
-    padding: 0 1rem;
+    padding: 0.6rem 1.2rem;
+    width: 98%;
   }
 
   .wepName {
-    margin-right: 8px;
+    font-size: 1.2rem;
   }
 }
 
@@ -99,6 +131,11 @@
   }
 
   .nav .ul {
-    gap: 12px;
+    gap: 15px;
+  }
+
+  .loginBtn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
   }
 }

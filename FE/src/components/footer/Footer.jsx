@@ -9,9 +9,6 @@ export default function Footer() {
         <p className={classes.text}>
           <span>&copy;</span> {date} יד שנייה לסטודנטים. כל הזכויות שמורות.
         </p>
-        <p className={classes.classInfo}>
-          Class 50/2
-        </p>
       </div>
     </footer>
   );
