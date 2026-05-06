@@ -9,13 +9,21 @@ function ProductDetails() {
   const [product, setProduct] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
-
   const [openChat, setOpenChat] = useState(false);
 
-  
   const userId = localStorage.getItem("id");
   const isLoggedIn = !!userId;
+
+  const categoryMap = {
+    electronics: "אלקטרוניקה ומחשוב",
+    books: "ספרים וחומרי לימוד",
+    furniture: "ריהוט וציוד לחדר",
+    appliances: "מוצרי חשמל למעונות",
+    bags: "תיקים ואביזרים",
+    stationery: "כלי כתיבה וציוד משרדי",
+    laboratory: "ציוד מעבדה",
+    other: "אחר"
+  };
 
   useEffect(() => {
     fetch(`http://localhost:5000/products/${id}`)
@@ -55,17 +63,45 @@ function ProductDetails() {
                 </>
               )}
             </div>
-            
+
+       
+            <div className={classes.detailsUnderImage}>
+              <div className={classes.descriptionSection}>
+                <h3 className={classes.sectionTitle}>תיאור המוצר</h3>
+                <p className={classes.descriptionText}>{product.description}</p>
+              </div>
+
+              <div className={classes.productSpecs}>
+                <div className={classes.specItem}>
+                  <span className={classes.specLabel}>מצב המוצר:</span>
+                  <span className={classes.specValue}>
+                    {product.productstatus === "new" ? "חדש" :
+                     product.productstatus === "like-new" ? "כמו חדש" :
+                     product.productstatus === "good" ? "מצב טוב" : "סביר"}
+                  </span>
+                </div>
+                
+                <div className={classes.specItem}>
+                  <span className={classes.specLabel}>קטגוריה:</span>
+                  <span className={classes.specValue}>
+                    {categoryMap[product.category] || product.category}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
 
+        
           <div className={classes.leftColumn}>
             <div className={classes.actionCard}>
               <h1 className={classes.productTitle}>{product.productName}</h1>
               <div className={classes.priceSection}>
-                {product.listingType === "donation" ? <span className={classes.freeText}>חינם</span> : <span className={classes.price}>₪{Number(product.price).toLocaleString()}</span>}
+                {product.listingType === "donation" ? 
+                  <span className={classes.freeText}>חינם</span> : 
+                  <span className={classes.price}>₪{Number(product.price).toLocaleString()}</span>
+                }
               </div>
               
-       
               <button onClick={handleSendMessage} className={classes.messageBtn}>שליחת הודעה 💬</button>
               
               <div className={classes.sellerInfo}>
@@ -79,17 +115,14 @@ function ProductDetails() {
               </div>
             </div>
           </div>
+
         </div>
       </div>
 
+    
       {openChat && isLoggedIn && (
-        <Chat 
-          productId={product.productId} 
-          sellerId={product.userId} 
-          sellerName={product.username} 
-        />
+        <Chat productId={product.productId} sellerId={product.userId} sellerName={product.username} />
       )}
-
       {isModalOpen && (
         <div className={classes.imageModal} onClick={() => setIsModalOpen(false)}>
           <span className={classes.closeModalBtn}>&times;</span>

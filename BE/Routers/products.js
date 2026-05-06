@@ -42,9 +42,12 @@ const upload = multer({
 const productValidation = [
   body("productName").trim().notEmpty().withMessage("Product name is required"),
   body("price").isNumeric().withMessage("Price must be a number"),
-  body("category").notEmpty().withMessage("Category is required"),
+ body("category").trim().notEmpty().withMessage("Category is required"),
+  body("description").trim().notEmpty().withMessage("Description is required"),
   body("userId").isInt().withMessage("Valid User ID is required"),
-  body("listingType").isIn(['sale', 'donation']).withMessage("Listing type must be 'sale' or 'donation'")
+  body("listingType").isIn(['sale', 'donation']).withMessage("Listing type must be 'sale' or 'donation'"),
+  body("productstatus").isIn(['new', 'like-new', 'good', 'fair']).withMessage("Product status must be one of: new, like-new, good, fair")
+
 ];
 
 // Middleware to handle validation errors
@@ -107,20 +110,36 @@ router.get("/:id", (req, res) => {
 
 
 // Add a new product with image upload
-router.post("/addProduct", upload.array("images", 5), productValidation, validate, (req, res) => {
-  const { productName, price, category, description, userId, listingType } = req.body;
-  // Ensure at least one image is uploaded
+router.post("/addProduct", upload.array("images", 10), productValidation, validate, (req, res) => {
+  const { productName, price, category, description, userId, listingType, productstatus } = req.body;
+
   if (!req.files || req.files.length === 0) {
     return res.status(400).json({ message: "At least one image is required" });
   }
+
   const imagesPaths = req.files.map((file) => `/uploads/${file.filename}`);
-  const query = "INSERT INTO products (productName, price, category, description, userId, images, listingType) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+  const query = `
+    INSERT INTO products 
+    (productName, price, category, description, userId, images, listingType, productstatus) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
   db.query(
     query,
-    [productName, price, category, description, userId, JSON.stringify(imagesPaths), listingType],
+    [
+      productName, 
+      price, 
+      category, 
+      description, 
+      userId, 
+      JSON.stringify(imagesPaths), 
+      listingType, 
+      productstatus
+    ],
     (err, results) => {
       if (err) {
-        console.error(err);
+        console.error("Database Error:", err);
         return res.status(500).json({ message: "Database error during product insertion" });
       }
       res.status(201).json({
