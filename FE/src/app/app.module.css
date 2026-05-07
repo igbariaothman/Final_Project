@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  /* border: 2px solid blue; */
 }
 
 body {
@@ -13,20 +12,7 @@ body {
   background-attachment: fixed;
 }
 
-/* main content area */
-.mainContent {
-  flex: 1; /* fills remaining space between header/footer */
-  background: lightblue;
-  width: min(80%, 1000px);
-  margin: 0 auto; /* center horizontally */
-  padding: 2rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-/* optional: make footer stick to bottom if content is small */
 footer {
   margin-top: auto;
 }
+

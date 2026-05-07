@@ -1,111 +1,175 @@
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap');
+
+/* الحاوية الرئيسية مع تأثير العمق */
 .wrapper {
-  min-height: 80vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   direction: rtl;
   font-family: "Assistant", sans-serif;
+  background: radial-gradient(circle at top right, rgba(2, 137, 255, 0.1), transparent 40%),
+    radial-gradient(circle at bottom left, rgba(219, 0, 223, 0.1), transparent 40%);
 }
 
+/* بطاقة الدخول الزجاجية الاحترافية */
 .authCard {
-  width: 100%;
-  max-width: 450px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(15px);
-  border-radius: 20px;
-  padding: 40px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 480px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(25px) saturate(160%);
+  -webkit-backdrop-filter: blur(25px) saturate(160%);
+  border-radius: 35px;
+  padding: 55px 45px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
   color: white;
+  position: relative;
+  overflow: hidden;
 }
 
+/* عنوان الصفحة بتدرج لوني أسطوري */
 .title {
   text-align: center;
-  margin-bottom: 30px;
-  font-size: 20px;
-  font-weight: 700;
+  margin-bottom: 45px;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, #ffffff 0%, #0289ff 50%, #db00df 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -1px;
 }
 
+/* حاوية المدخلات المحدثة */
 .inputBox {
   position: relative;
-  margin-bottom: 30px;
+  margin-bottom: 35px;
 }
 
 .inputBox input {
   width: 100%;
-  padding: 12px 10px;
-  background: transparent;
+  padding: 16px 15px;
+  background: rgba(255, 255, 255, 0.03);
   border: none;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.15);
   outline: none;
   color: white;
-  font-size: 1.1rem;
-  transition: 0.3s;
+  font-size: 1.15rem;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 10px 10px 0 0;
 }
 
 .inputBox label {
   position: absolute;
-  top: 12px;
-  right: 10px;
+  top: 16px;
+  right: 15px;
   pointer-events: none;
-  transition: 0.3s;
-  color: rgba(255, 255, 255, 0.6);
+  transition: 0.4s;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 600;
 }
 
-.inputBox input:focus ~ label,
-.inputBox input:valid ~ label {
-  top: -15px;
-  right: 0;
+/* تأثير تحريك التسمية (Floating Label) عند التركيز */
+.inputBox input:focus~label,
+.inputBox input:valid~label {
+  top: -22px;
+  right: 5px;
   font-size: 0.9rem;
-  color: #db00df;
+  color: #0289ff;
+  font-weight: 800;
+  letter-spacing: 0.5px;
 }
 
 .inputBox input:focus {
-  border-bottom: 2px solid #db00df;
+  background: rgba(255, 255, 255, 0.07);
+  border-bottom: 2px solid #0289ff;
+  box-shadow: 0 10px 20px rgba(2, 137, 255, 0.1);
 }
 
+/* زر الإجراء الرئيسي بنمط النيون */
 .actionBtn {
   width: 100%;
-  padding: 14px;
-  background: #db00df;
+  padding: 18px;
+  background: linear-gradient(135deg, #0289ff 0%, #db00df 100%);
   border: none;
-  border-radius: 10px;
+  border-radius: 20px;
   color: white;
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 800;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 15px 30px rgba(219, 0, 223, 0.3);
+  margin-top: 15px;
 }
 
 .actionBtn:hover {
-  background: #ff00fb;
-  box-shadow: 0 0 20px rgba(219, 0, 223, 0.4);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 45px rgba(219, 0, 223, 0.5);
+  filter: brightness(1.1);
 }
 
+.actionBtn:active {
+  transform: translateY(-2px);
+}
+
+/* نصوص التبديل والروابط */
 .switchText {
   text-align: center;
-  margin-top: 20px;
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.8);
+  margin-top: 30px;
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
 }
 
 .switchText span {
-  color: #64d2ff;
+  color: #0289ff;
   cursor: pointer;
-  font-weight: 600;
-  text-decoration: underline;
+  font-weight: 800;
+  text-decoration: none;
+  margin-right: 8px;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
+.switchText span:hover {
+  color: #db00df;
+  text-shadow: 0 0 10px rgba(219, 0, 223, 0.4);
+}
+
+/* رسائل الخطأ والنجاح الاحترافية */
 .errorMessage {
+  background: rgba(255, 69, 58, 0.1);
+  border: 1px solid rgba(255, 69, 58, 0.2);
   color: #ff453a;
-  font-size: 0.9rem;
-  margin-bottom: 15px;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  margin-bottom: 25px;
   text-align: center;
+  font-weight: 700;
 }
 
 .infoMessage {
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.2);
   color: #00ff88;
-  font-size: 0.9rem;
-  margin-bottom: 15px;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  margin-bottom: 25px;
   text-align: center;
+  font-weight: 700;
+}
+
+/* تحسينات للشاشات الصغيرة */
+@media (max-width: 480px) {
+  .authCard {
+    padding: 40px 25px;
+    border-radius: 30px;
+    width: 95%;
+  }
+
+  .title {
+    font-size: 1.8rem;
+  }
 }

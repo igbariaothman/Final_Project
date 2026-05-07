@@ -1,52 +1,68 @@
-@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600&display=swap');
 
 .footer {
   width: 100%;
-  background: rgba(30, 30, 30, 0.4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  padding: 1.5rem 0;
+  background: linear-gradient(135deg,
+      rgba(25, 25, 25, 0.45) 0%,
+      rgba(40, 40, 40, 0.3) 100%);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  padding: 2.5rem 0;
   margin-top: auto;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   direction: rtl;
   font-family: 'Assistant', sans-serif;
+  position: relative;
+  overflow: hidden;
 }
 
+.footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(219, 0, 223, 0.4),
+      transparent);
+}
 
 .container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   padding: 0 2rem;
 }
 
 .text {
   margin: 0;
-  font-size: 1rem;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.85);
-  letter-spacing: 0.3px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.5px;
   text-align: center;
+  transition: color 0.3s ease;
 }
 
 .text span {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
+  color: #ffffff;
+  font-weight: 700;
 }
 
-.classInfo {
-  margin: 0;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #db00df;
-  opacity: 0.9;
-  letter-spacing: 1px;
-}
 
 @media (max-width: 768px) {
+  .footer {
+    padding: 1.5rem 0;
+  }
+
   .text {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    line-height: 1.6;
   }
 }

@@ -1,93 +1,209 @@
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap');
+
 .container {
-  max-width: 600px;
-  margin: 50px auto;
-  padding: 30px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(15px);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-width: 750px;
+  margin: 60px auto;
+  padding: 50px 40px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(25px) saturate(150%);
+  -webkit-backdrop-filter: blur(25px) saturate(150%);
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   direction: rtl;
   font-family: 'Assistant', sans-serif;
   color: white;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease;
 }
 
 .title {
   text-align: center;
-  font-size: 25px;
-  margin-bottom: 25px;
-  font-weight: 700;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  margin-bottom: 40px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.6) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -1px;
 }
 
 .inputGroup {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   display: flex;
   flex-direction: column;
-  font-size: 15px;
 }
 
 .inputGroup label {
-  margin-bottom: 8px;
-  font-weight: 600;
+  margin-bottom: 12px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.9);
+  padding-right: 5px;
 }
 
 .inputGroup input,
 .inputGroup textarea,
 .select {
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.05);
+  padding: 16px 20px;
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
   color: white;
+  font-size: 1.05rem;
   outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Assistant', sans-serif;
+}
+
+.inputGroup input:focus,
+.inputGroup textarea:focus,
+.select:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #db00df;
+  box-shadow: 0 0 20px rgba(219, 0, 223, 0.3);
+  transform: translateY(-2px);
 }
 
 .inputGroup input::placeholder,
 .inputGroup textarea::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 15px center;
+  background-size: 18px;
 }
 
 .select option {
-  background: #333;
+  background: #1a1a1a;
   color: white;
+  padding: 10px;
 }
 
 .previewContainer {
   display: flex;
-  gap: 10px;
+  gap: 15px;
   flex-wrap: wrap;
-  margin-bottom: 20px;
+  margin: 25px 0;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 20px;
+  min-height: 100px;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
 }
 
 .imgPreview {
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 90px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 15px;
   border: 2px solid #db00df;
+  box-shadow: 0 8px 15px rgba(219, 0, 223, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.imgPreview:hover {
+  transform: scale(1.1) rotate(3deg);
 }
 
 .shareBtn {
   width: 100%;
-  padding: 15px;
-  background: #db00df;
+  padding: 20px;
+  background: linear-gradient(135deg, #db00df 0%, #7e00df 100%);
   color: white;
   border: none;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-weight: 700;
+  border-radius: 18px;
+  font-size: 1.3rem;
+  font-weight: 800;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  margin-top: 20px;
+  box-shadow: 0 15px 30px rgba(219, 0, 223, 0.3);
 }
 
 .shareBtn:hover {
-  background: #ff00fb;
-  box-shadow: 0 0 20px rgba(219, 0, 223, 0.4);
+  transform: translateY(-5px);
+  filter: brightness(1.15);
+  box-shadow: 0 20px 40px rgba(219, 0, 223, 0.5);
+}
+
+.shareBtn:active {
+  transform: translateY(-2px);
 }
 
 .message {
   text-align: center;
-  margin-top: 15px;
-  font-weight: 600;
+  margin-top: 25px;
+  padding: 12px;
+  background: rgba(255, 218, 0, 0.1);
+  border-radius: 12px;
   color: #ffda00;
-  font-size: 15px;
+  font-weight: 700;
+  font-size: 1rem;
+  border: 1px solid rgba(255, 218, 0, 0.2);
+}
+
+/* حاوية الصورة لضمان التموضع النسبي للزر */
+.imageWrapper {
+  position: relative;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.imageWrapper:hover {
+  transform: translateY(-2px);
+}
+
+/* تنسيق زر الحذف الأنيق */
+.removeBtn {
+  position: absolute;
+  top: -8px;
+  /* تموضع قليلاً خارج الصورة لجمالية التصميم */
+  right: -8px;
+  background: #ff3b3b;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+  box-shadow: 0 4px 10px rgba(255, 59, 59, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+}
+
+.removeBtn:hover {
+  background: #ff1f1f;
+  transform: scale(1.2) rotate(90deg);
+  box-shadow: 0 6px 15px rgba(255, 59, 59, 0.6);
+}
+
+.removeBtn:active {
+  transform: scale(0.9);
+}
+
+@media (max-width: 768px) {
+  .container {
+    margin: 30px 15px;
+    padding: 35px 25px;
+    border-radius: 25px;
+  }
+
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .shareBtn {
+    padding: 16px;
+    font-size: 1.1rem;
+  }
 }
