@@ -26,7 +26,7 @@ function Home() {
 
   function filteredProduct() {
     return products.filter((p) =>
-      p.category.toLowerCase().includes(searchCategory.toLowerCase()),
+      p.category.includes(searchCategory),
     );
   }
 
