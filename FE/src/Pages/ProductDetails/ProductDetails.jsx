@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import classes from "./productDetails.module.css";
 import Chat from "../Chat/Chat";
+import Report from "../Reports/Reports.jsx";
 
 function ProductDetails() {
   const { id } = useParams();
@@ -12,6 +13,7 @@ function ProductDetails() {
   const [openChat, setOpenChat] = useState(false);
 
   const userId = localStorage.getItem("id");
+  const productId = localStorage.setItem("productId", id);
   const isLoggedIn = !!userId;
 
   const categoryMap = {
@@ -87,6 +89,17 @@ function ProductDetails() {
                     {categoryMap[product.category] || product.category}
                   </span>
                 </div>
+
+                <div className="reportButton">
+                  
+                </div>
+                  <button onClick={() => {
+                    localStorage.setItem("productId", product.productId);
+                    navigate("/reports");
+                  }}>
+                    דיווח
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -117,7 +130,6 @@ function ProductDetails() {
           </div>
 
         </div>
-      </div>
 
     
       {openChat && isLoggedIn && (

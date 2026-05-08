@@ -10,14 +10,9 @@ function Home() {
   const navigate = useNavigate();
   const admin = localStorage.getItem("role");
   const isLoggedIn = localStorage.getItem("login");
-  // const [report, setReport] = useState(false);
 
   const PRODUCTS_PER_PAGE = 25;
 
-
-  // function handleReportClick() {
-  //   setReport(!report);
-  // }
 
   useEffect(() => {
     fetch("http://localhost:5000/products")
@@ -93,9 +88,10 @@ function Home() {
                   src={getImage(p.images)}
                   alt={p.productName}
                   className={classes.productImg}
-                  onError={(e) => {
-                    e.target.src = "https://via.placeholder.com/150";
-                  }}
+                  // onError={(e) => {
+                  //   e.target.src =
+                  //     "http://localhost:5000/uploads/defaultImage.png";
+                  // }}
                 />
               </div>
 
@@ -130,10 +126,6 @@ function Home() {
                 </div>
               )}
 
-              {/* <div className="reportButton">
-                <button onClick={handleReportClick}>Report</button>
-                {report && <Report />}
-              </div> */}
             </div>
           </div>
         ))}
