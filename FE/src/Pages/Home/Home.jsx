@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import classes from "./home.module.css";
+// import Report from "../Reports/Reports.jsx";
 
 function Home() {
   const [products, setProducts] = useState([]);
@@ -9,8 +10,14 @@ function Home() {
   const navigate = useNavigate();
   const admin = localStorage.getItem("role");
   const isLoggedIn = localStorage.getItem("login");
+  // const [report, setReport] = useState(false);
 
   const PRODUCTS_PER_PAGE = 25;
+
+
+  // function handleReportClick() {
+  //   setReport(!report);
+  // }
 
   useEffect(() => {
     fetch("http://localhost:5000/products")
@@ -112,16 +119,21 @@ function Home() {
 
               {isLoggedIn && admin === "admin" && (
                 <div>
-                  <button 
+                  <button
                     className={classes.deletebutton}
                     onClick={(e) => {
                       e.stopPropagation();
                     }}
                   >
-                    delete
+                    Delete
                   </button>
                 </div>
               )}
+
+              {/* <div className="reportButton">
+                <button onClick={handleReportClick}>Report</button>
+                {report && <Report />}
+              </div> */}
             </div>
           </div>
         ))}

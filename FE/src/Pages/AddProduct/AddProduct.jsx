@@ -61,7 +61,7 @@ function Product() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setMessage("המוצר פורסם בהצלحة!");
+        setMessage("המוצר פורסם בהצלחה!");
         setName("");
         setPrice("");
         setCategory("");
