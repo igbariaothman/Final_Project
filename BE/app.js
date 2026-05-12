@@ -4,16 +4,12 @@ const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
 const mysql = require("mysql"); 
-
 const userRouter = require("./Routers/user.js");
 const productsRouter = require("./Routers/products.js");
 const messagesRouter = require("./Routers/messages.js");
-<<<<<<< HEAD
 const favoritesRouter = require("./Routers/favorites.js");
-=======
 const reportRouter = require("./Routers/reports.js");
 
->>>>>>> 5f1bb5b53408b4da11d8c220a81cd73502ec3910
 
 const app = express();
 const server = http.createServer(app);
@@ -51,11 +47,9 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/users", userRouter);
 app.use("/products", productsRouter);
 app.use("/messages", messagesRouter);
-<<<<<<< HEAD
 app.use("/favorites", favoritesRouter); 
-=======
 app.use("/reports", reportRouter);
->>>>>>> 5f1bb5b53408b4da11d8c220a81cd73502ec3910
+
 
 io.on("connection", (socket) => {
   socket.on("join_chat", (data) => {
