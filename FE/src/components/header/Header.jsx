@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("id"));
   const navigation = useNavigate();
+const role = localStorage.getItem("role");
+
 
   useEffect(() => {
     const check = () => setIsLoggedIn(!!localStorage.getItem("id"));
@@ -29,6 +31,15 @@ export default function Header() {
 
         <nav className={classes.nav}>
           <ul className={classes.ul}>
+            {role === "admin" && (
+              <li
+                onClick={() => navigation("/admin")}
+                className={classes.li}
+              >
+                Admin
+              </li>
+            )}
+
             <li onClick={() => navigation("/")} className={classes.li}>
               דף הבית
             </li>

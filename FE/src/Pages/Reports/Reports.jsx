@@ -83,7 +83,7 @@ async function sendMessage() {
         <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Message" />
       </div>
         <button onClick={sendMessage}>send Report</button>
-        <p className={classes.alert}>{alert}</p>
+        {alert && <p className={classes.alert}>{alert}</p>}
       
     </div>
   )}

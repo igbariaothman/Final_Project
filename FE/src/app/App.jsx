@@ -8,6 +8,7 @@ import ProductDetails from "../Pages/ProductDetails/ProductDetails";
 import Favorites from "../Pages/Favorites/Favorites"
 import Report from "../Pages/Reports/Reports.jsx";
 import classes from "./app.module.css";
+import AdminPage from "../Pages/AdminPage/AdminPage.jsx";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/productDetails/:id" element ={<ProductDetails/>} />
           <Route path="/reports" element={<Report />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </main>
       <Footer />
