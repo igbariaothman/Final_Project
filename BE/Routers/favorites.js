@@ -2,57 +2,53 @@ const express = require("express");
 const router = express.Router();
 const dbSingleton = require("../db/dbSingleton");
 
-// Execute a query to the database
 const db = dbSingleton.getConnection();
 
-//show all favorites
 router.get("/", (req, res) => {
   const { userId } = req.query;
-
   const query = `
-    SELECT p.*
+    SELECT p.*, p.productId as productId
     FROM favorites f
-    JOIN products p ON f.productId = p.id
+    JOIN products p ON f.productId = p.productId
     WHERE f.userId = ?
   `;
-
   db.query(query, [userId], (err, results) => {
-    if (err) return res.status(500).json(err);
+    if (err) return res.status(500).json({ error: err.message });
     res.json(results);
   });
 });
 
-//add favorit
-router.post("/addfavorite", (req, res) => {
-  const {userId , productId } = req.body;
-  const query = "INSERT INTO favorites (userId , productId ) VALUES (? ,?)";
+router.post("/add", (req, res) => {
+  const { userId, productId } = req.body;
+  const query = "INSERT INTO favorites (userId, productId) VALUES (?, ?)";
   db.query(query, [userId, productId], (err, results) => {
     if (err) {
-      res.status(500).send(err);
-      return;
+      if (err.code === "ER_DUP_ENTRY") {
+        return res.status(400).json({ message: "המוצר כבר קיים במועדפים" });
+      }
+      return res.status(500).json({ error: err.message });
     }
     res.json({ message: "Product added to favorites!", id: results.insertId });
   });
 });
 
-//delete favorite
-router.delete("/:productId", (req, res) => {
+router.delete("/remove/:productId", (req, res) => {
   const { productId } = req.params;
   const { userId } = req.body;
   const query = "DELETE FROM favorites WHERE userId = ? AND productId = ?";
   db.query(query, [userId, productId], (err, results) => {
-    if (err) {
-      res.status(500).send(err);
-      return;
-    }
-    if (results.affectedRows === 0) {
-      res.status(404).json({ message: "Favorite not found" });
-    } else {
-      res.json({ message: "Product removed from favorites!" });
-    }
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: "Product removed from favorites!" });
   });
 });
 
+router.get("/check", (req, res) => {
+  const { userId, productId } = req.query;
+  const query = "SELECT * FROM favorites WHERE userId = ? AND productId = ?";
+  db.query(query, [userId, productId], (err, results) => {
+    if (err) return res.status(500).json(err);
+    res.json({ isFavorite: results.length > 0 });
+  });
+});
 
 module.exports = router;
-

@@ -10,6 +10,7 @@ function ProductDetails() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openChat, setOpenChat] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const userId = localStorage.getItem("id");
   const isLoggedIn = !!userId;
@@ -25,12 +26,56 @@ function ProductDetails() {
     other: "אחר"
   };
 
+  const handleToggleFavorite = async () => {
+    if (!isLoggedIn) {
+      navigate("/login");
+      return;
+    }
+
+    if (isFavorite) {
+      try {
+        const response = await fetch(`http://localhost:5000/favorites/remove/${id}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId }),
+        });
+
+        if (response.ok) {
+          setIsFavorite(false);
+        }
+      } catch (err) {
+        console.error("Error removing from favorites:", err);
+      }
+    } else {
+      try {
+        const response = await fetch("http://localhost:5000/favorites/add", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, productId: id }),
+        });
+
+        if (response.ok) {
+          setIsFavorite(true);
+        }
+      } catch (err) {
+        console.error("Error adding to favorites:", err);
+      }
+    }
+  };
+
   useEffect(() => {
     fetch(`http://localhost:5000/products/${id}`)
       .then((res) => res.json())
       .then((data) => setProduct(data))
       .catch((err) => console.error(err));
-  }, [id]);
+
+    if (isLoggedIn) {
+      fetch(`http://localhost:5000/favorites/check?userId=${userId}&productId=${id}`)
+        .then((res) => res.json())
+        .then((data) => setIsFavorite(data.isFavorite))
+        .catch((err) => console.error(err));
+    }
+  }, [id, userId, isLoggedIn]);
 
   if (!product) return <h2 className={classes.loading}>Loading...</h2>;
 
@@ -38,11 +83,11 @@ function ProductDetails() {
     if (isLoggedIn) {
       setOpenChat(true);
     } else {
-      alert("נא להתחבר כדי לשלוח הודעה");
       navigate("/login");
     }
   };
 
+  
   const getImgUrl = (path) => path ? `http://localhost:5000${path}` : "https://via.placeholder.com/600x400";
 
   return (
@@ -64,7 +109,6 @@ function ProductDetails() {
               )}
             </div>
 
-       
             <div className={classes.detailsUnderImage}>
               <div className={classes.descriptionSection}>
                 <h3 className={classes.sectionTitle}>תיאור המוצר</h3>
@@ -80,7 +124,6 @@ function ProductDetails() {
                      product.productstatus === "good" ? "מצב טוב" : "סביר"}
                   </span>
                 </div>
-                
                 <div className={classes.specItem}>
                   <span className={classes.specLabel}>קטגוריה:</span>
                   <span className={classes.specValue}>
@@ -91,19 +134,25 @@ function ProductDetails() {
             </div>
           </div>
 
-        
           <div className={classes.leftColumn}>
             <div className={classes.actionCard}>
-              <h1 className={classes.productTitle}>{product.productName}</h1>
+              <div className={classes.titleRow} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h1 className={classes.productTitle}>{product.productName}</h1>
+                <button 
+                  className={`${classes.favoriteBtn} ${isFavorite ? classes.activeFavorite : ""}`} 
+                  onClick={handleToggleFavorite}
+                  style={{ background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}
+                >
+                  {isFavorite ? "❤️" : "🤍"}
+                </button>
+              </div>
               <div className={classes.priceSection}>
                 {product.listingType === "donation" ? 
                   <span className={classes.freeText}>חינם</span> : 
                   <span className={classes.price}>₪{Number(product.price).toLocaleString()}</span>
                 }
               </div>
-              
               <button onClick={handleSendMessage} className={classes.messageBtn}>שליחת הודעה 💬</button>
-              
               <div className={classes.sellerInfo}>
                 <p className={classes.sellerLabel}>על המוכר</p>
                 <div className={classes.sellerRow}>
@@ -115,11 +164,9 @@ function ProductDetails() {
               </div>
             </div>
           </div>
-
         </div>
       </div>
 
-    
       {openChat && isLoggedIn && (
         <Chat productId={product.productId} sellerId={product.userId} sellerName={product.username} />
       )}

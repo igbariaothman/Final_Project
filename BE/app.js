@@ -8,6 +8,7 @@ const mysql = require("mysql");
 const userRouter = require("./Routers/user.js");
 const productsRouter = require("./Routers/products.js");
 const messagesRouter = require("./Routers/messages.js");
+const favoritesRouter = require("./Routers/favorites.js");
 
 const app = express();
 const server = http.createServer(app);
@@ -45,6 +46,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/users", userRouter);
 app.use("/products", productsRouter);
 app.use("/messages", messagesRouter);
+app.use("/favorites", favoritesRouter); 
 
 io.on("connection", (socket) => {
   socket.on("join_chat", (data) => {
