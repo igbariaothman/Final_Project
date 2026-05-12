@@ -97,16 +97,42 @@ function ProductDetails() {
       <div className={classes.pageWrapper}>
         <div className={classes.mainContent}>
           <div className={classes.rightColumn}>
-            <div 
-              className={classes.imageMainWrapper} 
+            <div
+              className={classes.imageMainWrapper}
               onClick={() => setIsModalOpen(true)}
-              style={{ cursor: 'zoom-in' }}
+              style={{ cursor: "zoom-in" }}
             >
-              <img src={getImgUrl(product.images[currentIndex])} alt="Product" className={classes.mainDisplayImage} />
+              <img
+                src={getImgUrl(product.images[currentIndex])}
+                alt="Product"
+                className={classes.mainDisplayImage}
+              />
               {product.images.length > 1 && (
                 <>
-                  <button className={classes.arrowLeft} onClick={(e) => { e.stopPropagation(); setCurrentIndex((prev) => (prev + 1) % product.images.length); }}>❯</button>
-                  <button className={classes.arrowRight} onClick={(e) => { e.stopPropagation(); setCurrentIndex((prev) => (prev - 1 + product.images.length) % product.images.length); }}>❮</button>
+                  <button
+                    className={classes.arrowLeft}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentIndex(
+                        (prev) => (prev + 1) % product.images.length,
+                      );
+                    }}
+                  >
+                    ❯
+                  </button>
+                  <button
+                    className={classes.arrowRight}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentIndex(
+                        (prev) =>
+                          (prev - 1 + product.images.length) %
+                          product.images.length,
+                      );
+                    }}
+                  >
+                    ❮
+                  </button>
                 </>
               )}
             </div>
@@ -121,9 +147,13 @@ function ProductDetails() {
                 <div className={classes.specItem}>
                   <span className={classes.specLabel}>מצב המוצר:</span>
                   <span className={classes.specValue}>
-                    {product.productstatus === "new" ? "חדש" :
-                     product.productstatus === "like-new" ? "כמו חדש" :
-                     product.productstatus === "good" ? "מצב טוב" : "סביר"}
+                    {product.productstatus === "new"
+                      ? "חדש"
+                      : product.productstatus === "like-new"
+                        ? "כמו חדש"
+                        : product.productstatus === "good"
+                          ? "מצב טוב"
+                          : "סביר"}
                   </span>
                 </div>
                 <div className={classes.specItem}>
@@ -133,59 +163,93 @@ function ProductDetails() {
                   </span>
                 </div>
 
-                <div className="reportButton">
-                  
-                </div>
-                  <button onClick={() => {
-                    localStorage.setItem("productId", product.productId);
-                    navigate("/reports");
-                  }}>
+                <div className={classes.reportButton}>
+                  <button
+                    onClick={() => {
+                      localStorage.setItem("productId", product.productId);
+                      navigate("/reports");
+                    }}
+                  >
                     דיווח
                   </button>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div className={classes.leftColumn}>
-            <div className={classes.actionCard}>
-              <div className={classes.titleRow} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h1 className={classes.productTitle}>{product.productName}</h1>
-                <button 
-                  className={`${classes.favoriteBtn} ${isFavorite ? classes.activeFavorite : ""}`} 
-                  onClick={handleToggleFavorite}
-                  style={{ background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}
-                >
-                  {isFavorite ? "❤️" : "🤍"}
-                </button>
-              </div>
-              <div className={classes.priceSection}>
-                {product.listingType === "donation" ? 
-                  <span className={classes.freeText}>חינם</span> : 
-                  <span className={classes.price}>₪{Number(product.price).toLocaleString()}</span>
-                }
-              </div>
-              <button onClick={handleSendMessage} className={classes.messageBtn}>שליחת הודעה 💬</button>
-              <div className={classes.sellerInfo}>
-                <p className={classes.sellerLabel}>על המוכר</p>
-                <div className={classes.sellerRow}>
-                  <div className={classes.avatar}>{product.username?.charAt(0).toUpperCase() || "U"}</div>
-                  <div className={classes.sellerMeta}>
-                    <p className={classes.sellerName}>{product.username || "משתמש"}</p>
-                  </div>
+        <div className={classes.leftColumn}>
+          <div className={classes.actionCard}>
+            <div
+              className={classes.titleRow}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <h1 className={classes.productTitle}>{product.productName}</h1>
+              <button
+                className={`${classes.favoriteBtn} ${isFavorite ? classes.activeFavorite : ""}`}
+                onClick={handleToggleFavorite}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  fontSize: "1.5rem",
+                  cursor: "pointer",
+                }}
+              >
+                {isFavorite ? "❤️" : "🤍"}
+              </button>
+            </div>
+            <div className={classes.priceSection}>
+              {product.listingType === "donation" ? (
+                <span className={classes.freeText}>חינם</span>
+              ) : (
+                <span className={classes.price}>
+                  ₪{Number(product.price).toLocaleString()}
+                </span>
+              )}
+            </div>
+            <button onClick={handleSendMessage} className={classes.messageBtn}>
+              שליחת הודעה 💬
+            </button>
+            <div className={classes.sellerInfo}>
+              <p className={classes.sellerLabel}>על המוכר</p>
+              <div className={classes.sellerRow}>
+                <div className={classes.avatar}>
+                  {product.username?.charAt(0).toUpperCase() || "U"}
+                </div>
+                <div className={classes.sellerMeta}>
+                  <p className={classes.sellerName}>
+                    {product.username || "משתמש"}
+                  </p>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
       {openChat && isLoggedIn && (
-        <Chat productId={product.productId} sellerId={product.userId} sellerName={product.username} />
+        <Chat
+          productId={product.productId}
+          sellerId={product.userId}
+          sellerName={product.username}
+        />
       )}
       {isModalOpen && (
-        <div className={classes.imageModal} onClick={() => setIsModalOpen(false)}>
+        <div
+          className={classes.imageModal}
+          onClick={() => setIsModalOpen(false)}
+        >
           <span className={classes.closeModalBtn}>&times;</span>
-          <img src={getImgUrl(product.images[currentIndex])} className={classes.modalContent} alt="Full Size" onClick={(e) => e.stopPropagation()} />
+          <img
+            src={getImgUrl(product.images[currentIndex])}
+            className={classes.modalContent}
+            alt="Full Size"
+            onClick={(e) => e.stopPropagation()}
+          />
         </div>
       )}
     </>

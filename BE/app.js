@@ -3,29 +3,25 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
-const mysql = require("mysql"); 
+const mysql = require("mysql");
 
 const userRouter = require("./Routers/user.js");
 const productsRouter = require("./Routers/products.js");
 const messagesRouter = require("./Routers/messages.js");
-<<<<<<< HEAD
 const favoritesRouter = require("./Routers/favorites.js");
-=======
 const reportRouter = require("./Routers/reports.js");
-
->>>>>>> 5f1bb5b53408b4da11d8c220a81cd73502ec3910
 
 const app = express();
 const server = http.createServer(app);
 
-const port = 5000; 
+const port = 5000;
 const FRONTEND_URL = "http://localhost:3000";
 
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "",
-  database: "myproject"
+  database: "myproject",
 });
 
 db.connect((err) => {
@@ -51,11 +47,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/users", userRouter);
 app.use("/products", productsRouter);
 app.use("/messages", messagesRouter);
-<<<<<<< HEAD
-app.use("/favorites", favoritesRouter); 
-=======
+app.use("/favorites", favoritesRouter);
 app.use("/reports", reportRouter);
->>>>>>> 5f1bb5b53408b4da11d8c220a81cd73502ec3910
 
 io.on("connection", (socket) => {
   socket.on("join_chat", (data) => {
@@ -68,22 +61,27 @@ io.on("connection", (socket) => {
     const { senderId, receiverId, productId, messageText } = data;
     const roomId = `chat_${productId}_${Math.min(senderId, receiverId)}_${Math.max(senderId, receiverId)}`;
 
-    const sqlInsert = "INSERT INTO messages (senderId, receiverId, productId, messageText, isRead) VALUES (?, ?, ?, ?, 0)";
-    
-    db.query(sqlInsert, [senderId, receiverId, productId, messageText], (err, result) => {
-      if (err) {
-        console.error("Error saving message:", err);
-        return;
-      }
+    const sqlInsert =
+      "INSERT INTO messages (senderId, receiverId, productId, messageText, isRead) VALUES (?, ?, ?, ?, 0)";
 
-      const finalMessage = {
-        ...data,
-        id: result.insertId,
-        created_at: new Date()
-      };
+    db.query(
+      sqlInsert,
+      [senderId, receiverId, productId, messageText],
+      (err, result) => {
+        if (err) {
+          console.error("Error saving message:", err);
+          return;
+        }
 
-      io.to(roomId).emit("receive_message", finalMessage);
-    });
+        const finalMessage = {
+          ...data,
+          id: result.insertId,
+          created_at: new Date(),
+        };
+
+        io.to(roomId).emit("receive_message", finalMessage);
+      },
+    );
   });
 
   socket.on("disconnect", () => {
