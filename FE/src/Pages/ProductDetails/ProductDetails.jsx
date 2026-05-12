@@ -14,7 +14,8 @@ function ProductDetails() {
   const [isFavorite, setIsFavorite] = useState(false);
 
   const userId = localStorage.getItem("id");
-  const productId = localStorage.setItem("productId", id);
+ 
+  localStorage.setItem("productId", id); 
   const isLoggedIn = !!userId;
 
   const categoryMap = {
@@ -79,7 +80,7 @@ function ProductDetails() {
     }
   }, [id, userId, isLoggedIn]);
 
-  if (!product) return <h2 className={classes.loading}>Loading...</h2>;
+  if (!product) return <h2 className={classes.loading}>טוען...</h2>;
 
   const handleSendMessage = () => {
     if (isLoggedIn) {
@@ -89,7 +90,6 @@ function ProductDetails() {
     }
   };
 
-  
   const getImgUrl = (path) => path ? `http://localhost:5000${path}` : "https://via.placeholder.com/600x400";
 
   return (
@@ -102,11 +102,7 @@ function ProductDetails() {
               onClick={() => setIsModalOpen(true)}
               style={{ cursor: "zoom-in" }}
             >
-              <img
-                src={getImgUrl(product.images[currentIndex])}
-                alt="Product"
-                className={classes.mainDisplayImage}
-              />
+              <img src={getImgUrl(product.images[currentIndex])} alt={product.productName} className={classes.mainDisplayImage} />
               {product.images.length > 1 && (
                 <>
                   <button
@@ -162,68 +158,45 @@ function ProductDetails() {
                     {categoryMap[product.category] || product.category}
                   </span>
                 </div>
-
-                <div className={classes.reportButton}>
-                  <button
-                    onClick={() => {
-                      localStorage.setItem("productId", product.productId);
-                      navigate("/reports");
-                    }}
-                  >
-                    דיווח
-                  </button>
+                
+                <div className={classes.reportButtonWrapper}>
+                    <button onClick={() => {
+                        localStorage.setItem("productId", product.productId);
+                        navigate("/reports");
+                    }}>
+                        דיווח  ⚠️
+                    </button>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className={classes.leftColumn}>
-          <div className={classes.actionCard}>
-            <div
-              className={classes.titleRow}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <h1 className={classes.productTitle}>{product.productName}</h1>
-              <button
-                className={`${classes.favoriteBtn} ${isFavorite ? classes.activeFavorite : ""}`}
-                onClick={handleToggleFavorite}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  fontSize: "1.5rem",
-                  cursor: "pointer",
-                }}
-              >
-                {isFavorite ? "❤️" : "🤍"}
-              </button>
-            </div>
-            <div className={classes.priceSection}>
-              {product.listingType === "donation" ? (
-                <span className={classes.freeText}>חינם</span>
-              ) : (
-                <span className={classes.price}>
-                  ₪{Number(product.price).toLocaleString()}
-                </span>
-              )}
-            </div>
-            <button onClick={handleSendMessage} className={classes.messageBtn}>
-              שליחת הודעה 💬
-            </button>
-            <div className={classes.sellerInfo}>
-              <p className={classes.sellerLabel}>על המוכר</p>
-              <div className={classes.sellerRow}>
-                <div className={classes.avatar}>
-                  {product.username?.charAt(0).toUpperCase() || "U"}
-                </div>
-                <div className={classes.sellerMeta}>
-                  <p className={classes.sellerName}>
-                    {product.username || "משתמש"}
-                  </p>
+          <div className={classes.leftColumn}>
+            <div className={classes.actionCard}>
+              <div className={classes.titleRow} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h1 className={classes.productTitle}>{product.productName}</h1>
+                <button 
+                  className={`${classes.favoriteBtn} ${isFavorite ? classes.activeFavorite : ""}`} 
+                  onClick={handleToggleFavorite}
+                  style={{ background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}
+                >
+                  {isFavorite ? "❤️" : "🤍"}
+                </button>
+              </div>
+              <div className={classes.priceSection}>
+                {product.listingType === "donation" ? 
+                  <span className={classes.freeText}>חינם</span> : 
+                  <span className={classes.price}>₪{Number(product.price).toLocaleString()}</span>
+                }
+              </div>
+              <button onClick={handleSendMessage} className={classes.messageBtn}>שליחת הודעה 💬</button>
+              <div className={classes.sellerInfo}>
+                <p className={classes.sellerLabel}>על המוכר</p>
+                <div className={classes.sellerRow}>
+                  <div className={classes.avatar}>{product.username?.charAt(0).toUpperCase() || "U"}</div>
+                  <div className={classes.sellerMeta}>
+                    <p className={classes.sellerName}>{product.username || "משתמש"}</p>
+                  </div>
                 </div>
               </div>
             </div>
