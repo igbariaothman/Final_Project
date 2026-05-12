@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import classes from "./home.module.css";
+// import Report from "../Reports/Reports.jsx";
 
 function Home() {
   const [products, setProducts] = useState([]);
@@ -11,6 +12,7 @@ function Home() {
   const isLoggedIn = localStorage.getItem("login");
 
   const PRODUCTS_PER_PAGE = 25;
+
 
   useEffect(() => {
     fetch("http://localhost:5000/products")
@@ -86,9 +88,10 @@ function Home() {
                   src={getImage(p.images)}
                   alt={p.productName}
                   className={classes.productImg}
-                  onError={(e) => {
-                    e.target.src = "https://via.placeholder.com/150";
-                  }}
+                  // onError={(e) => {
+                  //   e.target.src =
+                  //     "http://localhost:5000/uploads/defaultImage.png";
+                  // }}
                 />
               </div>
 
@@ -112,16 +115,17 @@ function Home() {
 
               {isLoggedIn && admin === "admin" && (
                 <div>
-                  <button 
+                  <button
                     className={classes.deletebutton}
                     onClick={(e) => {
                       e.stopPropagation();
                     }}
                   >
-                    delete
+                    Delete
                   </button>
                 </div>
               )}
+
             </div>
           </div>
         ))}

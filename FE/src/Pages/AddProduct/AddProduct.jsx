@@ -104,7 +104,7 @@ function Product() {
       <div className={classes.inputGroup}>
         <label>קטגוריה</label>
         <select value={category} onChange={(e) => setCategory(e.target.value)} className={classes.select} >
-          <option value="">בחר קטגוריה</option>
+          <option value="" disabled>בחר קטגוריה</option>
           <option value="אלקטרוניקה ומחשוב">אלקטרוניקה ומחשוב</option>
           <option value="ספרים וחומרי לימוד">ספרים וחומרי לימוד</option>
           <option value="ריהוט וציוד לחדר">ריהוט וציוד לחדר</option>
@@ -119,7 +119,7 @@ function Product() {
       <div className={classes.inputGroup}>
         <label>מצב</label>
         <select value={productstatus} onChange={(e) => setProductStatus(e.target.value)} className={classes.select}>
-          <option value="">בחר מצב</option>
+          <option value="" disabled>בחר מצב</option>
           <option value="new">חדש</option>
           <option value="like-new">משומש - כמו חדש </option>
           <option value="good">משומש - במצב טוב</option>

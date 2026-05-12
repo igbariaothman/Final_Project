@@ -6,6 +6,7 @@ import AddProduct from "../Pages/AddProduct/AddProduct";
 import LogIn from '../Pages/Login/Login'
 import ProductDetails from "../Pages/ProductDetails/ProductDetails";
 import Favorites from "../Pages/Favorites/Favorites"
+import Report from "../Pages/Reports/Reports.jsx";
 import classes from "./app.module.css";
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/login" element={<LogIn />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/productDetails/:id" element ={<ProductDetails/>} />
+          <Route path="/reports" element={<Report />} />
         </Routes>
       </main>
       <Footer />
