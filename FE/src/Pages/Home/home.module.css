@@ -1,13 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap');
-
+@import url("https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap");
 
 .container {
   padding: 60px 20px;
   direction: rtl;
   min-height: 100vh;
-  font-family: 'Assistant', sans-serif;
-  background: radial-gradient(circle at top right, rgba(219, 0, 223, 0.05), transparent),
-    radial-gradient(circle at bottom left, rgba(0, 137, 255, 0.05), transparent);
+  font-family: "Assistant", sans-serif;
+  background-color: #333;
 }
 
 .mainTitle {
@@ -28,7 +26,7 @@
 }
 
 .mainTitle::after {
-  content: '';
+  content: "";
   display: block;
   width: 200px;
   height: 4px;
@@ -37,7 +35,6 @@
   border-radius: 10px;
   opacity: 0.8;
 }
-
 
 @keyframes titleGlow {
   0% {
@@ -77,10 +74,11 @@
 .searchInput:focus {
   background: rgba(255, 255, 255, 0.12);
   border-color: #db00df;
-  box-shadow: 0 0 25px rgba(219, 0, 223, 0.3), 0 15px 35px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 0 25px rgba(219, 0, 223, 0.3),
+    0 15px 35px rgba(0, 0, 0, 0.3);
   transform: translateY(-2px);
 }
-
 
 .grid {
   display: grid;
@@ -136,7 +134,8 @@
 
 .productName {
   margin: 0 0 10px 0;
-  font-size: 1.4rem;
+  font-size: 1.8rem;
+  margin-top: 10px;
   color: #ffffff;
   font-weight: 700;
   white-space: nowrap;
@@ -145,7 +144,7 @@
 }
 
 .description {
-  font-size: 0.95rem;
+  font-size: 1.3rem;
   color: rgba(255, 255, 255, 0.6);
   line-height: 1.5;
   margin-bottom: 15px;
@@ -168,7 +167,7 @@
   display: flex;
   align-items: baseline;
   gap: 4px;
-  color: #db00df;
+  color: #ffffff;
   font-weight: 800;
   font-size: 1.6rem;
 }

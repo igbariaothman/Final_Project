@@ -26,15 +26,22 @@ router.post("/", (req, res) => {
 });
 
 
+// get all reports for admin review
 router.get("/", (req, res) => {
   const sql = `
     SELECT 
       reports.*,
       users.username,
-      products.productName
+      products.*
+
     FROM reports
-    JOIN users ON reports.userId = users.id
-    JOIN products ON reports.productId = products.productId
+
+    JOIN users
+      ON reports.userId = users.id
+
+    JOIN products
+      ON reports.productId = products.productId
+
     ORDER BY reports.createdAt DESC
   `;
 
@@ -47,4 +54,6 @@ router.get("/", (req, res) => {
     res.json(result);
   });
 });
+
+
 module.exports = router;

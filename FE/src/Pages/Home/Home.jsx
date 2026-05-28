@@ -88,10 +88,6 @@ function Home() {
                   src={getImage(p.images)}
                   alt={p.productName}
                   className={classes.productImg}
-                  // onError={(e) => {
-                  //   e.target.src =
-                  //     "http://localhost:5000/uploads/defaultImage.png";
-                  // }}
                 />
               </div>
 
