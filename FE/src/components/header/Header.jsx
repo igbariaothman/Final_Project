@@ -2,23 +2,15 @@ import { useEffect, useState } from "react";
 import classes from "./header.module.css";
 import logo from "../../assets/logo.jpg";
 import { useNavigate } from "react-router-dom";
+import { useUserContext } from "../../context/UserContext";
 
 export default function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("id"));
+  const { currentUser, logout } = useUserContext();
+
   const navigation = useNavigate();
-const role = localStorage.getItem("role");
-
-
-  useEffect(() => {
-    const check = () => setIsLoggedIn(!!localStorage.getItem("id"));
-    window.addEventListener("authChanged", check);
-    return () => window.removeEventListener("authChanged", check);
-  }, []);
 
   function handleLogOut() {
-    localStorage.clear();
-    window.dispatchEvent(new Event("authChanged"));
-    navigation("/");
+    logout();
   }
 
   return (
@@ -31,11 +23,8 @@ const role = localStorage.getItem("role");
 
         <nav className={classes.nav}>
           <ul className={classes.ul}>
-            {role === "admin" && (
-              <li
-                onClick={() => navigation("/admin")}
-                className={classes.li}
-              >
+            {currentUser?.role === "admin" && (
+              <li onClick={() => navigation("/admin")} className={classes.li}>
                 Admin
               </li>
             )}
@@ -44,7 +33,7 @@ const role = localStorage.getItem("role");
               דף הבית
             </li>
 
-            {isLoggedIn && (
+            {currentUser && (
               <>
                 <li
                   onClick={() => navigation("add-product")}
@@ -61,7 +50,7 @@ const role = localStorage.getItem("role");
               </>
             )}
 
-            {!isLoggedIn ? (
+            {!currentUser ? (
               <li
                 onClick={() => navigation("login")}
                 className={`${classes.li} ${classes.loginBtn}`}

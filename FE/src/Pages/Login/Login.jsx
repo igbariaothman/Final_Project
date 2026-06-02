@@ -3,8 +3,10 @@ import classes from "./login.module.css";
 import Home from "../Home/Home";
 import ProductDetails from "../ProductDetails/ProductDetails";
 import { data } from "react-router-dom";
+import { useUserContext } from "../../context/UserContext";
 
 function LogIn() {
+  const { login } = useUserContext();
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
 
@@ -20,32 +22,37 @@ function LogIn() {
 
   // const [role , setRole ] = useState("user") ;
 
-  async function logIn() {
+  async function logInF() {
     setLogMessage("");
     if (!logEmail || !logPassword) {
       setLogMessage("נא למלא אימייל וסיסמה");
       return;
     }
-    try {
-      const res = await fetch("http://localhost:5000/users/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: logEmail, password: logPassword }),
-      });
-      const data = await res.json();
 
-      if (!res.ok) {
-        setLogMessage(data.message || "שגיאה בהתחברות");
-        return;
-      }
-      localStorage.setItem("id", data.user.id);
-      localStorage.setItem("role", data.user.role);
-      localStorage.setItem("login", true);
-      window.dispatchEvent(new Event("authChanged"));
-      setLoggedIn(true);
-    } catch (err) {
-      setLogMessage("שגיאה בחיבור לשרת");
-    }
+    const userData = { email: logEmail, password: logPassword };
+
+    login(userData);
+    // try {
+
+    //   const res = await fetch("http://localhost:5000/users/login", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({ email: logEmail, password: logPassword }),
+    //   });
+    //   const data = await res.json();
+
+    //   if (!res.ok) {
+    //     setLogMessage(data.message || "שגיאה בהתחברות");
+    //     return;
+    //   }
+    //   localStorage.setItem("id", data.user.id);
+    //   localStorage.setItem("role", data.user.role);
+    //   localStorage.setItem("login", true);
+    //   window.dispatchEvent(new Event("authChanged"));
+    //   setLoggedIn(true);
+    // } catch (err) {
+    //   setLogMessage("שגיאה בחיבור לשרת");
+    // }
   }
 
   async function signUp() {
@@ -110,7 +117,7 @@ function LogIn() {
               <label>סיסמה</label>
             </div>
             {logMessage && <p className={classes.errorMessage}>{logMessage}</p>}
-            <button onClick={logIn} className={classes.actionBtn}>
+            <button onClick={logInF} className={classes.actionBtn}>
               התחבר
             </button>
             <p className={classes.switchText}>

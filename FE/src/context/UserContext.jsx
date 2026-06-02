@@ -32,15 +32,13 @@ const UserContextProvider = ({ children }) => {
     try {
       const response = await axios.post("/users/login", userData);
       console.log("logged in successfully", response.data);
-      setCurrentUser(response.data);
-
-        navigate("/home");
-
+      setCurrentUser(response.data.user);
+      console.log(response.data.user);
+      navigate("/");
       setErrorMsg("");
       localStorage.setItem("session", "true");
     } catch (error) {
-      console.log(error?.response.data?.message);
-      setErrorMsg(error?.response.data?.message);
+      console.log(error);
     }
   };
 
@@ -66,8 +64,7 @@ const UserContextProvider = ({ children }) => {
       navigate("/");
       setErrorMsg("");
     } catch (error) {
-      console.log(error?.response.data?.message);
-      setErrorMsg(error?.response.data?.message);
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
