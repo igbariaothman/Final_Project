@@ -33,7 +33,7 @@ export default function Header() {
               דף הבית
             </li>
 
-            {currentUser && (
+            {currentUser?.role === "user" && (
               <>
                 <li
                   onClick={() => navigation("add-product")}
