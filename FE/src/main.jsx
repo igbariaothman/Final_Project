@@ -1,16 +1,21 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import React from "react";
+import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import 'normalize.css';
+import "normalize.css";
+import "./index.css";
+import App from "./app/App";
+import UserContextProvider from "./context/UserContext";
+import axios from "axios";
 
-import './index.css';
-
-import App from './app/App'
+axios.defaults.baseURL = "http://localhost:3000/";
+axios.defaults.withCredentials = true;
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <UserContextProvider>
+        <App />
+      </UserContextProvider>{" "}
     </BrowserRouter>
   </React.StrictMode>,
 );

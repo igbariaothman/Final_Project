@@ -89,6 +89,7 @@ button {
 }
 
 button:hover {
+<<<<<<< HEAD
   transform: translateY(-4px);
   box-shadow: 0 20px 40px rgba(13, 0, 255, 0.45);
   filter: brightness(1.1);
@@ -101,4 +102,20 @@ button:active {
 select option {
   background-color: #1a1a1c;
   color: white;
+=======
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(2, 137, 255, 0.4);
+}
+
+.alert {
+  text-align: center;
+  margin-top: 25px;
+  padding: 12px;
+  background: rgba(255, 218, 0, 0.1);
+  border-radius: 12px;
+  color: #ffda00;
+  font-weight: 700;
+  font-size: 1rem;
+  border: 1px solid rgba(255, 218, 0, 0.2);
+>>>>>>> a58c5c2bd3c29105e6b121236dac5863bf633044
 }

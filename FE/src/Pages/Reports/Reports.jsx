@@ -82,8 +82,13 @@ async function sendMessage() {
         <label>תלונה:</label>
         <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="הודעה" />
       </div>
+<<<<<<< HEAD
         <button onClick={sendMessage}>שלח תלונה</button>
         <p className={classes.alert}>{alert}</p>
+=======
+        <button onClick={sendMessage}>send Report</button>
+        {alert && <p className={classes.alert}>{alert}</p>}
+>>>>>>> a58c5c2bd3c29105e6b121236dac5863bf633044
       
     </div>
   )}
