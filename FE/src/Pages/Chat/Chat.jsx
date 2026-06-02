@@ -2,32 +2,34 @@ import { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 import classes from "./Chat.module.css";
 
-const socket = io("http://localhost:5000");
-
-function Chat({ productId, sellerId, sellerName }) {
+function Chat({ productId, sellerId, sellerName, onClose }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const scrollRef = useRef();
-  
+  const socketRef = useRef(null);
+
   const userId = Number(localStorage.getItem("id"));
 
   useEffect(() => {
+    socketRef.current = io("http://localhost:5000");
+
     if (userId && sellerId && productId) {
-      // جلب السجل التاريخي
       fetch(`http://localhost:5000/messages/history/${productId}/${userId}/${sellerId}`)
         .then((res) => res.json())
         .then((data) => setMessages(data))
         .catch((err) => console.error("Error fetching history:", err));
 
-      socket.emit("join_chat", { userId, sellerId, productId });
+      socketRef.current.emit("join_chat", { userId, sellerId, productId });
 
-      socket.on("receive_message", (data) => {
-        setMessages((prev) => [...prev, data]);
+      socketRef.current.on("receive_message", (data) => {
+        if (Number(data.senderId) !== userId) {
+          setMessages((prev) => [...prev, data]);
+        }
       });
     }
 
     return () => {
-      socket.off("receive_message");
+      socketRef.current.disconnect();
     };
   }, [userId, sellerId, productId]);
 
@@ -35,51 +37,67 @@ function Chat({ productId, sellerId, sellerName }) {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const sendMessage = async () => {
+  const sendMessage = () => {
     if (newMessage.trim() === "") return;
 
     const messageData = {
       senderId: userId,
       receiverId: Number(sellerId),
       productId: Number(productId),
-      messageText: newMessage
+      messageText: newMessage,
+      created_at: new Date().toISOString(),
     };
 
-    socket.emit("send_message", messageData); //
+    setMessages((prev) => [...prev, messageData]);
     setNewMessage("");
+    socketRef.current.emit("send_message", messageData);
+  };
+
+  const formatTime = (dateStr) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    return date.toLocaleTimeString("he-IL", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   return (
     <div className={classes.chatContainer}>
       <div className={classes.chatHeader}>
-        <h4>Chat with {sellerName}</h4>
+        <button className={classes.closeBtn} onClick={onClose}>✕</button>
+        <h4>צ'אט עם {sellerName}</h4>
       </div>
+
       <div className={classes.messagesArea}>
         {messages.map((msg, index) => {
           const isOwnMessage = Number(msg.senderId) === userId;
-          
           return (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className={`${classes.messageRow} ${isOwnMessage ? classes.ownMessage : classes.otherMessage}`}
             >
               <div className={classes.messageBubble}>
-                {msg.messageText} 
+                <span className={classes.messageText}>{msg.messageText}</span>
+                <span className={classes.messageTime}>
+                  {formatTime(msg.created_at)}
+                </span>
               </div>
             </div>
           );
         })}
         <div ref={scrollRef} />
       </div>
+
       <div className={classes.inputArea}>
-        <input 
-          type="text" 
-          value={newMessage} 
-          onChange={(e) => setNewMessage(e.target.value)} 
-          placeholder="Type your message..."
+        <input
+          type="text"
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          placeholder="הקלד הודעה..."
           onKeyPress={(e) => e.key === "Enter" && sendMessage()}
         />
-        <button onClick={sendMessage}>Send</button>
+        <button onClick={sendMessage}>שלח</button>
       </div>
     </div>
   );

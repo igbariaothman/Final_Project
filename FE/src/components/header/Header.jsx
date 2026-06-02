@@ -6,8 +6,7 @@ import { useNavigate } from "react-router-dom";
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("id"));
   const navigation = useNavigate();
-const role = localStorage.getItem("role");
-
+  const role = localStorage.getItem("role");
 
   useEffect(() => {
     const check = () => setIsLoggedIn(!!localStorage.getItem("id"));
@@ -32,10 +31,7 @@ const role = localStorage.getItem("role");
         <nav className={classes.nav}>
           <ul className={classes.ul}>
             {role === "admin" && (
-              <li
-                onClick={() => navigation("/admin")}
-                className={classes.li}
-              >
+              <li onClick={() => navigation("/admin")} className={classes.li}>
                 Admin
               </li>
             )}
@@ -46,24 +42,22 @@ const role = localStorage.getItem("role");
 
             {isLoggedIn && (
               <>
-                <li
-                  onClick={() => navigation("add-product")}
-                  className={classes.li}
-                >
+                <li onClick={() => navigation("/add-product")} className={classes.li}>
                   הוספת מוצר
                 </li>
-                <li
-                  onClick={() => navigation("favorites")}
-                  className={classes.li}
-                >
+                <li onClick={() => navigation("/favorites")} className={classes.li}>
                   מועדפים
+                </li>
+                {/* ✅ رابط الـ inbox */}
+                <li onClick={() => navigation("/inbox")} className={classes.li}>
+                     הודעות
                 </li>
               </>
             )}
 
             {!isLoggedIn ? (
               <li
-                onClick={() => navigation("login")}
+                onClick={() => navigation("/login")}
                 className={`${classes.li} ${classes.loginBtn}`}
               >
                 התחברות

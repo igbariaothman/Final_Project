@@ -2,8 +2,6 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import classes from "./productDetails.module.css";
 import Chat from "../Chat/Chat";
-import Report from "../Reports/Reports.jsx";
-
 
 function ProductDetails() {
   const { id } = useParams();
@@ -15,7 +13,6 @@ function ProductDetails() {
   const [isFavorite, setIsFavorite] = useState(false);
 
   const userId = localStorage.getItem("id");
-
   localStorage.setItem("productId", id);
   const isLoggedIn = !!userId;
 
@@ -46,10 +43,7 @@ function ProductDetails() {
             body: JSON.stringify({ userId }),
           },
         );
-
-        if (response.ok) {
-          setIsFavorite(false);
-        }
+        if (response.ok) setIsFavorite(false);
       } catch (err) {
         console.error("Error removing from favorites:", err);
       }
@@ -60,10 +54,7 @@ function ProductDetails() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ userId, productId: id }),
         });
-
-        if (response.ok) {
-          setIsFavorite(true);
-        }
+        if (response.ok) setIsFavorite(true);
       } catch (err) {
         console.error("Error adding to favorites:", err);
       }
@@ -89,11 +80,16 @@ function ProductDetails() {
   if (!product) return <h2 className={classes.loading}>טוען...</h2>;
 
   const handleSendMessage = () => {
-    if (isLoggedIn) {
-      setOpenChat(true);
-    } else {
+    if (!isLoggedIn) {
       navigate("/login");
+      return;
     }
+    // ✅ امنع المستخدم من فتح شات مع نفسه
+    if (Number(userId) === Number(product.userId)) {
+      alert("לא ניתן לשלוח הודעה למוצר שלך");
+      return;
+    }
+    setOpenChat(true);
   };
 
   const getImgUrl = (path) =>
@@ -175,20 +171,12 @@ function ProductDetails() {
                 <div className={classes.reportButtonWrapper}>
                   <Link
                     to={"/reports"}
-                    onClick={() => {
-                      localStorage.setItem("productId", product.productId);
-                    }}
+                    onClick={() =>
+                      localStorage.setItem("productId", product.productId)
+                    }
                   >
                     דיווח ⚠️
                   </Link>
-                  {/* <button
-                    onClick={() => {
-                      localStorage.setItem("productId", product.productId);
-                      navigate("/reports");
-                    }}
-                  >
-                    דיווח ⚠️
-                  </button> */}
                 </div>
               </div>
             </div>
@@ -218,6 +206,7 @@ function ProductDetails() {
                   {isFavorite ? "❤️" : "🤍"}
                 </button>
               </div>
+
               <div className={classes.priceSection}>
                 {product.listingType === "donation" ? (
                   <span className={classes.freeText}>חינם</span>
@@ -227,12 +216,16 @@ function ProductDetails() {
                   </span>
                 )}
               </div>
-              <button
-                onClick={handleSendMessage}
-                className={classes.messageBtn}
-              >
-                שליחת הודעה 💬
-              </button>
+
+              {Number(userId) !== Number(product.userId) && (
+                <button
+                  onClick={handleSendMessage}
+                  className={classes.messageBtn}
+                >
+                  שליחת הודעה 💬
+                </button>
+              )}
+
               <div className={classes.sellerInfo}>
                 <p className={classes.sellerLabel}>על המוכר</p>
                 <div className={classes.sellerRow}>
@@ -256,8 +249,10 @@ function ProductDetails() {
           productId={product.productId}
           sellerId={product.userId}
           sellerName={product.username}
+          onClose={() => setOpenChat(false)}
         />
       )}
+
       {isModalOpen && (
         <div
           className={classes.imageModal}
