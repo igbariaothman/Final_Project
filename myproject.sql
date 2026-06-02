@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 06, 2026 at 07:29 PM
+-- Generation Time: May 12, 2026 at 01:29 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -49,6 +49,19 @@ INSERT INTO `categories` (`categoryId`, `categoryName`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `favorites`
+--
+
+CREATE TABLE `favorites` (
+  `favoriteId` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `productId` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `messages`
 --
 
@@ -61,6 +74,20 @@ CREATE TABLE `messages` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `isRead` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `messages`
+--
+
+INSERT INTO `messages` (`id`, `senderId`, `receiverId`, `productId`, `messageText`, `created_at`, `isRead`) VALUES
+(2, 8, 8, 37, 'rgr', '2026-05-07 09:45:37', 0),
+(3, 8, 8, 37, 'hdth', '2026-05-07 09:45:39', 0),
+(4, 8, 8, 37, 'rsgh', '2026-05-07 09:45:40', 0),
+(5, 6, 8, 37, 'rgigrn', '2026-05-07 09:46:37', 0),
+(6, 6, 8, 37, 'rg', '2026-05-07 09:47:14', 0),
+(7, 6, 8, 37, 'wg', '2026-05-07 09:47:16', 0),
+(8, 6, 8, 37, 'geth', '2026-05-07 09:47:19', 0),
+(9, 6, 8, 37, 'wgrg', '2026-05-07 09:47:21', 0);
 
 -- --------------------------------------------------------
 
@@ -91,7 +118,31 @@ INSERT INTO `products` (`productId`, `productName`, `price`, `category`, `descri
 (33, 'כיסא סטודנט איכותי', 0.00, 'ריהוט וציוד לחדר', 'כיסא סטודנט איכותי מתכוונן עם גב מתכוונן ומשענות ידיים נקי במצב מצויין', 1, '[\"/uploads/1778083591992-×××¡× ×¡×××× ×.jpg\"]', 'donation', 'new', '2026-05-06 16:06:31'),
 (34, 'ספרים פסיכומטרי', 0.00, 'ספרים וחומרי לימוד', 'ספרי לימוד וחזרות העוסקים בחשיבה כמותית, חשיבה מילולית ואנגלית.\r\nספר לעבודה בכיתה\r\n3 חוברות סימולציות מלאות\r\nחוברת מבחן אמצע\r\nחוברת מבחני מרתון\r\nלומדות נוספות ומאגר השאלות מהקמפוס של יואל גבע.\r\n2 מקראות לתרגול קריאה בעברית', 1, '[\"/uploads/1778083630115-×¤×¡××××××¨× ×¡×¤×¨××.jpg\"]', 'donation', 'like-new', '2026-05-06 16:07:10'),
 (35, 'מק בוק אייר 13 אינץ 512 גיגה', 5000.00, 'אלקטרוניקה ומחשוב', 'מק בוק אייר חדש כמעט ולא היה בשימוש מוכרת מק בוק אייר במצב חדש לגמרי היה בשימוש רק 4 פעמים בודדות סוללה 100 אחוז נפח512 גיגה צבע מיוחד ויפה לא סטנדרטי מגיע עם עכבר מקורי של אפל נקנה באיי דיגיטל יבואן רשמי המחשב שמור ברמה גבוהה מאוד כמו חדש מהקופסה סיבה למכירהאין לי שימוש בו גמישה במחיר לרציניים בלבד כולל ביטוח למחשב +עכבר מקורי של אפל', 1, '[\"/uploads/1778083666172-MacBook13.jpg\"]', 'sale', 'new', '2026-05-06 16:07:46'),
-(36, 'Ipad Pro 11', 2000.00, 'אלקטרוניקה ומחשוב', 'iPad Pro 11 M4 (2024) 512GB Wi-Fi + Cellular למכירה מצב מצוין – כמו חדש כולל קופסה מקורית וכבל טעינה, דגם עם סים (Cellular) זיכרון: 512GB מסך: 11 אינץ\' מעבד: M4 האייפד עובד מצוין ללא בעיות. נמכר בגלל חוסר שימוש. כולל נרתיק ,כיסוי מגן ועט סטילוס', 1, '[\"/uploads/1778083696918-ipad pro 13.jpg\"]', 'sale', 'good', '2026-05-06 16:08:16');
+(36, 'Ipad Pro 11', 2000.00, 'אלקטרוניקה ומחשוב', 'iPad Pro 11 M4 (2024) 512GB Wi-Fi + Cellular למכירה מצב מצוין – כמו חדש כולל קופסה מקורית וכבל טעינה, דגם עם סים (Cellular) זיכרון: 512GB מסך: 11 אינץ\' מעבד: M4 האייפד עובד מצוין ללא בעיות. נמכר בגלל חוסר שימוש. כולל נרתיק ,כיסוי מגן ועט סטילוס', 1, '[\"/uploads/1778083696918-ipad pro 13.jpg\"]', 'sale', 'good', '2026-05-06 16:08:16'),
+(37, 'm7md', 0.00, 'ריהוט וציוד לחדר', 'student', 8, '[\"/uploads/1778147098879-134015687351623932.jpg\",\"/uploads/1778147098902-133995791583540665.jpg\",\"/uploads/1778147098924-134071458069640213.jpg\",\"/uploads/1778147098938-134163597727642388.jpg\",\"/uploads/1778147098956-134167021220744640.jpg\",\"/uploads/1778147098974-134175719603543026.jpg\",\"/uploads/1778147099019-image_0.jpg\"]', 'donation', 'fair', '2026-05-07 09:44:59');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `reports`
+--
+
+CREATE TABLE `reports` (
+  `reportId` int(11) NOT NULL,
+  `productId` int(11) DEFAULT NULL,
+  `userId` int(11) DEFAULT NULL,
+  `reportType` varchar(50) DEFAULT NULL,
+  `message` text DEFAULT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `reports`
+--
+
+INSERT INTO `reports` (`reportId`, `productId`, `userId`, `reportType`, `message`, `createdAt`) VALUES
+(1, 1, 2, 'product', 'This product looks fake or misleading.', '2026-05-08 16:21:35'),
+(2, 36, 8, 'user', 'qewfq', '2026-05-08 17:59:03');
 
 -- --------------------------------------------------------
 
@@ -129,6 +180,14 @@ ALTER TABLE `categories`
   ADD PRIMARY KEY (`categoryId`);
 
 --
+-- Indexes for table `favorites`
+--
+ALTER TABLE `favorites`
+  ADD PRIMARY KEY (`favoriteId`),
+  ADD UNIQUE KEY `unique_user_product` (`userId`,`productId`),
+  ADD KEY `fk_fav_product` (`productId`);
+
+--
 -- Indexes for table `messages`
 --
 ALTER TABLE `messages`
@@ -143,6 +202,12 @@ ALTER TABLE `messages`
 ALTER TABLE `products`
   ADD PRIMARY KEY (`productId`),
   ADD KEY `userId` (`userId`);
+
+--
+-- Indexes for table `reports`
+--
+ALTER TABLE `reports`
+  ADD PRIMARY KEY (`reportId`);
 
 --
 -- Indexes for table `users`
@@ -163,16 +228,28 @@ ALTER TABLE `categories`
   MODIFY `categoryId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
+-- AUTO_INCREMENT for table `favorites`
+--
+ALTER TABLE `favorites`
+  MODIFY `favoriteId` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `productId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `productId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+
+--
+-- AUTO_INCREMENT for table `reports`
+--
+ALTER TABLE `reports`
+  MODIFY `reportId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -183,6 +260,13 @@ ALTER TABLE `users`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `favorites`
+--
+ALTER TABLE `favorites`
+  ADD CONSTRAINT `fk_fav_product` FOREIGN KEY (`productId`) REFERENCES `products` (`productId`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_fav_user` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `messages`

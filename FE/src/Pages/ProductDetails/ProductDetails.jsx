@@ -4,6 +4,7 @@ import classes from "./productDetails.module.css";
 import Chat from "../Chat/Chat";
 import Report from "../Reports/Reports.jsx";
 
+
 function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();

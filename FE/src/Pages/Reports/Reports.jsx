@@ -62,9 +62,9 @@ async function sendMessage() {
 
   return (
     <div className= {classes.container}>
-      <p className={classes.title}>Reports</p>
+      <p className={classes.title}>דוחות</p>
 
-      <label>Report Type:</label>
+      <label>סוג דוח:</label>
       <select 
         name="reportType" 
         id="reportType"
@@ -72,17 +72,17 @@ async function sendMessage() {
         onChange={(e) => setReportType(e.target.value)}
       >
         <option value="" disabled>בחר סוג דיווח</option>
-        <option value="product">Product</option>
-        <option value="user">User</option>
-        <option value="chat">Chat</option>
+        <option value="product">מוצר</option>
+        <option value="user">לקוח</option>
+        <option value="chat">צ"אט</option>
         
         </select>
 
       <div className={classes.inputGroup}>
-        <label>Message:</label>
-        <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Message" />
+        <label>תלונה:</label>
+        <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="הודעה" />
       </div>
-        <button onClick={sendMessage}>send Report</button>
+        <button onClick={sendMessage}>שלח תלונה</button>
         <p className={classes.alert}>{alert}</p>
       
     </div>

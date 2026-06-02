@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import classes from "./home.module.css";
-// import Report from "../Reports/Reports.jsx";
 
 function Home() {
   const [products, setProducts] = useState([]);
@@ -12,7 +11,6 @@ function Home() {
   const isLoggedIn = localStorage.getItem("login");
 
   const PRODUCTS_PER_PAGE = 25;
-
 
   useEffect(() => {
     fetch("http://localhost:5000/products")
@@ -34,9 +32,9 @@ function Home() {
     return products.filter((p) => {
       const productName = (p.productName || "").toLowerCase();
       const category = (p.category || "").toLowerCase();
-      
-      return keywords.every(key => 
-        productName.includes(key) || category.includes(key)
+
+      return keywords.every(
+        (key) => productName.includes(key) || category.includes(key),
       );
     });
   }
@@ -125,7 +123,6 @@ function Home() {
                   </button>
                 </div>
               )}
-
             </div>
           </div>
         ))}
