@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Chat from "../Chat/Chat";
 import classes from "./Inbox.module.css";
+import { useUserContext } from "../../context/UserContext";
 
 function Inbox() {
   const [conversations, setConversations] = useState([]);
@@ -9,15 +10,15 @@ function Inbox() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const userId = Number(localStorage.getItem("id"));
+  const { currentUser } = useUserContext();
 
   useEffect(() => {
-    if (!userId) {
+    if (!currentUser) {
       navigate("/login");
       return;
     }
 
-    fetch(`http://localhost:5000/messages/inbox/${userId}`)
+    fetch(`http://localhost:5000/messages/inbox/${currentUser.id}`)
       .then((res) => res.json())
       .then((data) => {
         setConversations(data);
@@ -27,7 +28,7 @@ function Inbox() {
         console.error("Error fetching inbox:", err);
         setLoading(false);
       });
-  }, [userId]);
+  }, [currentUser]);
 
   const formatTime = (dateStr) => {
     if (!dateStr) return "";
@@ -39,7 +40,7 @@ function Inbox() {
   };
 
   const getContactId = (conv) => {
-    return Number(conv.senderId) === userId
+    return Number(conv.senderId) === currentUser.id
       ? Number(conv.receiverId)
       : Number(conv.senderId);
   };
@@ -57,7 +58,7 @@ function Inbox() {
           <div className={classes.conversationList}>
             {conversations.map((conv, index) => {
               const isUnread =
-                conv.isRead === 0 && Number(conv.receiverId) === userId;
+                conv.isRead === 0 && Number(conv.receiverId) === currentUser.id;
 
               return (
                 <div
