@@ -35,24 +35,22 @@ export default function Header() {
 
             {currentUser?.role === "user" && (
               <>
-                <li
-                  onClick={() => navigation("add-product")}
-                  className={classes.li}
-                >
+                <li onClick={() => navigation("/add-product")} className={classes.li}>
                   הוספת מוצר
                 </li>
-                <li
-                  onClick={() => navigation("favorites")}
-                  className={classes.li}
-                >
+                <li onClick={() => navigation("/favorites")} className={classes.li}>
                   מועדפים
+                </li>
+                {/* ✅ رابط الـ inbox */}
+                <li onClick={() => navigation("/inbox")} className={classes.li}>
+                     הודעות
                 </li>
               </>
             )}
 
             {!currentUser ? (
               <li
-                onClick={() => navigation("login")}
+                onClick={() => navigation("/login")}
                 className={`${classes.li} ${classes.loginBtn}`}
               >
                 התחברות
