@@ -7,7 +7,7 @@ import LogIn from "../Pages/Login/Login";
 import ProductDetails from "../Pages/ProductDetails/ProductDetails";
 import Favorites from "../Pages/Favorites/Favorites";
 import Report from "../Pages/Reports/Reports.jsx";
-import Inbox from "../Pages/Inpox/Inbox.jsx"
+import Inbox from "../Pages/Inpox/Inbox.jsx";
 import classes from "./app.module.css";
 import AdminPage from "../Pages/AdminPage/AdminPage.jsx";
 import { useUserContext } from "../context/UserContext.jsx";
@@ -34,6 +34,7 @@ export default function App() {
               <Route path="/add-product" element={<AddProduct />} />
               <Route path="/favorites" element={<Favorites />} />
               <Route path="/reports" element={<Report />} />
+              <Route path="/inbox" element={<Inbox />} />
             </>
           ) : (
             <>
@@ -43,6 +44,7 @@ export default function App() {
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        {/* 
         {role === "admin" || role === "user" ? (
           <Routes>
             <Route path="/" element={<Home />} />
@@ -63,7 +65,7 @@ export default function App() {
             <Route path="/inbox" element={<Navigate to="/login" replace />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        )}
+        )} */}
       </main>
       <Footer />
     </div>

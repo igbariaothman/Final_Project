@@ -4,7 +4,6 @@ const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
 const mysql = require("mysql");
-const mysql = require("mysql");
 const userRouter = require("./Routers/user.js");
 const productsRouter = require("./Routers/products.js");
 const messagesRouter = require("./Routers/messages.js");
@@ -62,7 +61,6 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/users", userRouter);
 app.use("/products", productsRouter);
 app.use("/messages", messagesRouter);
-app.use("/favorites", favoritesRouter);
 app.use("/favorites", favoritesRouter);
 app.use("/reports", reportRouter);
 
