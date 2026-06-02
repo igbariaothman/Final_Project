@@ -12,7 +12,7 @@ const dbSingleton = {
         database: "myproject",
         waitForConnections: true,
         connectionLimit: 10,
-        queueLimit: 0
+        queueLimit: 0,
       });
 
       console.log("Database Pool created!");

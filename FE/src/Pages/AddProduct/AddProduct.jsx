@@ -1,19 +1,19 @@
 import { useState } from "react";
 import classes from "./addProduct.module.css";
+import { useUserContext } from "../../context/UserContext";
 
 function Product() {
-  const userId = localStorage.getItem("id");
+  const { currentUser } = useUserContext();
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
-  const [listingType, setListingType] = useState("sale"); 
+  const [listingType, setListingType] = useState("sale");
   const [message, setMessage] = useState("");
   const [images, setImages] = useState([]);
   const [preview, setPreview] = useState([]);
   const [productstatus, setProductStatus] = useState("");
 
-  
   const handleRemoveImage = (index) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
     setPreview((prev) => prev.filter((_, i) => i !== index));
@@ -22,12 +22,18 @@ function Product() {
   function handleAddProduct() {
     const priceNumber = listingType === "donation" ? 0 : Number(price);
 
-    if (!name || (listingType === "sale" && !price) || !category || !description || !productstatus) {
+    if (
+      !name ||
+      (listingType === "sale" && !price) ||
+      !category ||
+      !description ||
+      !productstatus
+    ) {
       setMessage("נא למלא את כל השדות החיוניים");
       return;
     }
-    
-    if(images && images.length > 10) {
+
+    if (images && images.length > 10) {
       setMessage("ניתן להעלות רק עד 10 תמונות");
       return;
     }
@@ -37,7 +43,7 @@ function Product() {
       return;
     }
 
-    if (!userId) {
+    if (!currentUser) {
       setMessage("יש להתחבר כדי לפרסם מוצר");
       return;
     }
@@ -47,8 +53,8 @@ function Product() {
     formData.append("price", priceNumber);
     formData.append("category", category);
     formData.append("description", description);
-    formData.append("listingType", listingType); 
-    formData.append("userId", userId);
+    formData.append("listingType", listingType);
+    formData.append("userId", currentUser?.id);
     formData.append("productstatus", productstatus);
 
     images.forEach((img) => {
@@ -83,12 +89,21 @@ function Product() {
 
       <div className={classes.inputGroup}>
         <label>שם המוצר</label>
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="מה אתה מוכר؟" />
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="מה אתה מוכר؟"
+        />
       </div>
 
       <div className={classes.inputGroup}>
         <label>סוג המודעה</label>
-        <select value={listingType} onChange={(e) => setListingType(e.target.value)} className={classes.select}>
+        <select
+          value={listingType}
+          onChange={(e) => setListingType(e.target.value)}
+          className={classes.select}
+        >
           <option value="sale">למכירה</option>
           <option value="donation">לתרומה</option>
         </select>
@@ -97,14 +112,25 @@ function Product() {
       {listingType === "sale" && (
         <div className={classes.inputGroup}>
           <label>מחיר (₪)</label>
-          <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="0.00 ₪" />
+          <input
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            placeholder="0.00 ₪"
+          />
         </div>
       )}
 
       <div className={classes.inputGroup}>
         <label>קטגוריה</label>
-        <select value={category} onChange={(e) => setCategory(e.target.value)} className={classes.select} >
-          <option value="" disabled>בחר קטגוריה</option>
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className={classes.select}
+        >
+          <option value="" disabled>
+            בחר קטגוריה
+          </option>
           <option value="אלקטרוניקה ומחשוב">אלקטרוניקה ומחשוב</option>
           <option value="ספרים וחומרי לימוד">ספרים וחומרי לימוד</option>
           <option value="ריהוט וציוד לחדר">ריהוט וציוד לחדר</option>
@@ -118,8 +144,14 @@ function Product() {
 
       <div className={classes.inputGroup}>
         <label>מצב</label>
-        <select value={productstatus} onChange={(e) => setProductStatus(e.target.value)} className={classes.select}>
-          <option value="" disabled>בחר מצב</option>
+        <select
+          value={productstatus}
+          onChange={(e) => setProductStatus(e.target.value)}
+          className={classes.select}
+        >
+          <option value="" disabled>
+            בחר מצב
+          </option>
           <option value="new">חדש</option>
           <option value="like-new">משומש - כמו חדש </option>
           <option value="good">משומש - במצב טוב</option>
@@ -129,7 +161,11 @@ function Product() {
 
       <div className={classes.inputGroup}>
         <label>תיאור המוצר</label>
-        <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="פרט קצת על המוצר..." />
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="פרט קצת על המוצר..."
+        />
       </div>
 
       <div className={classes.inputGroup}>
@@ -146,22 +182,21 @@ function Product() {
         />
       </div>
 
-
-<div className={classes.previewContainer}>
-  {preview.map((img, i) => (
-    <div key={i} className={classes.imageWrapper}>
-      <img src={img} className={classes.imgPreview} alt="preview" />
-      <button 
-        type="button"
-        className={classes.removeBtn} 
-        onClick={() => handleRemoveImage(i)}
-        aria-label="Remove image"
-      >
-        ✕
-      </button>
-    </div>
-  ))}
-</div>
+      <div className={classes.previewContainer}>
+        {preview.map((img, i) => (
+          <div key={i} className={classes.imageWrapper}>
+            <img src={img} className={classes.imgPreview} alt="preview" />
+            <button
+              type="button"
+              className={classes.removeBtn}
+              onClick={() => handleRemoveImage(i)}
+              aria-label="Remove image"
+            >
+              ✕
+            </button>
+          </div>
+        ))}
+      </div>
 
       <button className={classes.shareBtn} onClick={handleAddProduct}>
         פרסם מוצר

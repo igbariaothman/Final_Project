@@ -3,19 +3,34 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
-const mysql = require("mysql"); 
+const mysql = require("mysql");
 const userRouter = require("./Routers/user.js");
 const productsRouter = require("./Routers/products.js");
 const messagesRouter = require("./Routers/messages.js");
 const favoritesRouter = require("./Routers/favorites.js");
 const reportRouter = require("./Routers/reports.js");
-
+const session = require("express-session");
 
 const app = express();
+const FRONTEND_URL = "http://localhost:3000";
+app.use(
+  cors({
+    origin: FRONTEND_URL,
+    credentials: true,
+  }),
+);
 const server = http.createServer(app);
 
+app.use(
+  session({
+    secret: "your-secret-key",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false },
+  }),
+);
+
 const port = 5000;
-const FRONTEND_URL = "http://localhost:3000";
 
 const db = mysql.createConnection({
   host: "localhost",
@@ -36,6 +51,7 @@ const io = new Server(server, {
   cors: {
     origin: FRONTEND_URL,
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
@@ -47,9 +63,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/users", userRouter);
 app.use("/products", productsRouter);
 app.use("/messages", messagesRouter);
-app.use("/favorites", favoritesRouter); 
+app.use("/favorites", favoritesRouter);
 app.use("/reports", reportRouter);
-
 
 io.on("connection", (socket) => {
   socket.on("join_chat", (data) => {
