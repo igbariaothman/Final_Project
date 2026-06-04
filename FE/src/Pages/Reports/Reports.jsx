@@ -1,29 +1,23 @@
 import { useState } from "react";
 import classes from "../Reports/report.module.css";
+import { useUserContext } from "../../context/UserContext.jsx"; 
 
 function Reports() {
+  const { currentUser } = useUserContext();
   const [reportType, setReportType] = useState("");
   const [message, setMessage] = useState("");
   const [alert, setAlert] = useState("");
 
   async function sendMessage() {
-    if (!reportType || !message) {
-      setAlert("נא למלא את כל השדות");
-      return;
-    }
+    setAlert(""); 
 
-    if (!localStorage.getItem("id")) {
+    if (!currentUser) {
       setAlert("יש להתחבר כדי לשלוח דיווח");
       return;
     }
 
-    if (!message) {
-      setAlert("נא למלא את שדה ההודעה");
-      return;
-    }
-
-    if (!reportType) {
-      setAlert("נא לבחור סוג דיווח");
+    if (!reportType || !message.trim()) {
+      setAlert("נא למלא את כל השדות");
       return;
     }
 
@@ -35,9 +29,9 @@ function Reports() {
         },
         body: JSON.stringify({
           productId: localStorage.getItem("productId"),
-          userId: localStorage.getItem("id"),
+          userId: localStorage.getItem("id") || currentUser.id,
           reportType,
-          message,
+          message: message.trim(),
         }),
       });
 
@@ -48,11 +42,12 @@ function Reports() {
         return;
       }
 
-      setAlert("Report sent");
+      setAlert("הדיווח נשלח בהצלחה");
       setMessage("");
       setReportType("");
     } catch (err) {
-      setAlert("Server error");
+      console.error("Error sending report:", err);
+      setAlert("שגיאת שרת");
     }
   }
 
@@ -60,7 +55,7 @@ function Reports() {
     <div className={classes.container}>
       <p className={classes.title}>דוחות</p>
 
-      <label>סוג דוח:</label>
+      <label htmlFor="reportType">סוג דוח:</label>
       <select
         name="reportType"
         id="reportType"
@@ -84,8 +79,7 @@ function Reports() {
         />
       </div>
       <button onClick={sendMessage}>שלח תלונה</button>
-      <p className={classes.alert}>{alert}</p>
-      <button onClick={sendMessage}>send Report</button>
+      
       {alert && <p className={classes.alert}>{alert}</p>}
     </div>
   );

@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import classes from "./favorites.module.css";
+import { useUserContext } from "../../context/UserContext";
 
 function Favorites() {
   const [favorite, setFavorite] = useState([]);
-  const userId = localStorage.getItem("id");
   const navigate = useNavigate();
+
+  const { currentUser } = useUserContext();
+  const userId = currentUser?.id;
 
   useEffect(() => {
     if (userId) {
@@ -25,9 +28,7 @@ function Favorites() {
     })
       .then((res) => res.json())
       .then(() => {
-        setFavorite((prev) =>
-          prev.filter((item) => item.productId !== productId),
-        );
+        setFavorite((prev) => prev.filter((item) => item.productId !== productId));
       })
       .catch((err) => console.error(err));
   }

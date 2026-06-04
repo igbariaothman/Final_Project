@@ -12,25 +12,24 @@ const reportRouter = require("./Routers/reports.js");
 const session = require("express-session");
 
 const app = express();
-const FRONTEND_URL = "http://localhost:3000";
-app.use(
-  cors({
-    origin: FRONTEND_URL,
-    credentials: true,
-  }),
-);
 const server = http.createServer(app);
-
-app.use(
-  session({
-    secret: "your-secret-key",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false },
-  }),
-);
-
 const port = 5000;
+const FRONTEND_URL = "http://localhost:3000";
+
+// ✅ cors مرة وحدة بس
+app.use(cors({
+  origin: FRONTEND_URL,
+  credentials: true,
+}));
+
+app.use(express.json());
+
+app.use(session({
+  secret: "your-secret-key",
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false },
+}));
 
 const db = mysql.createConnection({
   host: "localhost",
@@ -55,8 +54,6 @@ const io = new Server(server, {
   },
 });
 
-app.use(cors({ origin: FRONTEND_URL }));
-app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/users", userRouter);
 app.use("/products", productsRouter);
@@ -73,7 +70,6 @@ io.on("connection", (socket) => {
 
   socket.on("send_message", (data) => {
     const { senderId, receiverId, productId, messageText } = data;
-
     const roomId = `chat_${productId}_${Math.min(senderId, receiverId)}_${Math.max(senderId, receiverId)}`;
 
     const sqlInsert =
@@ -93,9 +89,10 @@ io.on("connection", (socket) => {
           id: result.insertId,
           created_at: new Date().toISOString(),
         };
+
         socket.to(roomId).emit("receive_message", finalMessage);
         console.log(`Message sent in room: ${roomId}`);
-      },
+      }
     );
   });
 

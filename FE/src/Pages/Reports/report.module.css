@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght=400;600;700;800&display=swap');
 
 .container {
   width: 100%;
@@ -13,6 +13,7 @@
   box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
   direction: rtl;
   font-family: 'Assistant', sans-serif;
+  box-sizing: border-box;
 }
 
 .title {
@@ -45,15 +46,19 @@ select, textarea {
   color: #ffffff;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: inherit;
+  box-sizing: border-box;
 }
 
 select {
   cursor: pointer;
   appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' %3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: left 15px center;
   background-size: 20px;
+  padding-left: 45px; 
 }
 
 textarea {
@@ -96,23 +101,44 @@ button:hover {
 
 button:active {
   transform: translateY(0);
+  box-shadow: 0 10px 20px rgba(13, 0, 255, 0.25);
 }
 
 select option {
   background-color: #1a1a1c;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(2, 137, 255, 0.4);
+  color: #ffffff;
+  padding: 15px;
+}
+
+select option:disabled {
+  color: rgba(255, 255, 255, 0.3);
 }
 
 .alert {
   text-align: center;
   margin-top: 25px;
-  padding: 12px;
-  background: rgba(255, 218, 0, 0.1);
-  border-radius: 12px;
+  padding: 14px;
+  background: rgba(255, 218, 0, 0.08);
+  border-radius: 14px;
   color: #ffda00;
   font-weight: 700;
   font-size: 1rem;
-  border: 1px solid rgba(255, 218, 0, 0.2);
+  border: 1px solid rgba(255, 218, 0, 0.18);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 580px) {
+  .container {
+    margin: 20px auto;
+    width: 92%;
+    padding: 30px 20px;
+  }
+  .title {
+    font-size: 1.8rem;
+  }
 }

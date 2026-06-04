@@ -34,7 +34,7 @@ router.post("/add", (req, res) => {
 
 router.delete("/remove/:productId", (req, res) => {
   const { productId } = req.params;
-  const { userId } = req.body;
+  const { userId } = req.body; // ✅ من body مش من session
   const query = "DELETE FROM favorites WHERE userId = ? AND productId = ?";
   db.query(query, [userId, productId], (err, results) => {
     if (err) return res.status(500).json({ error: err.message });

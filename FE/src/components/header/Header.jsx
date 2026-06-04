@@ -41,9 +41,11 @@ export default function Header() {
                 <li onClick={() => navigation("/favorites")} className={classes.li}>
                   מועדפים
                 </li>
-                {/* ✅ رابط الـ inbox */}
                 <li onClick={() => navigation("/inbox")} className={classes.li}>
                      הודעות
+                </li>
+                  <li onClick={() => navigation("/profile")} className={classes.li}>
+             פרופיל שלי
                 </li>
               </>
             )}
