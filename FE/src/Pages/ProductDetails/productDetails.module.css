@@ -264,7 +264,7 @@
   justify-content: center;
   gap: 8px;
   text-decoration: none;
-  box-sizing: border-box; 
+  box-sizing: border-box;
 }
 
 .reportButtonWrapper a:hover {
@@ -273,7 +273,6 @@
   color: #ff3b3b;
   transform: translateY(-2px);
 }
-
 
 .sellerInfo {
   margin-top: 50px;
@@ -457,11 +456,11 @@
     grid-template-columns: 1fr;
   }
 
- @media (max-width: 700px) {
-  .reportButtonWrapper {
-    grid-column: span 1;
+  @media (max-width: 700px) {
+    .reportButtonWrapper {
+      grid-column: span 1;
+    }
   }
-}
 
   .actionCard {
     padding: 30px 20px;
