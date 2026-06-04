@@ -1,58 +1,75 @@
-
 import React, { useEffect, useState } from "react";
 import classes from "./adminPAge.module.css";
 
-
 function AdminPage() {
+  const [reports, setReports] = useState([]);
 
-    const [reports, setReports] = useState([]);
+  useEffect(() => {
+    fetch("http://localhost:5000/reports")
+      .then((res) => res.json())
+      .then((data) => {
+        setReports(data);
+      })
+      .catch((err) => {
+        console.log("Error fetching reports:", err);
+      });
+  }, []);
 
- useEffect(() => {
-   fetch("http://localhost:5000/reports")
-     .then((res) => res.json())
-     .then((data) => {
-       setReports(data);
-     })
-     .catch((err) => {
-       console.log("Error fetching reports:", err);
-     });
- }, []);
-
+  const getProductImage = (imagesField) => {
+    if (!imagesField) return "https://via.placeholder.com/600x400";
+    try {
+      const parsed = JSON.parse(imagesField);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return `http://localhost:5000${parsed[0]}`;
+      }
+    } catch (e) {
+      if (typeof imagesField === "string" && imagesField.startsWith("/")) {
+        return `http://localhost:5000${imagesField}`;
+      }
+    }
+    return "https://via.placeholder.com/600x400";
+  };
 
   return (
-<div className={classes.cardsContainer}>
-    <p className="title">Product Reports</p>
+    <div className={classes.pageWrapper}>
+      <h1 className={classes.pageTitle}>דוחות</h1>
 
-  {reports.map((report) => (
-    <div className={classes.reportCard} key={report.reportId}>
+      <div className={classes.cardsContainer}>
+        {reports.length === 0 ? (
+          <p className={classes.noReports}>אין דיווחים קיימים במערכת</p>
+        ) : (
+          reports.map((report) => (
+            <div className={classes.reportCard} key={report.reportId}>
+              <div className={classes.imageWrapper}>
+                <img
+                  src={getProductImage(report.images)}
+                  alt={report.productName || "Product"}
+                  className={classes.image}
+                />
+                <span className={`${classes.badge} ${classes[report.reportType]}`}>
+                  {report.reportType}
+                </span>
+              </div>
 
-      <img
-        src={`http://localhost:5000${JSON.parse(report.images)[0]}`}
-        alt={report.productName}
-        className={classes.image}
-      />
+              <div className={classes.cardContent}>
+                <h2>{report.productName || "מוצר כללי"}</h2>
+                <p className={classes.price}>{report.price ? `${report.price} ₪` : "חינם / תרומה"}</p>
 
-      <h2>{report.productName}</h2>
-
-      <p>{report.price} ₪</p>
-
-      <p>
-        <strong>User:</strong> {report.username}
-      </p>
-
-      <p>
-        <strong>Report Type:</strong> {report.reportType}
-      </p>
-
-      <p>
-        <strong>Message:</strong> {report.message}
-      </p>
-
+                <div className={classes.metaInfo}>
+                  <p>
+                    <strong>משתמש: </strong> {report.username || "משתמש"}
+                  </p>
+                  <p className={classes.reportMessage}>
+                    <strong>הודעה :</strong> {report.message}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </div>
-  ))}
-
-</div>
-);
+  );
 }
 
 export default AdminPage;

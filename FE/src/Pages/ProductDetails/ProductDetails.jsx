@@ -2,19 +2,20 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import classes from "./productDetails.module.css";
 import Chat from "../Chat/Chat";
+import { useUserContext } from "../../context/UserContext";
 
 function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { currentUser } = useUserContext();
   const [product, setProduct] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openChat, setOpenChat] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const userId = localStorage.getItem("id");
-  localStorage.setItem("productId", id);
-  const isLoggedIn = !!userId;
+  const userId = currentUser?.id;
+  const isLoggedIn = !!currentUser;
 
   const categoryMap = {
     electronics: "אלקטרוניקה ומחשוב",
@@ -84,7 +85,6 @@ function ProductDetails() {
       navigate("/login");
       return;
     }
-    // ✅ امنع المستخدم من فتح شات مع نفسه
     if (Number(userId) === Number(product.userId)) {
       alert("לא ניתן לשלוח הודעה למוצר שלך");
       return;
@@ -217,7 +217,7 @@ function ProductDetails() {
                 )}
               </div>
 
-              {Number(userId) !== Number(product.userId) && (
+              {isLoggedIn && Number(userId) !== Number(product.userId) && (
                 <button
                   onClick={handleSendMessage}
                   className={classes.messageBtn}
@@ -233,7 +233,11 @@ function ProductDetails() {
                     {product.username?.charAt(0).toUpperCase() || "U"}
                   </div>
                   <div className={classes.sellerMeta}>
-                    <p className={classes.sellerName}>
+                    <p
+                      className={classes.sellerName}
+                      style={{ cursor: "pointer", textDecoration: "underline" }}
+                      onClick={() => navigate(`/profile/${product.userId}`)}
+                    >
                       {product.username || "משתמש"}
                     </p>
                   </div>

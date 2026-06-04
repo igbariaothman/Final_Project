@@ -248,7 +248,7 @@
   margin-top: 10px;
 }
 
-.reportButtonWrapper button {
+.reportButtonWrapper a {
   width: 100%;
   background: transparent;
   border: 1px solid rgba(255, 59, 59, 0.3);
@@ -263,12 +263,15 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
-.reportButtonWrapper button:hover {
+.reportButtonWrapper a:hover {
   background: rgba(255, 59, 59, 0.1);
   border-color: rgba(255, 59, 59, 0.5);
   color: #ff3b3b;
+  transform: translateY(-2px);
 }
 
 .sellerInfo {
@@ -453,8 +456,10 @@
     grid-template-columns: 1fr;
   }
 
-  .reportButtonWrapper {
-    grid-column: span 1;
+  @media (max-width: 700px) {
+    .reportButtonWrapper {
+      grid-column: span 1;
+    }
   }
 
   .actionCard {

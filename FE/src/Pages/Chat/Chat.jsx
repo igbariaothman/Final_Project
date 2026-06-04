@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 import classes from "./Chat.module.css";
+import { useUserContext } from "../../context/UserContext";
 
 function Chat({ productId, sellerId, sellerName, onClose }) {
   const [messages, setMessages] = useState([]);
@@ -8,7 +9,8 @@ function Chat({ productId, sellerId, sellerName, onClose }) {
   const scrollRef = useRef();
   const socketRef = useRef(null);
 
-  const userId = Number(localStorage.getItem("id"));
+  const { currentUser } = useUserContext();
+  const userId = Number(currentUser?.id);
 
   useEffect(() => {
     socketRef.current = io("http://localhost:5000");
