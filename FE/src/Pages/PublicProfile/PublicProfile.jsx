@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import classes from "./PublicProfile.module.css";
+import classes from "../PublicProfile/PublicProfile.module.css";
 
 function PublicProfile() {
   const { id } = useParams();
@@ -30,9 +30,9 @@ function PublicProfile() {
       const arr = typeof images === "string" ? JSON.parse(images) : images;
       return arr?.length > 0
         ? `http://localhost:5000${arr[0]}`
-        : "https://via.placeholder.com/200";
+        : "https://via.placeholder.com/150";
     } catch {
-      return "https://via.placeholder.com/200";
+      return "https://via.placeholder.com/150";
     }
   };
 
@@ -51,7 +51,6 @@ function PublicProfile() {
   return (
     <div className={classes.profilePage}>
 
-      {/* Hero Section */}
       <div className={classes.heroSection}>
         <div className={classes.heroBg} />
         <div className={classes.heroContent}>
@@ -64,7 +63,6 @@ function PublicProfile() {
           </div>
         </div>
 
-        {/* Stats */}
         <div className={classes.statsRow}>
           <div className={classes.statItem}>
             <span className={classes.statNumber}>{products.length}</span>
@@ -85,7 +83,6 @@ function PublicProfile() {
         </div>
       </div>
 
-      {/* Products Section */}
       <div className={classes.productsSection}>
         <h2 className={classes.productsTitle}>
           מוצרים של {user.username}
@@ -97,31 +94,43 @@ function PublicProfile() {
             <p className={classes.emptyText}>אין מוצרים עדיין</p>
           </div>
         ) : (
-          <div className={classes.productsGrid}>
+          <div className={classes.grid}>
             {products.map((p) => (
               <div
                 key={p.productId}
-                className={classes.productCard}
                 onClick={() => navigate(`/productDetails/${p.productId}`)}
+                className={`${classes.card} ${p.listingType === "donation" ? classes.donationBg : classes.saleBg}`}
               >
-                <div className={classes.productImageWrapper}>
-                  <img
-                    src={getImgUrl(p.images)}
-                    alt={p.productName}
-                    className={classes.productImg}
-                  />
-                  <div className={classes.productBadge}>
-                    {p.listingType === "donation" ? "תרומה" : "מכירה"}
+                <div className={classes.badge}>
+                  {p.listingType === "donation" ? "תרומה" : "מכירה"}
+                </div>
+
+                <div className={classes.contentWrapper}>
+                  <div className={classes.imageContainer}>
+                    <img
+                      src={getImgUrl(p.images)}
+                      alt={p.productName}
+                      className={classes.productImg}
+                    />
+                  </div>
+
+                  <div className={classes.textDetails}>
+                    <h2 className={classes.productName}>{p.productName}</h2>
+                    <p className={classes.description}>{p.description}</p>
                   </div>
                 </div>
-                <div className={classes.productInfo}>
-                  <p className={classes.productName}>{p.productName}</p>
-                  <p className={classes.productPrice}>
-                    {p.listingType === "donation"
-                      ? "חינם "
-                      : `₪${Number(p.price).toLocaleString()}`}
-                  </p>
-                  <p className={classes.productDesc}>{p.description}</p>
+
+                <div className={classes.priceTag}>
+                  {p.listingType === "donation" ? (
+                    <span className={classes.freeText}>חינם</span>
+                  ) : (
+                    <div className={classes.priceContainer}>
+                      <span className={classes.priceVal}>
+                        {Number(p.price).toLocaleString()}
+                      </span>
+                      <span className={classes.currency}>₪</span>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

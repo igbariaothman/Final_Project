@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import classes from "./adminPAge.module.css";
 
 function AdminPage() {
   const [reports, setReports] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("http://localhost:5000/reports")
@@ -30,6 +32,13 @@ function AdminPage() {
     return "https://via.placeholder.com/600x400";
   };
 
+  const getBadgeLabel = (type) => {
+    if (type === "product") return "דיווח מוצר";
+    if (type === "user") return "דיווח משתמש";
+    if (type === "chat") return "דיווח צ'אט";
+    return type;
+  };
+
   return (
     <div className={classes.pageWrapper}>
       <h1 className={classes.pageTitle}>דוחות</h1>
@@ -39,7 +48,12 @@ function AdminPage() {
           <p className={classes.noReports}>אין דיווחים קיימים במערכת</p>
         ) : (
           reports.map((report) => (
-            <div className={classes.reportCard} key={report.reportId}>
+            <div 
+              className={classes.reportCard} 
+              key={report.reportId}
+              onClick={() => navigate(`/productDetails/${report.productId}`)}
+              style={{ cursor: "pointer" }}
+            >
               <div className={classes.imageWrapper}>
                 <img
                   src={getProductImage(report.images)}
@@ -47,13 +61,13 @@ function AdminPage() {
                   className={classes.image}
                 />
                 <span className={`${classes.badge} ${classes[report.reportType]}`}>
-                  {report.reportType}
+                  {getBadgeLabel(report.reportType)}
                 </span>
               </div>
 
               <div className={classes.cardContent}>
                 <h2>{report.productName || "מוצר כללי"}</h2>
-                <p className={classes.price}>{report.price ? `${report.price} ₪` : "חינם / תרומה"}</p>
+                <p className={classes.price}>{report.price ? `₪${Number(report.price).toLocaleString()}` : "חינם / תרומה"}</p>
 
                 <div className={classes.metaInfo}>
                   <p>

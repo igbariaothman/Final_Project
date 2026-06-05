@@ -1,31 +1,32 @@
-@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800;900&display=swap');
 
 .chatContainer {
   position: fixed;
-  bottom: 25px;
+  bottom: 30px;
   right: 30px;
-  width: 380px;
-  height: 550px;
-  background: rgba(15, 15, 18, 0.92);
-  backdrop-filter: blur(25px) saturate(180%);
-  -webkit-backdrop-filter: blur(25px) saturate(180%);
-  border-radius: 24px;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+  width: clamp(400px, 30vw, 480px);
+  height: clamp(600px, 70vh, 750px);
+  background: rgba(15, 15, 18, 0.95);
+  backdrop-filter: blur(35px) saturate(220%);
+  -webkit-backdrop-filter: blur(35px) saturate(220%);
+  border-radius: 32px;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7);
   display: flex;
   flex-direction: column;
   z-index: 3000;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   direction: rtl;
   font-family: 'Assistant', sans-serif;
-  animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-sizing: border-box;
+  animation: slideUp 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .chatHeader {
-  background: rgba(255, 255, 255, 0.05);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   color: #ffffff;
-  padding: 16px 20px;
+  padding: 22px 28px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -35,23 +36,25 @@
 
 .chatHeader h4 {
   margin: 0;
-  font-size: 1.1rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #ffffff 0%, #0289ff 100%);
+  font-size: clamp(1.4rem, 2vw, 1.75rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, #ffffff 0%, #0289ff 50%, #db00df 100%);
+  background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  letter-spacing: -0.5px;
 }
 
 .closeBtn {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.4rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  width: 32px;
-  height: 32px;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -60,28 +63,30 @@
 }
 
 .closeBtn:hover {
-  background: rgba(255, 59, 59, 0.2);
-  border-color: rgba(255, 59, 59, 0.4);
-  color: #ff3b3b;
-  transform: scale(1.1);
+  background: #ff3b3b;
+  border-color: #ff3b3b;
+  color: #ffffff;
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 0 20px rgba(255, 59, 59, 0.4);
 }
 
 .messagesArea {
   flex: 1;
-  padding: 16px 20px;
+  padding: 24px 28px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  background: rgba(0, 0, 0, 0.15);
+  gap: 16px;
+  background: rgba(0, 0, 0, 0.2);
   min-height: 0;
 }
 
 .messagesArea::-webkit-scrollbar {
-  width: 4px;
+  width: 5px;
 }
+
 .messagesArea::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 10px;
 }
 
@@ -90,129 +95,144 @@
   width: 100%;
 }
 
-/* ✅ رسائل المرسل — لون أزرق */
 .ownMessage {
   justify-content: flex-start;
 }
 
 .ownMessage .messageBubble {
   background: linear-gradient(135deg, #0289ff 0%, #0056b3 100%);
-  color: white;
-  border-radius: 18px 18px 4px 18px;
-  box-shadow: 0 4px 12px rgba(2, 137, 255, 0.25);
+  color: #ffffff;
+  border-radius: 24px 24px 6px 24px;
+  box-shadow: 0 8px 24px rgba(2, 137, 255, 0.25);
 }
 
 .ownMessage .messageTime {
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(255, 255, 255, 0.85);
+  text-align: left;
 }
 
-/* ✅ رسائل المستلم — لون رمادي */
 .otherMessage {
   justify-content: flex-end;
 }
 
 .otherMessage .messageBubble {
-  background: rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #ffffff;
-  border-radius: 18px 18px 18px 4px;
+  border-radius: 24px 24px 24px 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 .otherMessage .messageTime {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.6);
+  text-align: right;
 }
 
 .messageBubble {
-  max-width: 75%;
-  padding: 10px 16px;
-  font-size: 1rem;
-  line-height: 1.55;
-  word-wrap: break-word;
-  word-break: break-word;
+  max-width: 80%;
+  padding: 14px 22px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+  box-sizing: border-box;
 }
 
 .messageText {
-  font-size: 1rem;
+  font-size: clamp(1.25rem, 1.6vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.6;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 
-/* ✅ وقت الرسالة */
 .messageTime {
-  font-size: 0.7rem;
-  text-align: left;
-  margin-top: 2px;
-  align-self: flex-end;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-top: 4px;
+  width: 100%;
+  display: block;
 }
+
 
 .inputArea {
-  padding: 12px 16px;
+  padding: 20px 24px;
   display: flex;
-  flex-direction: row;
-  gap: 10px;
-  background: rgba(10, 10, 14, 0.95);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
   align-items: center;
+  gap: 14px;
+  background: rgba(10, 10, 14, 0.98);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   flex-shrink: 0;
+  box-sizing: border-box;
+  direction: ltr;
 }
 
 .inputArea input {
   flex: 1;
-  padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 14px;
-  color: white;
+  height: 58px;
+  padding: 0 24px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  color: #ffffff;
   outline: none;
-  font-size: 0.95rem;
+  font-size: 1.5rem;
+  font-weight: 600;
   font-family: 'Assistant', sans-serif;
-  transition: all 0.3s ease;
-  min-width: 0;
+  box-sizing: border-box;
+  direction: rtl;
+  text-align: right;
 }
 
 .inputArea input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.35);
 }
 
 .inputArea input:focus {
   border-color: #0289ff;
-  background: rgba(255, 255, 255, 0.11);
-  box-shadow: 0 0 12px rgba(2, 137, 255, 0.2);
+  box-shadow: 0 0 25px rgba(2, 137, 255, 0.25);
 }
 
-.inputArea button {
-  background: linear-gradient(135deg, #0289ff 0%, #0d00ff 100%);
-  color: white;
+.sendButton {
+  width: 100px;
+  height: 58px;
   border: none;
-  padding: 12px 16px;
-  border-radius: 14px;
-  font-size: 0.95rem;
-  font-weight: 700;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #0289ff 0%, #db00df 100%);
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 900;
   font-family: 'Assistant', sans-serif;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(13, 0, 255, 0.25);
   flex-shrink: 0;
-  white-space: nowrap;
-  width: auto;
-  min-width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: auto;
 }
 
-.inputArea button:hover {
+.sendButton:hover {
   transform: translateY(-2px);
-  filter: brightness(1.15);
-  box-shadow: 0 8px 20px rgba(13, 0, 255, 0.4);
+  filter: brightness(1.1);
 }
 
 @keyframes slideUp {
   from {
-    transform: translateY(30px);
+    transform: translateY(40px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .chatContainer {
+    width: 420px;
+    height: 650px;
+    bottom: 20px;
+    right: 20px;
   }
 }
 
@@ -225,5 +245,18 @@
     right: 0;
     border-radius: 0;
     border: none;
+  }
+
+  .chatHeader {
+    padding: 20px;
+  }
+
+  .messagesArea {
+    padding: 20px;
+  }
+
+  .inputArea {
+    padding: 16px;
+    border-radius: 0;
   }
 }

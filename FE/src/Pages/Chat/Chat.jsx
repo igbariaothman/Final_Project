@@ -68,7 +68,7 @@ function Chat({ productId, sellerId, sellerName, onClose }) {
     <div className={classes.chatContainer}>
       <div className={classes.chatHeader}>
         <button className={classes.closeBtn} onClick={onClose}>✕</button>
-        <h4>צ'אט עם {sellerName}</h4>
+        <h4>צ"ט עם {sellerName}</h4>
       </div>
 
       <div className={classes.messagesArea}>
@@ -81,7 +81,7 @@ function Chat({ productId, sellerId, sellerName, onClose }) {
             >
               <div className={classes.messageBubble}>
                 <span className={classes.messageText}>{msg.messageText}</span>
-                <span className={classes.messageTime}>
+                <span className={classes.messageTime} >
                   {formatTime(msg.created_at)}
                 </span>
               </div>
@@ -91,16 +91,22 @@ function Chat({ productId, sellerId, sellerName, onClose }) {
         <div ref={scrollRef} />
       </div>
 
-      <div className={classes.inputArea}>
-        <input
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="הקלד הודעה..."
-          onKeyPress={(e) => e.key === "Enter" && sendMessage()}
-        />
-        <button onClick={sendMessage}>שלח</button>
-      </div>
+  <div className={classes.inputArea}>
+  <input
+    type="text"
+    value={newMessage}
+    onChange={(e) => setNewMessage(e.target.value)}
+    placeholder="הקלד הודעה..."
+    onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+  />
+
+  <button
+    className={classes.sendButton}
+    onClick={sendMessage}
+  >
+    שלח
+  </button>
+</div>
     </div>
   );
 }

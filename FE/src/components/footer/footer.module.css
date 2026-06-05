@@ -1,18 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap');
 
 .footer {
   width: 100%;
-  background: linear-gradient(135deg,
-      rgba(25, 25, 25, 0.45) 0%,
-      rgba(40, 40, 40, 0.3) 100%);
-  backdrop-filter: blur(16px) saturate(120%);
-  -webkit-backdrop-filter: blur(16px) saturate(120%);
-  padding: 2.5rem 0;
+  background: rgba(10, 11, 14, 0.8);
+  backdrop-filter: blur(25px) saturate(200%);
+  -webkit-backdrop-filter: blur(25px) saturate(200%);
+  padding: 3rem 0;
   margin-top: auto;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   direction: rtl;
   font-family: 'Assistant', sans-serif;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .footer::before {
@@ -21,48 +21,66 @@
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 40%;
-  height: 1px;
+  width: 85%;
+  height: 2px;
   background: linear-gradient(90deg,
       transparent,
-      rgba(219, 0, 223, 0.4),
+      #0289ff,
+      #db00df,
       transparent);
+  filter: blur(1px);
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1450px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 0 2rem;
+  justify-content: center;
+  gap: 15px;
+  padding: 0 3rem;
+  box-sizing: border-box;
 }
 
 .text {
   margin: 0;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.7);
-  letter-spacing: 0.5px;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: -0.3px;
   text-align: center;
-  transition: color 0.3s ease;
+  transition: color 0.4s ease;
+}
+
+.text:hover {
+  color: #ffffff;
 }
 
 .text span {
-  font-size: 1.05rem;
-  color: #ffffff;
-  font-weight: 700;
+  font-size: 2rem;
+  background: linear-gradient(135deg, #0289ff 0%, #db00df 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 900;
+  margin-left: 5px;
 }
-
 
 @media (max-width: 768px) {
   .footer {
-    padding: 1.5rem 0;
+    padding: 2rem 0;
+  }
+
+  .container {
+    padding: 0 1.5rem;
   }
 
   .text {
-    font-size: 0.85rem;
+    font-size: 1rem;
     line-height: 1.6;
+  }
+
+  .text span {
+    font-size: 1.15rem;
   }
 }
