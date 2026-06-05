@@ -1,8 +1,6 @@
 import { useState } from "react";
 import classes from "./login.module.css";
 import Home from "../Home/Home";
-import ProductDetails from "../ProductDetails/ProductDetails";
-import { data } from "react-router-dom";
 import { useUserContext } from "../../context/UserContext";
 
 function LogIn() {
@@ -20,9 +18,8 @@ function LogIn() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [signMessage, setSignMessage] = useState("");
 
-  // const [role , setRole ] = useState("user") ;
-
-  async function logInF() {
+  async function handleLoginSubmit(e) {
+    e.preventDefault();
     setLogMessage("");
     if (!logEmail || !logPassword) {
       setLogMessage("נא למלא אימייל וסיסמה");
@@ -30,32 +27,11 @@ function LogIn() {
     }
 
     const userData = { email: logEmail, password: logPassword };
-
     login(userData);
-    // try {
-
-    //   const res = await fetch("http://localhost:5000/users/login", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({ email: logEmail, password: logPassword }),
-    //   });
-    //   const data = await res.json();
-
-    //   if (!res.ok) {
-    //     setLogMessage(data.message || "שגיאה בהתחברות");
-    //     return;
-    //   }
-    //   localStorage.setItem("id", data.user.id);
-    //   localStorage.setItem("role", data.user.role);
-    //   localStorage.setItem("login", true);
-    //   window.dispatchEvent(new Event("authChanged"));
-    //   setLoggedIn(true);
-    // } catch (err) {
-    //   setLogMessage("שגיאה בחיבור לשרת");
-    // }
   }
 
-  async function signUp() {
+  async function handleSignUpSubmit(e) {
+    e.preventDefault(); 
     setSignMessage("");
     if (!signEmail || !signPassword || !signUserName || !confirmPassword) {
       setSignMessage("נא למלא את כל השדות");
@@ -97,7 +73,7 @@ function LogIn() {
         </h2>
 
         {isLoginMode ? (
-          <div className={classes.formGroup}>
+          <form onSubmit={handleLoginSubmit} className={classes.formGroup}>
             <div className={classes.inputBox}>
               <input
                 type="email"
@@ -117,16 +93,16 @@ function LogIn() {
               <label>סיסמה</label>
             </div>
             {logMessage && <p className={classes.errorMessage}>{logMessage}</p>}
-            <button onClick={logInF} className={classes.actionBtn}>
+            <button type="submit" className={classes.actionBtn}>
               התחבר
             </button>
             <p className={classes.switchText}>
               אין לך חשבון?{" "}
               <span onClick={() => setIsLoginMode(false)}>הירשם כאן</span>
             </p>
-          </div>
+          </form>
         ) : (
-          <div className={classes.formGroup}>
+          <form onSubmit={handleSignUpSubmit} className={classes.formGroup}>
             <div className={classes.inputBox}>
               <input
                 type="text"
@@ -167,14 +143,14 @@ function LogIn() {
             {signMessage && (
               <p className={classes.infoMessage}>{signMessage}</p>
             )}
-            <button onClick={signUp} className={classes.actionBtn}>
+            <button type="submit" className={classes.actionBtn}>
               צור חשבון
             </button>
             <p className={classes.switchText}>
               כבר יש לך חשבון?{" "}
               <span onClick={() => setIsLoginMode(true)}>התחבר כאן</span>
             </p>
-          </div>
+          </form>
         )}
       </div>
     </div>

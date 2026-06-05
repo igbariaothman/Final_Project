@@ -1,20 +1,19 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #08090c;
+  background: radial-gradient(circle at 50% 0%, #14161d 0%, #08090c 100%);
+  min-height: 100vh;
+  background-attachment: fixed;
+}
+
 .app {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-}
-
-body {
-  /* background-image: url("../assets/project_background.png"); */
-  background-color: #333;
-
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  background: transparent;
 }
 
 footer {
   margin-top: auto;
 }
-

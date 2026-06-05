@@ -21,7 +21,7 @@ function ProductDetails() {
     electronics: "אלקטרוניקה ומחשוב",
     books: "ספרים וחומרי לימוד",
     furniture: "ריהוט וציוד לחדר",
-    appliances: "מוצרי חשמל למעונות",
+    appliances: "מוצري חשמל למעונות",
     bags: "תיקים ואביזרים",
     stationery: "כלי כתיבה וציוד משרדי",
     laboratory: "ציוד מעבדה",
@@ -199,7 +199,7 @@ function ProductDetails() {
                   style={{
                     background: "transparent",
                     border: "none",
-                    fontSize: "1.5rem",
+                    fontSize: "3rem",
                     cursor: "pointer",
                   }}
                 >
@@ -227,15 +227,19 @@ function ProductDetails() {
               )}
 
               <div className={classes.sellerInfo}>
-                <p className={classes.sellerLabel}>על המוכר</p>
+                <p className={classes.sellerLabel}>על המכר</p>
                 <div className={classes.sellerRow}>
-                  <div className={classes.avatar}>
+                  <div 
+                    className={classes.avatar} 
+                    style={{ cursor: "pointer" }}
+                    onClick={() => navigate(`/profile/${product.userId}`)}
+                  >
                     {product.username?.charAt(0).toUpperCase() || "U"}
                   </div>
                   <div className={classes.sellerMeta}>
                     <p
                       className={classes.sellerName}
-                      style={{ cursor: "pointer", textDecoration: "underline" }}
+                      style={{ cursor: "pointer" }}
                       onClick={() => navigate(`/profile/${product.userId}`)}
                     >
                       {product.username || "משתמש"}
