@@ -1,27 +1,28 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import classes from "./favorites.module.css";
+import { useUserContext } from "../../context/UserContext";
 
 function Favorites() {
   const [favorite, setFavorite] = useState([]);
-  const userId = localStorage.getItem("id");
+  const { currentUser } = useUserContext();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (userId) {
-      fetch(`http://localhost:5000/favorites?userId=${userId}`)
+    if (currentUser.id) {
+      fetch(`http://localhost:5000/favorites?userId=${currentUser.id}`)
         .then((res) => res.json())
         .then((data) => setFavorite(data))
         .catch((err) => console.error(err));
     }
-  }, [userId]);
+  }, [currentUser.id]);
 
   function deleteFavorite(e, productId) {
     e.stopPropagation();
     fetch(`http://localhost:5000/favorites/remove/${productId}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId }),
+      body: JSON.stringify({ userId: currentUser.id }),
     })
       .then((res) => res.json())
       .then(() => {

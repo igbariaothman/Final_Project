@@ -20,7 +20,6 @@ function LogIn() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [signMessage, setSignMessage] = useState("");
 
-  // const [role , setRole ] = useState("user") ;
 
   async function logInF() {
     setLogMessage("");
@@ -32,27 +31,7 @@ function LogIn() {
     const userData = { email: logEmail, password: logPassword };
 
     login(userData);
-    // try {
 
-    //   const res = await fetch("http://localhost:5000/users/login", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({ email: logEmail, password: logPassword }),
-    //   });
-    //   const data = await res.json();
-
-    //   if (!res.ok) {
-    //     setLogMessage(data.message || "שגיאה בהתחברות");
-    //     return;
-    //   }
-    //   localStorage.setItem("id", data.user.id);
-    //   localStorage.setItem("role", data.user.role);
-    //   localStorage.setItem("login", true);
-    //   window.dispatchEvent(new Event("authChanged"));
-    //   setLoggedIn(true);
-    // } catch (err) {
-    //   setLogMessage("שגיאה בחיבור לשרת");
-    // }
   }
 
   async function signUp() {

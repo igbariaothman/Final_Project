@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 import classes from "./Chat.module.css";
+import { useUserContext } from "../../context/UserContext";
 
 function Chat({ productId, sellerId, sellerName, onClose }) {
   const [messages, setMessages] = useState([]);
@@ -8,21 +9,23 @@ function Chat({ productId, sellerId, sellerName, onClose }) {
   const scrollRef = useRef();
   const socketRef = useRef(null);
 
-  const userId = Number(localStorage.getItem("id"));
+  const { currentUser } = useUserContext();
 
   useEffect(() => {
     socketRef.current = io("http://localhost:5000");
 
-    if (userId && sellerId && productId) {
-      fetch(`http://localhost:5000/messages/history/${productId}/${userId}/${sellerId}`)
+    if (currentUser.id && sellerId && productId) {
+      fetch(
+        `http://localhost:5000/messages/history/${productId}/${currentUser.id}/${sellerId}`,
+      )
         .then((res) => res.json())
         .then((data) => setMessages(data))
         .catch((err) => console.error("Error fetching history:", err));
 
-      socketRef.current.emit("join_chat", { userId, sellerId, productId });
+      socketRef.current.emit("join_chat", { userId: currentUser.id, sellerId, productId });
 
       socketRef.current.on("receive_message", (data) => {
-        if (Number(data.senderId) !== userId) {
+        if (Number(data.senderId) !== currentUser.id) {
           setMessages((prev) => [...prev, data]);
         }
       });
@@ -31,7 +34,7 @@ function Chat({ productId, sellerId, sellerName, onClose }) {
     return () => {
       socketRef.current.disconnect();
     };
-  }, [userId, sellerId, productId]);
+  }, [currentUser.id, sellerId, productId]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -41,7 +44,7 @@ function Chat({ productId, sellerId, sellerName, onClose }) {
     if (newMessage.trim() === "") return;
 
     const messageData = {
-      senderId: userId,
+      senderId: currentUser.id,
       receiverId: Number(sellerId),
       productId: Number(productId),
       messageText: newMessage,
@@ -71,7 +74,7 @@ function Chat({ productId, sellerId, sellerName, onClose }) {
 
       <div className={classes.messagesArea}>
         {messages.map((msg, index) => {
-          const isOwnMessage = Number(msg.senderId) === userId;
+          const isOwnMessage = Number(msg.senderId) === currentUser.id;
           return (
             <div
               key={index}

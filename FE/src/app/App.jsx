@@ -14,7 +14,6 @@ import { useUserContext } from "../context/UserContext.jsx";
 
 export default function App() {
   const { currentUser } = useUserContext();
-  const role = localStorage.getItem("role");
 
   return (
     <div className={classes.app}>

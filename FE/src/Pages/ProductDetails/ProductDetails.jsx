@@ -2,6 +2,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import classes from "./productDetails.module.css";
 import Chat from "../Chat/Chat";
+import { useUserContext } from "../../context/UserContext";
 
 function ProductDetails() {
   const { id } = useParams();
@@ -13,6 +14,7 @@ function ProductDetails() {
   const [isFavorite, setIsFavorite] = useState(false);
 
   const userId = localStorage.getItem("id");
+  // const { currentUser } = useUserContext();
   localStorage.setItem("productId", id);
   const isLoggedIn = !!userId;
 
