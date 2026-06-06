@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 import classes from "./Chat.module.css";
 import { useUserContext } from "../../context/UserContext";
-import { useUserContext } from "../../context/UserContext";
 
 function Chat({ productId, sellerId, sellerName, onClose }) {
   const [messages, setMessages] = useState([]);

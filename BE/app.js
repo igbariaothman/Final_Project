@@ -16,7 +16,6 @@ const server = http.createServer(app);
 const port = 5000;
 const FRONTEND_URL = "http://localhost:3000";
 
-// ✅ cors مرة وحدة بس
 app.use(cors({
   origin: FRONTEND_URL,
   credentials: true,

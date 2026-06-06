@@ -48,6 +48,29 @@ function Home() {
     return "https://via.placeholder.com/150";
   }
 
+
+async function deleteProduct(productId) {
+  // Implementation for deleting a product
+  try {
+    const res = await fetch(`http://localhost:5000/products/${productId}`, {
+      method : "DELETE",
+    });
+
+    const data = await res.json();
+
+    if (!res.ok){
+      console.log(data.message) ;
+      return ;
+    }
+    console.log(`Product deleted successfully: ${productId} `);
+
+    setProducts((prev) => prev.filter((p) => p.productId !== productId));
+
+  }catch (err) {
+    console.log(err)
+  }
+}
+
   const filtered = filteredProduct();
   const totalPages = Math.ceil(filtered.length / PRODUCTS_PER_PAGE);
   const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
@@ -55,6 +78,8 @@ function Home() {
     startIndex,
     startIndex + PRODUCTS_PER_PAGE,
   );
+
+
 
   return (
     <div className={classes.container}>
@@ -114,6 +139,7 @@ function Home() {
                     className={classes.deletebutton}
                     onClick={(e) => {
                       e.stopPropagation();
+                      deleteProduct(p.productId);
                     }}
                   >
                     Delete

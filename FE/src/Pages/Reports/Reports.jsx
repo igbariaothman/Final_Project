@@ -3,7 +3,6 @@ import classes from "../Reports/report.module.css";
 import { useUserContext } from "../../context/UserContext.jsx"; 
 
 function Reports() {
-  const { currentUser } = useUserContext();
   const [reportType, setReportType] = useState("");
   const [message, setMessage] = useState("");
   const [alert, setAlert] = useState("");

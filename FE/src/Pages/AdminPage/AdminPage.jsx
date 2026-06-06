@@ -39,6 +39,38 @@ function AdminPage() {
     return type;
   };
 
+  // func to delete report  by reportid
+  async function deleteReport(reportId) {
+    try {
+      const res = await fetch(`http://localhost:5000/reports/${reportId}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) return;
+      setReports((prev) => prev.filter((r) => r.reportId !== reportId));
+      console.log(`Report deleted successfully: ${reportId} `);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async function deleteProductAndReport(reportId) {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/reports/with-product/${reportId}`,
+        {
+          method: "DELETE",
+        },
+      );
+
+      if (!res.ok) return;
+      setReports((prev) => prev.filter((r) => r.reportId !== reportId));
+      console.log(`Product AND Report deleted successfully: ${reportId} `);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   return (
     <div className={classes.pageWrapper}>
       <h1 className={classes.pageTitle}>דוחות</h1>
@@ -48,8 +80,8 @@ function AdminPage() {
           <p className={classes.noReports}>אין דיווחים קיימים במערכת</p>
         ) : (
           reports.map((report) => (
-            <div 
-              className={classes.reportCard} 
+            <div
+              className={classes.reportCard}
               key={report.reportId}
               onClick={() => navigate(`/productDetails/${report.productId}`)}
               style={{ cursor: "pointer" }}
@@ -60,14 +92,20 @@ function AdminPage() {
                   alt={report.productName || "Product"}
                   className={classes.image}
                 />
-                <span className={`${classes.badge} ${classes[report.reportType]}`}>
+                <span
+                  className={`${classes.badge} ${classes[report.reportType]}`}
+                >
                   {getBadgeLabel(report.reportType)}
                 </span>
               </div>
 
               <div className={classes.cardContent}>
                 <h2>{report.productName || "מוצר כללי"}</h2>
-                <p className={classes.price}>{report.price ? `₪${Number(report.price).toLocaleString()}` : "חינם / תרומה"}</p>
+                <p className={classes.price}>
+                  {report.price
+                    ? `₪${Number(report.price).toLocaleString()}`
+                    : "חינם / תרומה"}
+                </p>
 
                 <div className={classes.metaInfo}>
                   <p>
@@ -77,6 +115,24 @@ function AdminPage() {
                     <strong>הודעה :</strong> {report.message}
                   </p>
                 </div>
+                <button
+                  className={classes.deletebutton}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteReport(report.reportId);
+                  }}
+                >
+                  Delete Report
+                </button>
+                <button
+                  className={classes.deletebutton}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteProductAndReport(report.reportId);
+                  }}
+                >
+                  Delete Product
+                </button>
               </div>
             </div>
           ))

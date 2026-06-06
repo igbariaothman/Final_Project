@@ -77,6 +77,29 @@
   transform: scale(1.05);
 }
 
+
+
+.deletebutton {
+  padding: 14px 28px;
+  border-radius: 18px;
+  background: rgba(255, 59, 59, 0.05);
+  border: 1px solid rgba(255, 59, 59, 0.25);
+  color: #ff3b3b;
+  font-weight: 800;
+  font-size: 1.6rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.deletebutton:hover {
+  background: #ff3b3b;
+  color: white;
+  box-shadow: 0 15px 30px rgba(255, 59, 59, 0.4);
+  transform: scale(1.05);
+  font-size: 1.8rem;
+}
+
+
 .badge {
   position: absolute;
   top: 22px;

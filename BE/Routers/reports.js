@@ -17,7 +17,7 @@ router.post("/", (req, res) => {
 
   db.query(sql, [productId, userId, reportType, message], (err, result) => {
     if (err) {
-      console.log("❌ REPORT ERROR:", err);
+      console.log("REPORT ERROR:", err);
       return res.status(500).json({ message: "Server error" });
     }
 
@@ -55,5 +55,73 @@ router.get("/", (req, res) => {
   });
 });
 
+// delete a report by reportId (admin only)
+router.delete("/:id", (req, res) => {
+  const { id } = req.params;
+
+  const sql = "DELETE FROM reports WHERE reportId = ?";
+
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      console.log("DELETE REPORT ERROR:", err);
+      return res.status(500).json({ message: "Server error" });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Report not found" });
+    }
+
+    res.json({ message: "Report deleted successfully" });
+  });
+});
+
+// delete product and report by productD (admin only) - also deletes all related reports
+// router.delete("/with-product/:id", (req, res) => {
+//   const reportId = req.params.id;
+
+//   db.query(
+//     "SELECT productId FROM reports WHERE productId = ?",
+//     [reportId],
+//     (err, result) => {
+//       if (err || result.length === 0) {
+//         return res.status(404).json({ message: "Report not found" });
+//       }
+
+//       const productId = result[0].productId;
+
+//       // delete product
+//       db.query("DELETE FROM products WHERE productId = ?", [productId]);
+
+//       // delete report
+//       db.query("DELETE FROM reports WHERE productId = ?", [reportId]);
+
+//       res.json({ message: "Product + Report deleted" });
+//     },
+//   );
+// });
+
+router.delete("/with-product/:id", (req, res) => {
+  const reportId = req.params.id;
+
+  db.query(
+    "SELECT productId FROM reports WHERE reportId = ?",
+    [reportId],
+    (err, result) => {
+      if (err || result.length === 0) {
+        return res.status(404).json({ message: "Report not found" });
+      }
+
+      const productId = result[0].productId;
+
+      // delete product
+      db.query("DELETE FROM products WHERE productId = ?", [productId]);
+
+      // delete report
+      db.query("DELETE FROM reports WHERE reportId = ?", [reportId]);
+
+      res.json({ message: "Product + Report deleted" });
+    },
+  );
+});
 
 module.exports = router;

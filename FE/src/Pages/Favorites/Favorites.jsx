@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import classes from "./favorites.module.css";
 import { useUserContext } from "../../context/UserContext";
-import { useUserContext } from "../../context/UserContext";
 
 function Favorites() {
   const [favorite, setFavorite] = useState([]);
