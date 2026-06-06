@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import classes from "./home.module.css";
+import { useUserContext } from "../../context/UserContext";
 
 function Home() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
-  const admin = localStorage.getItem("role");
-  const isLoggedIn = localStorage.getItem("login");
+  const { currentUser } = useUserContext();
+  const {isLoading} = useUserContext();
 
   const PRODUCTS_PER_PAGE = 25;
 
@@ -107,7 +108,7 @@ function Home() {
                 </div>
               )}
 
-              {isLoggedIn && admin === "admin" && (
+              {currentUser?.role === "admin" && (
                 <div>
                   <button
                     className={classes.deletebutton}

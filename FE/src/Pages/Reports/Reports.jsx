@@ -7,11 +7,13 @@ function Reports() {
   const [reportType, setReportType] = useState("");
   const [message, setMessage] = useState("");
   const [alert, setAlert] = useState("");
+  const { currentUser } = useUserContext();
+
 
   async function sendMessage() {
     setAlert(""); 
 
-    if (!currentUser) {
+    if (!currentUser.id) {
       setAlert("יש להתחבר כדי לשלוח דיווח");
       return;
     }
@@ -29,7 +31,7 @@ function Reports() {
         },
         body: JSON.stringify({
           productId: localStorage.getItem("productId"),
-          userId: localStorage.getItem("id") || currentUser.id,
+          userId:currentUser.id,
           reportType,
           message: message.trim(),
         }),

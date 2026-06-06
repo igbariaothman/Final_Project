@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import classes from "./productDetails.module.css";
 import Chat from "../Chat/Chat";
 import { useUserContext } from "../../context/UserContext";
+import { useUserContext } from "../../context/UserContext";
 
 function ProductDetails() {
   const { id } = useParams();
