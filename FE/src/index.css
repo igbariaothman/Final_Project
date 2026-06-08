@@ -1,22 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Paytone+One&family=Raleway:wght@400;700&display=swap');
 
-/* #region variables */
-/*
-=============== 
-Variables
-===============
-*/
-
 :root {
   font-size: 62.5%;
-  /* dark shades of primary color*/
   --clr-blue-1: hsl(205, 86%, 17%);
   --clr-blue-2: hsl(205, 77%, 27%);
   --clr-blue-3: hsl(205, 72%, 37%);
   --clr-blue-4: hsl(205, 63%, 48%);
-  /* primary/main color */
   --clr-blue-5: hsl(205, 78%, 60%);
-  /* lighter shades of primary color */
   --clr-blue-6: hsl(205, 89%, 70%);
   --clr-blue-7: hsl(205, 90%, 76%);
   --clr-blue-8: hsl(205, 86%, 81%);
@@ -56,22 +46,8 @@ Variables
   --max-width: 900px;
 }
 
-/* #endregion variables */
-
-/* #region global */
-/*
-=============== 
-Global Styles
-===============
-*/
-
 *,
 ::after,
 ::before {
   box-sizing: border-box;
 }
-
-html {
-  font-size: 62.5%;
-}
-

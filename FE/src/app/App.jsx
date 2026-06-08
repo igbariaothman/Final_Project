@@ -7,13 +7,13 @@ import LogIn from "../Pages/Login/Login";
 import ProductDetails from "../Pages/ProductDetails/ProductDetails";
 import Favorites from "../Pages/Favorites/Favorites.jsx";
 import Report from "../Pages/Reports/Reports.jsx";
-import Inbox from "../Pages/Inpox/Inbox.jsx"
+import Inbox from "../Pages/Inpox/Inbox.jsx";
 import NotFound from "../Pages/NotFound/NotFound.jsx";
 import classes from "./app.module.css";
 import AdminPage from "../Pages/AdminPage/AdminPage.jsx";
 import { useUserContext } from "../context/UserContext.jsx";
-import Profile from "../Pages/Profile/Profile.jsx"
-import PublicProfile from "../pages/PublicProfile/PublicProfile.jsx"
+import Profile from "../Pages/Profile/Profile.jsx";
+import PublicProfile from "../Pages/PublicProfile/PublicProfile.jsx";
 
 export default function App() {
   const { currentUser, isLoading } = useUserContext();
@@ -29,14 +29,16 @@ export default function App() {
           <Route path="/productDetails/:id" element={<ProductDetails />} />
           <Route path="/profile/:id" element={<PublicProfile />} />
 
-          {currentUser?.role === "admin" ? (
+          {currentUser?.role === "admin" && (
             <>
               <Route path="/reports" element={<Report />} />
               <Route path="/admin" element={<AdminPage />} />
               <Route path="/inbox" element={<Inbox />} />
               <Route path="/profile" element={<Profile />} />
             </>
-          ) : currentUser?.role === "user" ? (
+          )}
+
+          {currentUser?.role === "user" && (
             <>
               <Route path="/add-product" element={<AddProduct />} />
               <Route path="/favorites" element={<Favorites />} />
@@ -44,11 +46,17 @@ export default function App() {
               <Route path="/inbox" element={<Inbox />} />
               <Route path="/profile" element={<Profile />} />
             </>
-          ) : (
+          )}
+
+          {!currentUser && (
             <>
               <Route path="/login" element={<LogIn />} />
+              <Route path="/add-product" element={<Navigate to="/login" replace />} />
+              <Route path="/favorites" element={<Navigate to="/login" replace />} />
               <Route path="/reports" element={<Navigate to="/login" replace />} />
+              <Route path="/admin" element={<Navigate to="/login" replace />} />
               <Route path="/inbox" element={<Navigate to="/login" replace />} />
+              <Route path="/profile" element={<Navigate to="/login" replace />} />
             </>
           )}
 

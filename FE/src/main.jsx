@@ -15,11 +15,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <UserContextProvider>
         <App />
-      </UserContextProvider>{" "}
+      </UserContextProvider>
     </BrowserRouter>
   </React.StrictMode>,
 );
-
-// const h1 = document.createElement('h1')
-// h1.textContent = 'Hello'
-// document.getElementById('root').append(h1)

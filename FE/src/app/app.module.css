@@ -1,10 +1,8 @@
-body {
+:global(body) {
   margin: 0;
   padding: 0;
-  background-color: #08090c;
-  background: radial-gradient(circle at 50% 0%, #14161d 0%, #08090c 100%);
+  background: radial-gradient(circle at 50% 0%, #14161d 0%, #08090c 100%) fixed;
   min-height: 100vh;
-  background-attachment: fixed;
 }
 
 .app {
@@ -14,6 +12,6 @@ body {
   background: transparent;
 }
 
-footer {
+:global(footer) {
   margin-top: auto;
 }

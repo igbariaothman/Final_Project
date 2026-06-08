@@ -11,18 +11,15 @@ const UserContextProvider = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (localStorage.getItem("session")) loadMe();
-    else setIsLoading(false);
+    loadMe();
   }, []);
 
-  // Function to check if user is already logged in when the app loads
-  // The server uses cookies to track sessions, so we just ask for the profile
   async function loadMe() {
     try {
-      const res = await axios.get("/users/profile"); // cookies are sent automatically
-      setCurrentUser(res.data.user); // User is logged in, save their data
+      const res = await axios.get("/users/profile");
+      setCurrentUser(res.data.user);
     } catch {
-      setCurrentUser(null); // User is not logged in
+      setCurrentUser(null);
     } finally {
       setIsLoading(false);
     }
@@ -31,38 +28,32 @@ const UserContextProvider = ({ children }) => {
   const login = async (userData) => {
     try {
       const response = await axios.post("/users/login", userData);
-      console.log("logged in successfully", response.data);
       setCurrentUser(response.data.user);
-      console.log(response.data.user);
-      navigate("/");
       setErrorMsg("");
-      localStorage.setItem("session", "true");
+      navigate("/");
     } catch (error) {
-      console.log(error);
+      setErrorMsg(error?.response?.data?.message || "שגיאה בהתחברות למערכת");
     }
   };
 
   const register = async (userData) => {
     try {
       const response = await axios.post("/users/register", userData);
-      setErrorMsg("");
       setCurrentUser(response.data.user);
-      navigate("/home");
-      localStorage.setItem("session", "true");
+      setErrorMsg("");
+      navigate("/");
     } catch (error) {
-      console.log(error?.response.data?.message);
-      setErrorMsg(error?.response.data?.message);
+      setErrorMsg(error?.response?.data?.message || "שגיאה ברישום המערכת");
     }
   };
 
   const logout = async () => {
     setIsLoading(true);
     try {
-      await axios.post("/users/logout", null, {});
-      localStorage.clear();
+      await axios.post("/users/logout", null);
       setCurrentUser(null);
-      navigate("/");
       setErrorMsg("");
+      navigate("/login");
     } catch (error) {
       console.log(error);
     } finally {
