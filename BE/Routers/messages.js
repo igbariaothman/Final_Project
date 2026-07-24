@@ -8,7 +8,9 @@ const db = dbSingleton.getConnection();
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array().map((err) => err.msg) });
+    return res
+      .status(400)
+      .json({ errors: errors.array().map((err) => err.msg) });
   }
   next();
 };
@@ -32,15 +34,23 @@ router.get("/history/:productId/:user1/:user2", (req, res) => {
 router.get("/inbox/:userId", (req, res) => {
   const { userId } = req.params;
   const query = `
-    SELECT m.*, u.username AS contactName, p.productName 
-    FROM messages m
-    JOIN users u ON (u.id = IF(m.senderId = ?, m.receiverId, m.senderId))
-    JOIN products p ON m.productId = p.productId
-    WHERE (m.senderId = ? OR m.receiverId = ?)
-    AND m.id IN (
-      SELECT MAX(id) FROM messages GROUP BY productId, LEAST(senderId, receiverId), GREATEST(senderId, receiverId)
-    )
-    ORDER BY m.created_at DESC`;
+    SELECT
+          m.*,
+          u.username AS contactName,
+          u.role AS contactRole,
+          COALESCE(p.productName, 'Deleted Product') AS productName
+        FROM messages m
+        JOIN users u
+          ON u.id = IF(m.senderId = ?, m.receiverId, m.senderId)
+        LEFT JOIN products p
+          ON m.productId = p.productId
+        WHERE (m.senderId = ? OR m.receiverId = ?)
+          AND m.id IN (
+            SELECT MAX(id)
+            FROM messages
+            GROUP BY productId, LEAST(senderId, receiverId), GREATEST(senderId, receiverId)
+          )
+        ORDER BY m.created_at DESC`;
 
   db.query(query, [userId, userId, userId], (err, results) => {
     if (err) return res.status(500).json({ message: "Error fetching inbox" });
@@ -51,7 +61,8 @@ router.get("/inbox/:userId", (req, res) => {
 // mark as read
 router.put("/read/:productId/:senderId/:receiverId", (req, res) => {
   const { productId, senderId, receiverId } = req.params;
-  const query = "UPDATE messages SET isRead = 1 WHERE productId = ? AND senderId = ? AND receiverId = ?";
+  const query =
+    "UPDATE messages SET isRead = 1 WHERE productId = ? AND senderId = ? AND receiverId = ?";
 
   db.query(query, [productId, senderId, receiverId], (err) => {
     if (err) return res.status(500).json({ message: "Error updating status" });
