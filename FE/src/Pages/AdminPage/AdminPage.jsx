@@ -5,6 +5,7 @@ import classes from "./adminPAge.module.css";
 function AdminPage() {
   const [reports, setReports] = useState([]);
   const navigate = useNavigate();
+  const [filterType, setFilterType] = useState("all");
 
   useEffect(() => {
     fetch("http://localhost:5000/reports")
@@ -54,6 +55,7 @@ function AdminPage() {
     }
   }
 
+  // func to delete product and report by reportid
   async function deleteProductAndReport(reportId) {
     try {
       const res = await fetch(
@@ -71,15 +73,33 @@ function AdminPage() {
     }
   }
 
+  const filteredReports =
+    filterType === "all"
+      ? reports
+      : reports.filter((report) => report.reportType === filterType);
+
   return (
     <div className={classes.pageWrapper}>
       <h1 className={classes.pageTitle}>דוחות</h1>
-
+      <div className={classes.filterContainer}>
+        <select
+        className={classes.filterSelect}
+          name="reportType"
+          id="reportType"
+          value={filterType}
+          onChange={(e) => setFilterType(e.target.value)}
+        >
+          <option value="all">כל הדיווחים</option>
+          <option value="product">דיווח מוצר</option>
+          <option value="user">דיווח משתמש</option>
+          <option value="chat">דיווח צ'אט</option>
+        </select>
+      </div>
       <div className={classes.cardsContainer}>
-        {reports.length === 0 ? (
+        {filteredReports.length === 0 ? (
           <p className={classes.noReports}>אין דיווחים קיימים במערכת</p>
         ) : (
-          reports.map((report) => (
+          filteredReports.map((report) => (
             <div
               className={classes.reportCard}
               key={report.reportId}

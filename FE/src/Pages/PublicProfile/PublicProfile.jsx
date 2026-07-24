@@ -36,21 +36,22 @@ function PublicProfile() {
     }
   };
 
-  if (loading) return (
-    <div className={classes.loadingPage}>
-      <div className={classes.spinner} />
-    </div>
-  );
+  if (loading)
+    return (
+      <div className={classes.loadingPage}>
+        <div className={classes.spinner} />
+      </div>
+    );
 
-  if (!user) return (
-    <div className={classes.loadingPage}>
-      <p className={classes.notFound}>משתמש לא נמצא</p>
-    </div>
-  );
+  if (!user)
+    return (
+      <div className={classes.loadingPage}>
+        <p className={classes.notFound}>משתמש לא נמצא</p>
+      </div>
+    );
 
   return (
     <div className={classes.profilePage}>
-
       <div className={classes.heroSection}>
         <div className={classes.heroBg} />
         <div className={classes.heroContent}>
@@ -84,9 +85,7 @@ function PublicProfile() {
       </div>
 
       <div className={classes.productsSection}>
-        <h2 className={classes.productsTitle}>
-          מוצרים של {user.username}
-        </h2>
+        <h2 className={classes.productsTitle}>מוצרים של {user.username}</h2>
 
         {products.length === 0 ? (
           <div className={classes.emptyState}>
