@@ -62,7 +62,7 @@ async function deleteProduct(productId) {
       console.log(data.message) ;
       return ;
     }
-    console.log(`Product deleted successfully: ${productId} `);
+    console.log(`מוצר נמחק בהצלחה ${productId} `);
 
     setProducts((prev) => prev.filter((p) => p.productId !== productId));
 
@@ -142,7 +142,7 @@ async function deleteProduct(productId) {
                       deleteProduct(p.productId);
                     }}
                   >
-                    Delete
+                    מחיקת מוצר
                   </button>
                 </div>
               )}

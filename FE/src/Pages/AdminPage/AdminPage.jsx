@@ -79,7 +79,7 @@ function AdminPage() {
       if (!res.ok) return ;
 
       setReports((prev) => prev.filter((r) => r.reportId !== reportId));
-      console.log(`Product AND Report deleted successfully: ${reportId} `);
+      console.log(`המוצר והתלונה נמחקו בהצלחה !: ${reportId} `);
     } catch (err) {
       console.log(err);
     } 
@@ -154,7 +154,7 @@ function AdminPage() {
                     deleteReport(report.reportId);
                   }}
                 >
-                  Delete Report
+                  מחיקת תלונה
                 </button>
                 <button
                   className={classes.deletebutton}
@@ -165,7 +165,7 @@ function AdminPage() {
                     setShowModal(true);
                   }}
                 >
-                  Delete Product
+                  מחיקת מוצר
                 </button>
               </div>
             </div>
