@@ -8,8 +8,7 @@ function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
-  const { currentUser } = useUserContext();
-  const {isLoading} = useUserContext();
+  const { currentUser, isLoading } = useUserContext();
 
   const PRODUCTS_PER_PAGE = 25;
 
@@ -25,12 +24,14 @@ function Home() {
   }, [searchTerm]);
 
   function filteredProduct() {
+    const activeProducts = products.filter((p) => p.status !== "sold");
+
     const searchLower = searchTerm.toLowerCase().trim();
-    if (!searchLower) return products;
+    if (!searchLower) return activeProducts;
 
     const keywords = searchLower.split(/\s+/);
 
-    return products.filter((p) => {
+    return activeProducts.filter((p) => {
       const productName = (p.productName || "").toLowerCase();
       const category = (p.category || "").toLowerCase();
 
@@ -48,28 +49,25 @@ function Home() {
     return "https://via.placeholder.com/150";
   }
 
+  async function deleteProduct(productId) {
+    try {
+      const res = await fetch(`http://localhost:5000/products/${productId}`, {
+        method: "DELETE",
+      });
 
-async function deleteProduct(productId) {
-  // Implementation for deleting a product
-  try {
-    const res = await fetch(`http://localhost:5000/products/${productId}`, {
-      method : "DELETE",
-    });
+      const data = await res.json();
 
-    const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+        return;
+      }
+      console.log(`מוצר נמחק בהצלחה ${productId}`);
 
-    if (!res.ok){
-      console.log(data.message) ;
-      return ;
+      setProducts((prev) => prev.filter((p) => p.productId !== productId));
+    } catch (err) {
+      console.log(err);
     }
-    console.log(`מוצר נמחק בהצלחה ${productId} `);
-
-    setProducts((prev) => prev.filter((p) => p.productId !== productId));
-
-  }catch (err) {
-    console.log(err)
   }
-}
 
   const filtered = filteredProduct();
   const totalPages = Math.ceil(filtered.length / PRODUCTS_PER_PAGE);
@@ -78,8 +76,6 @@ async function deleteProduct(productId) {
     startIndex,
     startIndex + PRODUCTS_PER_PAGE,
   );
-
-
 
   return (
     <div className={classes.container}>
@@ -100,7 +96,9 @@ async function deleteProduct(productId) {
           <div
             key={p.productId}
             onClick={() => navigate(`/productDetails/${p.productId}`)}
-            className={`${classes.card} ${p.listingType === "donation" ? classes.donationBg : classes.saleBg}`}
+            className={`${classes.card} ${
+              p.listingType === "donation" ? classes.donationBg : classes.saleBg
+            }`}
           >
             <div className={classes.badge}>
               {p.listingType === "donation" ? "תרומה" : "מכירה"}
@@ -157,7 +155,9 @@ async function deleteProduct(productId) {
             <button
               key={index + 1}
               onClick={() => setCurrentPage(index + 1)}
-              className={`${classes.pageBtn} ${currentPage === index + 1 ? classes.activePage : ""}`}
+              className={`${classes.pageBtn} ${
+                currentPage === index + 1 ? classes.activePage : ""
+              }`}
             >
               {index + 1}
             </button>

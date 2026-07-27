@@ -21,7 +21,7 @@ function ProductDetails() {
     electronics: "אלקטרוניקה ומחשוב",
     books: "ספרים וחומרי לימוד",
     furniture: "ריהוט וציוד לחדר",
-    appliances: "מוצري חשמל למעונות",
+    appliances: "מוצרי חשמל למעונות",
     bags: "תיקים ואביזרים",
     stationery: "כלי כתיבה וציוד משרדי",
     laboratory: "ציוד מעבדה",
@@ -97,6 +97,9 @@ function ProductDetails() {
       ? `http://localhost:5000${path}`
       : "https://via.placeholder.com/600x400";
 
+  const isSold = product.status === "sold";
+  const isOwner = Number(userId) === Number(product.userId);
+
   return (
     <>
       <div className={classes.pageWrapper}>
@@ -168,16 +171,19 @@ function ProductDetails() {
                   </span>
                 </div>
 
-                <div className={classes.reportButtonWrapper}>
-                  <Link
-                    to={"/reports"}
-                    onClick={() =>
-                      localStorage.setItem("productId", product.productId)
-                    }
-                  >
-                    דיווח ⚠️
-                  </Link>
-                </div>
+         
+                {!isSold && !isOwner && (
+                  <div className={classes.reportButtonWrapper}>
+                    <Link
+                      to={"/reports"}
+                      onClick={() =>
+                        localStorage.setItem("productId", product.productId)
+                      }
+                    >
+                      דיווח ⚠️
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -194,7 +200,9 @@ function ProductDetails() {
               >
                 <h1 className={classes.productTitle}>{product.productName}</h1>
                 <button
-                  className={`${classes.favoriteBtn} ${isFavorite ? classes.activeFavorite : ""}`}
+                  className={`${classes.favoriteBtn} ${
+                    isFavorite ? classes.activeFavorite : ""
+                  }`}
                   onClick={handleToggleFavorite}
                   style={{
                     background: "transparent",
@@ -217,7 +225,7 @@ function ProductDetails() {
                 )}
               </div>
 
-              {isLoggedIn && Number(userId) !== Number(product.userId) && (
+              {!isSold && isLoggedIn && !isOwner && (
                 <button
                   onClick={handleSendMessage}
                   className={classes.messageBtn}
@@ -226,11 +234,28 @@ function ProductDetails() {
                 </button>
               )}
 
+              {isSold && (
+                <div
+                  style={{
+                    padding: "10px",
+                    backgroundColor: "#ffebee",
+                    color: "#c62828",
+                    borderRadius: "8px",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                    margin: "10px 0",
+                    fontSize: "2.2rem",
+                  }}
+                >
+                  מוצר זה נמכר
+                </div>
+              )}
+
               <div className={classes.sellerInfo}>
                 <p className={classes.sellerLabel}>על המכר</p>
                 <div className={classes.sellerRow}>
-                  <div 
-                    className={classes.avatar} 
+                  <div
+                    className={classes.avatar}
                     style={{ cursor: "pointer" }}
                     onClick={() => navigate(`/profile/${product.userId}`)}
                   >

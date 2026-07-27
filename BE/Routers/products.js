@@ -128,6 +128,23 @@ router.post("/addProduct", upload.array("images", 10), productValidation, valida
   );
 });
 
+// Mark as sold
+router.put("/sold/:id", (req, res) => {
+  const { id } = req.params;
+  const query = "UPDATE products SET status = 'sold' WHERE productId = ?";
+  
+  db.query(query, [id], (err, results) => {
+    if (err) {
+      console.error("Database Error:", err);
+      return res.status(500).json({ message: "Failed to mark as sold" });
+    }
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    res.json({ message: "Product marked as sold successfully" });
+  });
+});
+
 // Update product details
 router.put("/:id", productValidation, validate, (req, res) => {
   const { id } = req.params;
@@ -159,23 +176,6 @@ router.delete("/:id", (req, res) => {
       });
       res.json({ message: "Product and associated images deleted successfully" });
     });
-  });
-});
-
-// Mark as sold and update status field to match React code 
-router.put("/sold/:id", (req, res) => {
-  const { id } = req.params;
-  const query = "UPDATE products SET status = 'sold' WHERE productId = ?";
-  
-  db.query(query, [id], (err, results) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ message: "Failed to mark as sold" });
-    }
-    if (results.affectedRows === 0) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-    res.json({ message: "Product marked as sold successfully" });
   });
 });
 

@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useUserContext } from "../../context/UserContext.jsx"; 
+import { useUserContext } from "../../context/UserContext.jsx";
 import classes from "../PublicProfile/PublicProfile.module.css";
 
 function PublicProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { currentUser } = useUserContext(); 
+  const { currentUser } = useUserContext();
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +33,13 @@ function PublicProfile() {
   }, [id]);
 
   const handleMarkAsSold = async (e, productId) => {
-    if (!window.confirm("האם אתה בטוח שברצונך לסמן מוצר זה כנמכר ולהעביר אותו להיסטוריה?")) return;
+    e.stopPropagation();
+
+    const confirmed = window.confirm(
+      "האם אתה בטוח שברצונך לסמן מוצר זה כנמכר ולהעביר אותו להיסטוריה?",
+    );
+
+    if (!confirmed) return;
 
     try {
       await axios.put(`http://localhost:5000/products/sold/${productId}`);
@@ -61,11 +67,12 @@ function PublicProfile() {
       </div>
     );
 
-  if (!user) return (
-    <div className={classes.loadingPage}>
-      <p className={classes.notFound}>משתמש לא נמצא</p>
-    </div>
-  );
+  if (!user)
+    return (
+      <div className={classes.loadingPage}>
+        <p className={classes.notFound}>משתמש לא נמצא</p>
+      </div>
+    );
 
   const activeProducts = products.filter((p) => p.status !== "sold");
   const soldHistoryProducts = products.filter((p) => p.status === "sold");
@@ -92,12 +99,17 @@ function PublicProfile() {
             <span className={classes.statLabel}>מוצרים פעילים</span>
           </div>
           <div className={classes.statItem}>
-            <span className={classes.statNumber}>{soldHistoryProducts.length}</span>
+            <span className={classes.statNumber}>
+              {soldHistoryProducts.length}
+            </span>
             <span className={classes.statLabel}>היסטוריית מכירות</span>
           </div>
           <div className={classes.statItem}>
             <span className={classes.statNumber}>
-              {activeProducts.filter((p) => p.listingType === "donation").length}
+              {
+                activeProducts.filter((p) => p.listingType === "donation")
+                  .length
+              }
             </span>
             <span className={classes.statLabel}>תרומות זמינות</span>
           </div>
@@ -105,7 +117,9 @@ function PublicProfile() {
       </div>
 
       <div className={classes.productsSection}>
-        <h2 className={classes.productsTitle}>מוצרים זמינים של {user.username}</h2>
+        <h2 className={classes.productsTitle}>
+          מוצרים זמינים של {user.username}
+        </h2>
 
         {activeProducts.length === 0 ? (
           <div className={classes.emptyState}>
@@ -183,7 +197,7 @@ function PublicProfile() {
                 key={p.productId}
                 onClick={() => navigate(`/productDetails/${p.productId}`)}
                 className={`${classes.card} ${classes.soldCardBg}`}
-                style={{ opacity: 0.75 }} 
+                style={{ opacity: 0.75 }}
               >
                 <div className={classes.soldBadge}>נמכר / הועבר</div>
 
@@ -203,14 +217,15 @@ function PublicProfile() {
                 </div>
 
                 <div className={classes.priceTag}>
-                  <span className={classes.historyPriceLabel}>נמכר בשווי: {Number(p.price).toLocaleString()} ₪</span>
+                  <span className={classes.historyPriceLabel}>
+                    נמכר בשווי: {Number(p.price).toLocaleString()} ₪
+                  </span>
                 </div>
               </div>
             ))}
           </div>
         )}
       </div>
-
     </div>
   );
 }
