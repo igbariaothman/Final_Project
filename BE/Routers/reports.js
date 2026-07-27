@@ -101,7 +101,7 @@ router.delete("/with-product/:id", (req, res) => {
               message: "Product not found",
             });
           }
-
+console.log("Product owner:", productResult[0]);
           const ownerId = productResult[0].userId;
           const productName = productResult[0].productName;
 

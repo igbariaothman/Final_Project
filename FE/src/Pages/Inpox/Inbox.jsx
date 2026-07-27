@@ -105,7 +105,7 @@ function Inbox() {
               ? "Administrator"
               : selectedChat.contactName
           }
-          messageType={selectedChat.messageType}
+          isAdminChat = {selectedChat.contactRole === "admin"}
           onClose={() => setSelectedChat(null)}
         />
       )}
