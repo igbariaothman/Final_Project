@@ -189,7 +189,6 @@ function AdminPage() {
                 className={classes.deletebutton}
                 onClick={() => {
                   setShowModal(false);
-                  setAdminMessage("");
                 }}
               >
                 Cancel
