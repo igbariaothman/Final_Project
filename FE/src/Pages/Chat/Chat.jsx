@@ -3,7 +3,7 @@ import io from "socket.io-client";
 import classes from "./Chat.module.css";
 import { useUserContext } from "../../context/UserContext";
 
-function Chat({ productId, sellerId, sellerName, messageType , onClose }) {
+function Chat({ productId, sellerId, sellerName, isAdminChat , onClose }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const scrollRef = useRef();
@@ -97,7 +97,7 @@ function Chat({ productId, sellerId, sellerName, messageType , onClose }) {
       </div>
 
       <div className={classes.inputArea}>
-        {messageType === "chat" && (
+        {!isAdminChat && (
           <div>
             <input
               type="text"
