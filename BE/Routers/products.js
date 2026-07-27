@@ -13,23 +13,20 @@ const db = dbSingleton.getConnection();
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const dir = 'uploads/';
-    // Automatically create the directory if it doesn't exist
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
     cb(null, dir);
   },
   filename: (req, file, cb) => {
-    // Use a unique timestamp to prevent filename conflicts
     cb(null, `${Date.now()}-${file.originalname}`);
   },
 });
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    // Accept only image files  
     if (file.mimetype.startsWith("image/")) {
       cb(null, true);
     } else {
@@ -42,15 +39,13 @@ const upload = multer({
 const productValidation = [
   body("productName").trim().notEmpty().withMessage("Product name is required"),
   body("price").isNumeric().withMessage("Price must be a number"),
- body("category").trim().notEmpty().withMessage("Category is required"),
+  body("category").trim().notEmpty().withMessage("Category is required"),
   body("description").trim().notEmpty().withMessage("Description is required"),
   body("userId").isInt().withMessage("Valid User ID is required"),
   body("listingType").isIn(['sale', 'donation']).withMessage("Listing type must be 'sale' or 'donation'"),
   body("productstatus").isIn(['new', 'like-new', 'good', 'fair']).withMessage("Product status must be one of: new, like-new, good, fair")
-
 ];
 
-// Middleware to handle validation errors
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -60,6 +55,7 @@ const validate = (req, res, next) => {
 };
 
 // --- 3. Routes ---
+
 // Get all products
 router.get("/", (req, res) => {
   const query = `
@@ -82,32 +78,23 @@ router.get("/", (req, res) => {
 // Get one product 
 router.get("/:id", (req, res) => {
   const id = req.params.id;
-
   const query = `
     SELECT p.*, u.username 
     FROM products p 
     JOIN users u ON p.userId = u.id 
     WHERE p.productId = ?
   `;
-
   db.query(query, [id], (err, results) => {
-    if (err) {
-      return res.status(500).json({ message: "Error fetching product" });
-    }
-
-    if (results.length === 0) {
-      return res.status(404).json({ message: "Product not found" });
-    }
+    if (err) return res.status(500).json({ message: "Error fetching product" });
+    if (results.length === 0) return res.status(404).json({ message: "Product not found" });
 
     const product = {
       ...results[0],
       images: JSON.parse(results[0].images || "[]"),
     };
-
     res.json(product);
   });
 });
-
 
 // Add a new product with image upload
 router.post("/addProduct", upload.array("images", 10), productValidation, validate, (req, res) => {
@@ -118,7 +105,6 @@ router.post("/addProduct", upload.array("images", 10), productValidation, valida
   }
 
   const imagesPaths = req.files.map((file) => `/uploads/${file.filename}`);
-
   const query = `
     INSERT INTO products 
     (productName, price, category, description, userId, images, listingType, productstatus) 
@@ -127,16 +113,7 @@ router.post("/addProduct", upload.array("images", 10), productValidation, valida
 
   db.query(
     query,
-    [
-      productName, 
-      price, 
-      category, 
-      description, 
-      userId, 
-      JSON.stringify(imagesPaths), 
-      listingType, 
-      productstatus
-    ],
+    [productName, price, category, description, userId, JSON.stringify(imagesPaths), listingType, productstatus],
     (err, results) => {
       if (err) {
         console.error("Database Error:", err);
@@ -151,7 +128,7 @@ router.post("/addProduct", upload.array("images", 10), productValidation, valida
   );
 });
 
-// Update product details (without image update for simplicity)
+// Update product details
 router.put("/:id", productValidation, validate, (req, res) => {
   const { id } = req.params;
   const { productName, price, category, description, listingType } = req.body;
@@ -164,20 +141,17 @@ router.put("/:id", productValidation, validate, (req, res) => {
   });
 });
 
-
 // Delete a product and its associated images
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
-  // 1. Fetch image paths first to delete them from the disk
   db.query("SELECT images FROM products WHERE productId = ?", [id], (err, results) => {
     if (err || results.length === 0) return res.status(404).json({ message: "Product not found" });
     const images = JSON.parse(results[0].images || "[]");
-    // 2. Delete record from database
+    
     db.query("DELETE FROM products WHERE productId = ?", [id], (deleteErr) => {
       if (deleteErr) return res.status(500).json({ message: "Delete failed" });
-      // 3. Unlink (delete) physical files from the uploads folder
+      
       images.forEach(imagePath => {
-        // We use path.join to ensure correct paths on Windows/Linux
         const fullPath = path.join(__dirname, "..", imagePath);
         if (fs.existsSync(fullPath)) {
           fs.unlinkSync(fullPath);
@@ -188,6 +162,21 @@ router.delete("/:id", (req, res) => {
   });
 });
 
-
+// Mark as sold and update status field to match React code 
+router.put("/sold/:id", (req, res) => {
+  const { id } = req.params;
+  const query = "UPDATE products SET status = 'sold' WHERE productId = ?";
+  
+  db.query(query, [id], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Failed to mark as sold" });
+    }
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    res.json({ message: "Product marked as sold successfully" });
+  });
+});
 
 module.exports = router;

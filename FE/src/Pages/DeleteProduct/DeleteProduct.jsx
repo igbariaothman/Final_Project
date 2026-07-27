@@ -1,6 +1,4 @@
-
 import classes from "./deleteproduct.module.css";
-
 
 function DeleteProduct({ productId, products }) {
   async function deleteProduct() {
@@ -19,7 +17,6 @@ function DeleteProduct({ productId, products }) {
 
       products((prev) => prev.filter((p) => p.productId !== productId));
       console.log(`Product deleted successfully: ${productId} `);
-
     } catch (err) {
       console.log(err);
     }
@@ -34,7 +31,7 @@ function DeleteProduct({ productId, products }) {
           deleteProduct();
         }}
       >
-        Delete
+        מחיקה
       </button>
     </div>
   );
