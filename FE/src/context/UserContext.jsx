@@ -11,7 +11,8 @@ const UserContextProvider = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    loadMe();
+    if (localStorage.getItem("session")) loadMe();
+    else setIsLoading(false);
   }, []);
 
   async function loadMe() {
@@ -30,6 +31,7 @@ const UserContextProvider = ({ children }) => {
       const response = await axios.post("/users/login", userData);
       setCurrentUser(response.data.user);
       setErrorMsg("");
+      localStorage.setItem("session", "true");
       navigate("/");
     } catch (error) {
       setErrorMsg(error?.response?.data?.message || "שגיאה בהתחברות למערכת");

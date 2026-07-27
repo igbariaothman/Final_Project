@@ -73,7 +73,9 @@ function Inbox() {
                   <div className={classes.convInfo}>
                     <div className={classes.convTop}>
                       <span className={classes.contactName}>
-                        {conv.contactName}
+                        {conv.contactRole === "admin"
+                          ? "Administrator"
+                          : conv.contactName}
                       </span>
                       <span className={classes.convTime}>
                         {formatTime(conv.created_at)}
@@ -98,7 +100,12 @@ function Inbox() {
         <Chat
           productId={selectedChat.productId}
           sellerId={getContactId(selectedChat)}
-          sellerName={selectedChat.contactName}
+          sellerName={
+            selectedChat.contactRole === "admin"
+              ? "Administrator"
+              : selectedChat.contactName
+          }
+          messageType={selectedChat.messageType}
           onClose={() => setSelectedChat(null)}
         />
       )}

@@ -54,11 +54,12 @@ function PublicProfile() {
     }
   };
 
-  if (loading) return (
-    <div className={classes.loadingPage}>
-      <div className={classes.spinner} />
-    </div>
-  );
+  if (loading)
+    return (
+      <div className={classes.loadingPage}>
+        <div className={classes.spinner} />
+      </div>
+    );
 
   if (!user) return (
     <div className={classes.loadingPage}>
@@ -73,7 +74,6 @@ function PublicProfile() {
 
   return (
     <div className={classes.profilePage}>
-
       <div className={classes.heroSection}>
         <div className={classes.heroBg} />
         <div className={classes.heroContent}>

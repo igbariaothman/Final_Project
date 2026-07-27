@@ -4,7 +4,6 @@ const dbSingleton = require("../db/dbSingleton");
 
 const db = dbSingleton.getConnection();
 
-
 //Send a report about a product
 router.post("/", (req, res) => {
   const { productId, userId, reportType, message } = req.body;
@@ -24,7 +23,6 @@ router.post("/", (req, res) => {
     res.json({ message: "Report sent successfully" });
   });
 });
-
 
 // get all reports for admin review
 router.get("/", (req, res) => {
@@ -75,51 +73,79 @@ router.delete("/:id", (req, res) => {
   });
 });
 
-// delete product and report by productD (admin only) - also deletes all related reports
-// router.delete("/with-product/:id", (req, res) => {
-//   const reportId = req.params.id;
-
-//   db.query(
-//     "SELECT productId FROM reports WHERE productId = ?",
-//     [reportId],
-//     (err, result) => {
-//       if (err || result.length === 0) {
-//         return res.status(404).json({ message: "Report not found" });
-//       }
-
-//       const productId = result[0].productId;
-
-//       // delete product
-//       db.query("DELETE FROM products WHERE productId = ?", [productId]);
-
-//       // delete report
-//       db.query("DELETE FROM reports WHERE productId = ?", [reportId]);
-
-//       res.json({ message: "Product + Report deleted" });
-//     },
-//   );
-// });
-
+// delete product and report by productId (admin only) - also deletes all related reports
 router.delete("/with-product/:id", (req, res) => {
   const reportId = req.params.id;
+  const { adminId, adminMessage } = req.body;
 
+  // 1) Get product id from report
   db.query(
     "SELECT productId FROM reports WHERE reportId = ?",
     [reportId],
-    (err, result) => {
-      if (err || result.length === 0) {
-        return res.status(404).json({ message: "Report not found" });
+    (err, reportResult) => {
+      if (err || reportResult.length === 0) {
+        return res.status(404).json({
+          message: "Report not found",
+        });
       }
 
-      const productId = result[0].productId;
+      const productId = reportResult[0].productId;
 
-      // delete product
-      db.query("DELETE FROM products WHERE productId = ?", [productId]);
+      // 2) Get product owner
+      db.query(
+        "SELECT userId, productName FROM products WHERE productId = ?",
+        [productId],
+        (err, productResult) => {
+          if (err || productResult.length === 0) {
+            return res.status(404).json({
+              message: "Product not found",
+            });
+          }
 
-      // delete report
-      db.query("DELETE FROM reports WHERE reportId = ?", [reportId]);
+          const ownerId = productResult[0].userId;
+          const productName = productResult[0].productName;
 
-      res.json({ message: "Product + Report deleted" });
+          // 3) Send message to product owner
+          const message = `Your product "${productName}" was removed by an administrator.
+
+          Admin message:
+          ${adminMessage}`;
+          db.query(
+            `INSERT INTO messages
+            (senderId, receiverId, productId, messageText, messageType)
+            VALUES (?, ?, ?, ?, ?)`,
+            [adminId, ownerId, productId, message, "notification"],
+            (err, result) => {
+              if (err) {
+                console.log("MESSAGE ERROR:", err);
+                return res.status(500).json({
+                  message: "Failed to send message",
+                });
+              }
+
+              console.log("MESSAGE INSERTED:", result);
+
+              db.query(
+                "SELECT * FROM messages ORDER BY id DESC LIMIT 1",
+                (err, rows) => {
+                  console.log("LAST MESSAGE:", rows);
+                },
+              );
+              // delete product...
+
+              // 4) Delete product
+              db.query("DELETE FROM products WHERE productId = ?", [productId]);
+
+              // 5) Delete report
+              db.query("DELETE FROM reports WHERE reportId = ?", [reportId]);
+
+              res.json({
+                message: "Product, report deleted and user notified",
+              });
+            },
+          );
+        },
+      );
     },
   );
 });

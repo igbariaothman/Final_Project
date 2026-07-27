@@ -3,7 +3,7 @@ import io from "socket.io-client";
 import classes from "./Chat.module.css";
 import { useUserContext } from "../../context/UserContext";
 
-function Chat({ productId, sellerId, sellerName, onClose }) {
+function Chat({ productId, sellerId, sellerName, messageType , onClose }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const scrollRef = useRef();
@@ -49,6 +49,7 @@ function Chat({ productId, sellerId, sellerName, onClose }) {
       receiverId: Number(sellerId),
       productId: Number(productId),
       messageText: newMessage,
+      messageType: "chat",
       created_at: new Date().toISOString(),
     };
 
@@ -69,7 +70,9 @@ function Chat({ productId, sellerId, sellerName, onClose }) {
   return (
     <div className={classes.chatContainer}>
       <div className={classes.chatHeader}>
-        <button className={classes.closeBtn} onClick={onClose}>✕</button>
+        <button className={classes.closeBtn} onClick={onClose}>
+          ✕
+        </button>
         <h4>צ"ט עם {sellerName}</h4>
       </div>
 
@@ -83,7 +86,7 @@ function Chat({ productId, sellerId, sellerName, onClose }) {
             >
               <div className={classes.messageBubble}>
                 <span className={classes.messageText}>{msg.messageText}</span>
-                <span className={classes.messageTime} >
+                <span className={classes.messageTime}>
                   {formatTime(msg.created_at)}
                 </span>
               </div>
@@ -93,22 +96,23 @@ function Chat({ productId, sellerId, sellerName, onClose }) {
         <div ref={scrollRef} />
       </div>
 
-  <div className={classes.inputArea}>
-  <input
-    type="text"
-    value={newMessage}
-    onChange={(e) => setNewMessage(e.target.value)}
-    placeholder="הקלד הודעה..."
-    onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-  />
+      <div className={classes.inputArea}>
+        {messageType === "chat" && (
+          <div>
+            <input
+              type="text"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="הקלד הודעה..."
+              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+            />
 
-  <button
-    className={classes.sendButton}
-    onClick={sendMessage}
-  >
-    שלח
-  </button>
-</div>
+            <button className={classes.sendButton} onClick={sendMessage}>
+              שלח
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
