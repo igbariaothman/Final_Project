@@ -12,6 +12,7 @@ function PublicProfile() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Function to fetch user profile data and their products
   const fetchProfileData = () => {
     Promise.all([
       fetch(`http://localhost:5000/users/${id}`).then((res) => res.json()),
@@ -32,6 +33,8 @@ function PublicProfile() {
     fetchProfileData();
   }, [id]);
 
+
+  // Function to handle marking a product as sold, with a confirmation prompt
   const handleMarkAsSold = async (e, productId) => {
     e.stopPropagation();
 
@@ -41,6 +44,7 @@ function PublicProfile() {
 
     if (!confirmed) return;
 
+    // Make a PUT request to mark the product as sold and refresh the profile data
     try {
       await axios.put(`http://localhost:5000/products/sold/${productId}`);
       fetchProfileData();
@@ -49,6 +53,8 @@ function PublicProfile() {
     }
   };
 
+
+  // Function to get the image URL for a product, handling cases where images may be missing or malformed
   const getImgUrl = (images) => {
     try {
       const arr = typeof images === "string" ? JSON.parse(images) : images;
@@ -74,6 +80,7 @@ function PublicProfile() {
       </div>
     );
 
+    
   const activeProducts = products.filter((p) => p.status !== "sold");
   const soldHistoryProducts = products.filter((p) => p.status === "sold");
 

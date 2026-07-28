@@ -4,6 +4,7 @@ import { useUserContext } from "../../context/UserContext";
 
 function Product() {
   const { currentUser } = useUserContext();
+
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
@@ -14,22 +15,26 @@ function Product() {
   const [preview, setPreview] = useState([]);
   const [productstatus, setProductStatus] = useState("");
 
+  // Function to handle image removal
   const handleRemoveImage = (index) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
     setPreview((prev) => prev.filter((_, i) => i !== index));
   };
 
-  function handleAddProduct() {
+  // Function to handle product submission
+  const handleAddProduct = () => {
     if (!currentUser || !currentUser.id) {
       setMessage("יש להתחבר כדי לפרסם מוצר");
       return;
     }
 
+    // Trim inputs and validate removing leading/trailing spaces
     const trimmedName = name.trim();
     const trimmedDesc = description.trim();
     const priceNumber = listingType === "donation" ? 0 : Number(price);
 
 
+    // Validate inputs
     if (
       !trimmedName ||
       (listingType === "sale" && (price === "" || isNaN(priceNumber))) ||
@@ -41,22 +46,25 @@ function Product() {
       return;
     }
 
-  
+  // Additional validation for price when listing type is sale
     if (listingType === "sale" && priceNumber < 0) {
       setMessage("המחיר לא יכול להיות שלילי");
       return;
     }
 
+    // Validate images
     if (!images || images.length === 0) {
       setMessage("חובה להעלות לפחות תמונה אחת למוצר");
       return;
     }
 
+    // Limit the number of images to 10
     if (images.length > 10) {
       setMessage("ניתן להעלות רק עד 10 תמונות");
       return;
     }
 
+    // Prepare form data for submission
     const formData = new FormData();
     formData.append("productName", trimmedName);
     formData.append("price", priceNumber);
@@ -66,10 +74,11 @@ function Product() {
     formData.append("userId", currentUser.id);
     formData.append("productstatus", productstatus);
 
+    // Append images to form data
     images.forEach((img) => {
       formData.append("images", img);
     });
-
+  // Send the form data to the backend
     fetch("http://localhost:5000/products/addProduct", {
       method: "POST",
       body: formData,
@@ -82,6 +91,7 @@ function Product() {
         }
         return data;
       })
+      // Handle the response and reset the form on success
       .then(() => {
         setMessage("המוצר פורסם בהצלחה! ✅");
         setName("");
@@ -98,6 +108,7 @@ function Product() {
         setMessage(err.message || "שגיאה בהוספת המוצר");
       });
   }
+
 
   return (
     <div className={classes.container}>

@@ -30,6 +30,7 @@ function Inbox() {
       });
   }, [currentUser]);
 
+  // Function to format the time for display in the inbox
   const formatTime = (dateStr) => {
     if (!dateStr) return "";
     const date = new Date(dateStr);
@@ -39,6 +40,7 @@ function Inbox() {
     });
   };
 
+  // Function to get the contact ID for a conversation, determining whether the current user is the sender or receiver
   const getContactId = (conv) => {
     return Number(conv.senderId) === currentUser.id
       ? Number(conv.receiverId)
@@ -68,7 +70,7 @@ function Inbox() {
                 >
                   <div className={classes.avatar}>
                     {conv.contactRole === "admin"
-                      ? "נה"
+                      ? "Admin"
                       : conv.contactName?.charAt(0).toUpperCase() || "?"}
                   </div>
 

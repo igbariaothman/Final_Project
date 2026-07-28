@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../../context/UserContext";
 
 export default function Header() {
+
   const { currentUser, logout } = useUserContext();
   const navigation = useNavigate();
 
@@ -23,6 +24,8 @@ export default function Header() {
 
         <nav className={classes.nav}>
           <ul className={classes.ul}>
+
+            {/* if the user is admin, show the admin page link */}
             {currentUser?.role === "admin" && (
               <li onClick={() => navigation("/admin")} className={classes.li}>
                 מנהל מערכת
@@ -33,6 +36,7 @@ export default function Header() {
               דף הבית
             </li>
 
+            {/* if the user is logged in show the links for it */}
             {currentUser?.role === "user" && (
               <>
                 <li onClick={() => navigation("/add-product")} className={classes.li}>
@@ -56,6 +60,8 @@ export default function Header() {
               className={classes.profileWrapper}
               title="הפרופיל שלי"
             >
+
+              {/* design a profile icon using svg */}
               <div className={classes.profileLogoWrapper}>
                 <svg 
                   className={classes.profileIcon} 
@@ -82,6 +88,7 @@ export default function Header() {
             </div>
           )}
 
+          {/* if the user is not logged in show the login button, otherwise show the logout button */}
           {!currentUser ? (
             <button onClick={() => navigation("/login")} className={classes.loginBtn}>
               התחברות

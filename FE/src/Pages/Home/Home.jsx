@@ -10,8 +10,10 @@ function Home() {
   const navigate = useNavigate();
   const { currentUser, isLoading } = useUserContext();
 
+  //num ber of products to show per page
   const PRODUCTS_PER_PAGE = 16;
 
+  // Fetch all products from the backend when the component mounts
   useEffect(() => {
     fetch("http://localhost:5000/products")
       .then((res) => res.json())
@@ -19,15 +21,18 @@ function Home() {
       .catch((err) => console.error("Error fetching products:", err));
   }, []);
 
+// Reset the current page to 1 whenever the search term changes
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
 
+  // Handle page change and scroll to the top of the page
   function handlePageChange(newPage) {
     setCurrentPage(newPage);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+// Filter products based on the search term and exclude sold products
   function filteredProduct() {
     const activeProducts = products.filter((p) => p.status !== "sold");
 
@@ -46,6 +51,7 @@ function Home() {
     });
   }
 
+  // Function to get the image URL for a product, handling cases where images may be missing or malformed
   function getImage(images) {
     if (Array.isArray(images) && images.length > 0) {
       const path = images[0];
@@ -55,6 +61,7 @@ function Home() {
     return "https://via.placeholder.com/150";
   }
 
+  // Function to get the label for the product status
   function getProductStatusLabel(status) {
     switch (status) {
       case "new":
@@ -70,6 +77,7 @@ function Home() {
     }
   }
 
+  // Function to get a short description for display, truncating if necessary
   function getShortDescription(text) {
     if (!text) return "";
     const firstPeriod = text.indexOf(".");
@@ -79,6 +87,7 @@ function Home() {
     return text.length > 50 ? text.substring(0, 50) + "..." : text;
   }
 
+  // Function to delete a product by its ID, only accessible to admin users
   async function deleteProduct(productId) {
     try {
       const res = await fetch(`http://localhost:5000/products/${productId}`, {
@@ -99,6 +108,7 @@ function Home() {
     }
   }
 
+  // Calculate the filtered products and pagination details
   const filtered = filteredProduct();
   const totalPages = Math.ceil(filtered.length / PRODUCTS_PER_PAGE);
   const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
@@ -107,6 +117,8 @@ function Home() {
     startIndex + PRODUCTS_PER_PAGE,
   );
 
+
+  
   return (
     <div className={classes.container}>
       <div className={classes.searchContainer}>

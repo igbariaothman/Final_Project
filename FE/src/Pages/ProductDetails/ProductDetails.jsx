@@ -28,12 +28,13 @@ function ProductDetails() {
     other: "אחר",
   };
 
+  // Function to handle adding or removing the product from favorites
   const handleToggleFavorite = async () => {
     if (!isLoggedIn) {
       navigate("/login");
       return;
     }
-
+    // If the product is already a favorite, remove it; otherwise, add it to favorites
     if (isFavorite) {
       try {
         const response = await fetch(
@@ -62,6 +63,7 @@ function ProductDetails() {
     }
   };
 
+  // Fetch product details and check if it's a favorite when the component mounts or when the product ID changes
   useEffect(() => {
     fetch(`http://localhost:5000/products/${id}`)
       .then((res) => res.json())
@@ -80,6 +82,8 @@ function ProductDetails() {
 
   if (!product) return <h2 className={classes.loading}>טוען...</h2>;
 
+
+  // Function to handle sending a message to the product owner
   const handleSendMessage = () => {
     if (!isLoggedIn) {
       navigate("/login");
@@ -92,15 +96,18 @@ function ProductDetails() {
     setOpenChat(true);
   };
 
+  // Function to get the image URL for a product, handling cases where images may be missing or malformed
   const getImgUrl = (path) => {
     if (!path) return "https://via.placeholder.com/600x400";
     if (path.startsWith("http")) return path;
     return `http://localhost:5000${path}`;
   };
 
+  
   const isSold = product.status === "sold";
   const isOwner = Number(userId) === Number(product.userId);
   const isAdmin = currentUser?.role === "admin";
+
 
   return (
     <>

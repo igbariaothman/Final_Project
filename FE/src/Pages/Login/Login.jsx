@@ -18,6 +18,7 @@ function LogIn() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [signMessage, setSignMessage] = useState("");
 
+  // Function to handle login form submission
   async function handleLoginSubmit(e) {
     e.preventDefault();
     setLogMessage("");
@@ -26,30 +27,31 @@ function LogIn() {
       return;
     }
 
+    // Create user data object and call the login function from context
     const userData = { email: logEmail, password: logPassword };
     login(userData);
   }
 
+  // Function to handle sign-up form submission
   async function handleSignUpSubmit(e) {
     e.preventDefault();
     setSignMessage("");
     setErrorMsg("");
-
+    // Validate that all required fields are filled
     if (!signUserName || !signEmail || !signPassword || !confirmPassword) {
       setErrorMsg("נא למלא את כל השדות");
       return;
     }
-
     if (signPassword !== confirmPassword) {
       setErrorMsg("הסיסמאות אינן תואמות");
       return;
     }
-
     if (signPassword.length < 8) {
       setErrorMsg("הסיסמה חייבת להכיל לפחות 8 תווים");
       return;
     }
 
+    // Create user data object and call the register function from context
     const userData = {
       username: signUserName,
       email: signEmail,

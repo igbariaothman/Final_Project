@@ -12,6 +12,7 @@ function Profile() {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
 
+  // Function to handle password change
   const handleChangePassword = async () => {
     setMessage("");
 
@@ -39,6 +40,7 @@ function Profile() {
       return;
     }
 
+    // Make a PUT request to change the password
     try {
       const res = await fetch(
         `http://localhost:5000/users/change-password/${currentUser.id}`,
@@ -67,7 +69,8 @@ function Profile() {
       setNewPassword("");
       setConfirmPassword("");
       setIsEditingPassword(false);
-    } catch (err) {
+    } 
+    catch (err) {
       setMessage("שגיאה בחיבור לשרת");
       setMessageType("error");
     }
@@ -76,7 +79,7 @@ function Profile() {
   return (
     <div className={classes.profilePage}>
       <div className={classes.profileCard}>
-        {/* Avatar */}
+        
         <div className={classes.avatarSection}>
           <div className={classes.avatar}>
             {currentUser?.username?.charAt(0).toUpperCase() || "U"}

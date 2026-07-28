@@ -60,13 +60,15 @@ app.use("/messages", messagesRouter);
 app.use("/favorites", favoritesRouter);
 app.use("/reports", reportRouter);
 
+
+// Socket.io connection handling
 io.on("connection", (socket) => {
   socket.on("join_chat", ({ userId, sellerId, productId }) => {
     const roomId = `chat_${productId}_${Math.min(userId, sellerId)}_${Math.max(userId, sellerId)}`;
     socket.join(roomId);
     console.log(`User ${userId} joined room: ${roomId}`);
   });
-
+// Handle sending messages
   socket.on("send_message", (data) => {
     const { senderId, receiverId, productId, messageText } = data;
     const roomId = `chat_${productId}_${Math.min(senderId, receiverId)}_${Math.max(senderId, receiverId)}`;
@@ -95,11 +97,13 @@ io.on("connection", (socket) => {
     );
   });
 
+  // Handle user disconnection
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
   });
 });
 
+// Start the server
 server.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

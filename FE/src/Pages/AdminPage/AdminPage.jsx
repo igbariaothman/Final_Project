@@ -13,6 +13,7 @@ function AdminPage() {
   const [selectedReportId, setSelectedReportId] = useState(null);
   const [searchProductId, setSearchProductId] = useState("");
 
+  //when open the page first time, fetch all the reports from the backend
   useEffect(() => {
     fetch("http://localhost:5000/reports")
       .then((res) => res.json())
@@ -24,6 +25,7 @@ function AdminPage() {
       });
   }, []);
 
+  // Function to get the label for the badge based on report type
   const getBadgeLabel = (type) => {
     if (type === "product") return "דיווח מוצר";
     if (type === "user") return "דיווח משתמש";
@@ -31,6 +33,7 @@ function AdminPage() {
     return type;
   };
 
+  // Function to delete a report by its ID
   async function deleteReport(reportId) {
     try {
       const res = await fetch(`http://localhost:5000/reports/${reportId}`, {
@@ -44,6 +47,7 @@ function AdminPage() {
     }
   }
 
+  // Function to delete a product and its associated report
   async function deleteProductAndReport(reportId) {
     if (!reportId) return;
     try {
@@ -71,6 +75,7 @@ function AdminPage() {
     }
   }
 
+  // Function to handle navigation to a product's details page based on the entered product ID
   const handleGoToProduct = async (e) => {
     e.preventDefault();
     const productId = searchProductId.trim();
@@ -182,7 +187,7 @@ function AdminPage() {
                   onClick={(e) => {
                     e.stopPropagation();
                     setSelectedReportId(report.reportId);
-                    setAdminMessage(""); 
+                    setAdminMessage("");
                     setShowModal(true);
                   }}
                 >

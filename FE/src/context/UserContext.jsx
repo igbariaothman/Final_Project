@@ -4,17 +4,21 @@ import { useNavigate } from "react-router-dom";
 
 const UserContext = createContext();
 
+
 const UserContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
+  // Load the current user from the server if there is a session in localStorage
   useEffect(() => {
     if (localStorage.getItem("session")) loadMe();
     else setIsLoading(false);
   }, []);
 
+
+  // Load the current user from the server
   async function loadMe() {
     try {
       const res = await axios.get("/users/profile");
@@ -27,6 +31,7 @@ const UserContextProvider = ({ children }) => {
     }
   }
 
+// Login function
   const login = async (userData) => {
     try {
       const response = await axios.post("/users/login", userData);
@@ -39,6 +44,7 @@ const UserContextProvider = ({ children }) => {
     }
   };
 
+  // Register function
   const register = async (userData) => {
     try {
       const response = await axios.post("/users/signup", userData);
@@ -50,6 +56,7 @@ const UserContextProvider = ({ children }) => {
     }
   };
 
+  // Logout function 
   const logout = async () => {
     setIsLoading(true);
     try {
@@ -65,6 +72,7 @@ const UserContextProvider = ({ children }) => {
     }
   };
 
+  //
   return (
     <UserContext.Provider
       value={{

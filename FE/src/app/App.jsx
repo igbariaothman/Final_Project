@@ -20,6 +20,7 @@ import Contact from "../Pages/Contact/Contact.jsx";
 import Accessibility from "../Pages/Accessibility/Accessibility.jsx";
 
 export default function App() {
+
   const { currentUser, isLoading } = useUserContext();
 
   if (isLoading) return null;
@@ -43,6 +44,7 @@ export default function App() {
             element={!currentUser ? <LogIn /> : <Navigate to="/" replace />}
           />
 
+
           {currentUser?.role === "admin" && (
             <>
               <Route path="/reports" element={<Report />} />
@@ -51,6 +53,7 @@ export default function App() {
               <Route path="/profile" element={<Profile />} />
             </>
           )}
+
 
           {currentUser?.role === "user" && (
             <>

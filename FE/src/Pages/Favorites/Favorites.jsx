@@ -10,6 +10,7 @@ function Favorites() {
   const { currentUser } = useUserContext();
   const userId = currentUser?.id;
 
+  // Fetch the favorite products for the current user when the component mounts or when the userId changes
   useEffect(() => {
     if (currentUser.id) {
       fetch(`http://localhost:5000/favorites?userId=${currentUser.id}`)
@@ -19,6 +20,7 @@ function Favorites() {
     }
   }, [currentUser.id]);
 
+  // Function to delete a favorite product for the current user
   function deleteFavorite(e, productId) {
     e.stopPropagation();
     fetch(`http://localhost:5000/favorites/remove/${productId}`, {
@@ -33,6 +35,7 @@ function Favorites() {
       .catch((err) => console.error(err));
   }
 
+  // Function to get the image URL for a product, handling cases where images may be missing or malformed
   const getImgUrl = (images) => {
     if (!images) return "https://via.placeholder.com/200";
     try {

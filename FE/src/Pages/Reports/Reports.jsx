@@ -9,6 +9,7 @@ function Reports() {
   const { currentUser } = useUserContext();
 
 
+  // Function to send a report to the server
   async function sendMessage() {
     setAlert(""); 
 

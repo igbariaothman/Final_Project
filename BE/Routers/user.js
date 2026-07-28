@@ -7,6 +7,7 @@ const doQuery = require("../db/query");
 
 const db = dbSingleton.getConnection();
 
+// --- Validation Rules ---
 const signupValidation = [
   body("username")
     .trim()
@@ -160,6 +161,8 @@ router.post("/logout", async (req, res, next) => {
   }
 });
 
+
+// Change Password
 router.put("/change-password/:id", async (req, res) => {
   const { id } = req.params;
   const { currentPassword, newPassword } = req.body;
@@ -197,6 +200,8 @@ router.put("/change-password/:id", async (req, res) => {
   }
 });
 
+
+// Get user by ID
 router.get("/:id", (req, res) => {
   const { id } = req.params;
   const query = "SELECT id, username, email FROM users WHERE id = ?";
@@ -207,6 +212,8 @@ router.get("/:id", (req, res) => {
   });
 });
 
+
+// Update user by ID
 router.put("/:id", updateValidation, validate, async (req, res) => {
   const { id } = req.params;
   const { username, email, password } = req.body;
