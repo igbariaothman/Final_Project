@@ -118,7 +118,7 @@ function PublicProfile() {
 
       <div className={classes.productsSection}>
         <h2 className={classes.productsTitle}>
-          מוצרים זמינים של {user.username}
+          מוצרים זמינים של:  {user.username}
         </h2>
 
         {activeProducts.length === 0 ? (

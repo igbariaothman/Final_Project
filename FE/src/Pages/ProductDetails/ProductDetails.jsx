@@ -92,13 +92,15 @@ function ProductDetails() {
     setOpenChat(true);
   };
 
-  const getImgUrl = (path) =>
-    path
-      ? `http://localhost:5000${path}`
-      : "https://via.placeholder.com/600x400";
+  const getImgUrl = (path) => {
+    if (!path) return "https://via.placeholder.com/600x400";
+    if (path.startsWith("http")) return path;
+    return `http://localhost:5000${path}`;
+  };
 
   const isSold = product.status === "sold";
   const isOwner = Number(userId) === Number(product.userId);
+  const isAdmin = currentUser?.role === "admin";
 
   return (
     <>
@@ -171,8 +173,7 @@ function ProductDetails() {
                   </span>
                 </div>
 
-         
-                {!isSold && !isOwner && (
+                {!isSold && !isOwner && !isAdmin && (
                   <div className={classes.reportButtonWrapper}>
                     <Link
                       to={"/reports"}
@@ -180,7 +181,7 @@ function ProductDetails() {
                         localStorage.setItem("productId", product.productId)
                       }
                     >
-                      דיווח ⚠️
+                      דיווח 
                     </Link>
                   </div>
                 )}
@@ -252,7 +253,7 @@ function ProductDetails() {
               )}
 
               <div className={classes.sellerInfo}>
-                <p className={classes.sellerLabel}>על המכר</p>
+                <p className={classes.sellerLabel}>על המכר :  </p>
                 <div className={classes.sellerRow}>
                   <div
                     className={classes.avatar}

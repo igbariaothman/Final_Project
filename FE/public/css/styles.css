@@ -1,7 +1,7 @@
 #NagishLiTrigger {
   bottom: 25px !important;
-  right: 25px !important;
-  left: auto !important;
+  right: auto !important;
+  left: 25px !important;
   width: 75px !important;
   height: 75px !important;
   z-index: 999999 !important;

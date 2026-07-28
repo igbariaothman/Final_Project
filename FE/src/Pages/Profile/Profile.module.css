@@ -2,7 +2,7 @@
 
 .profilePage {
   width: 100%;
-  padding: 80px 40px;
+  padding: 60px 20px;
   direction: rtl;
   min-height: 100vh;
   font-family: "Assistant", sans-serif;
@@ -15,83 +15,72 @@
 
 .profileCard {
   width: 100%;
-  max-width: 950px;
-  background: rgba(15, 15, 20, 0.7);
-  backdrop-filter: blur(30px) saturate(200%);
-  -webkit-backdrop-filter: blur(30px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 32px;
-  padding: 60px 50px;
+  max-width: 900px;
+  background: rgba(13, 19, 34, 0.8);
+  backdrop-filter: blur(25px);
+  border: 1.5px solid rgba(255, 255, 255, 0.14);
+  border-radius: 28px;
+  padding: 50px 40px;
   display: flex;
   flex-direction: column;
-  gap: 45px;
-  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+  gap: 35px;
+  box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.8);
   box-sizing: border-box;
 }
 
-/* Avatar Section */
 .avatarSection {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
 .avatar {
-  width: 110px;
-  height: 110px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0289ff 0%, #0d00ff 100%);
-  color: white;
-  font-size: 2.5rem;
+  background: linear-gradient(135deg, #00f2fe 0%, #a855f7 100%);
+  color: #060911;
+  font-size: 2.9rem;
   font-weight: 900;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 15px 35px rgba(2, 137, 255, 0.35);
-  transition: transform 0.3s ease;
-}
-
-.avatar:hover {
-  transform: scale(1.05);
+  box-shadow: 0 12px 28px rgba(0, 242, 254, 0.35);
 }
 
 .username {
   color: #ffffff;
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: clamp(2rem, 4vw, 2.8rem);
   font-weight: 900;
   margin: 0;
-  letter-spacing: -0.5px;
 }
 
 .roleBadge {
-  background: rgba(2, 137, 255, 0.1);
-  border: 1px solid rgba(2, 137, 255, 0.25);
-  color: #0289ff;
+  background: rgba(0, 242, 254, 0.15);
+  border: 1px solid rgba(0, 242, 254, 0.35);
+  color: #00f2fe;
   padding: 6px 18px;
-  border-radius: 20px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 0.3px;
+  border-radius: 99px;
+  font-size: 1.4rem;
+  font-weight: 800;
 }
 
-/* Info Section */
 .infoSection {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 24px;
-  padding: 10px 30px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(8, 12, 20, 0.6);
+  border-radius: 20px;
+  padding: 8px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .infoItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .infoItem:last-child {
@@ -99,218 +88,161 @@
 }
 
 .infoLabel {
-  color: rgba(255, 255, 255, 0.45);
-  font-size: 1.35rem;
+  color: #cbd5e1;
+  font-size: 2.2rem;
   font-weight: 700;
 }
 
 .infoValue {
   color: #ffffff;
-  font-size: 1.4rem;
+  font-size: 2rem;
   font-weight: 800;
 }
 
-/* Password Section */
 .passwordSection {
   display: flex;
   flex-direction: column;
 }
 
 .editBtn {
-  background: rgba(2, 137, 255, 0.04);
-  border: 1px solid rgba(2, 137, 255, 0.25);
-  color: #0289ff;
-  padding: 20px;
-  border-radius: 20px;
-  font-size: 1.4rem;
+  background: rgba(0, 242, 254, 0.12);
+  border: 1px solid rgba(0, 242, 254, 0.35);
+  color: #00f2fe;
+  padding: 18px;
+  border-radius: 18px;
+  font-size: 1.5rem;
   font-weight: 800;
   font-family: "Assistant", sans-serif;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   width: 100%;
-  box-shadow: 0 10px 25px rgba(2, 137, 255, 0.05);
 }
 
 .editBtn:hover {
-  background: rgba(2, 137, 255, 0.12);
-  border-color: #0289ff;
-  transform: translateY(-3px);
-  box-shadow: 0 15px 30px rgba(2, 137, 255, 0.2);
+  background: rgba(0, 242, 254, 0.22);
+  border-color: #00f2fe;
+  transform: translateY(-2px);
 }
 
 .passwordForm {
   display: flex;
   flex-direction: column;
-  gap: 25px;
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 24px;
-  padding: 35px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  gap: 20px;
+  background: rgba(8, 12, 20, 0.6);
+  border-radius: 20px;
+  padding: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .passwordTitle {
   color: #ffffff;
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 800;
   margin: 0;
-  letter-spacing: -0.3px;
 }
 
 .inputGroup {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .inputGroup label {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 1.3rem;
+  color: #cbd5e1;
+  font-size: 1.50rem;
   font-weight: 700;
-  padding-right: 5px;
 }
 
 .inputGroup input {
-  padding: 18px 22px;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
+  padding: 16px 20px;
+  background: rgba(20, 29, 47, 0.7);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
   color: #ffffff;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 600;
   font-family: "Assistant", sans-serif;
   outline: none;
-  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: all 0.3s ease;
 }
 
 .inputGroup input:focus {
-  border-color: #0289ff;
-  background: rgba(255, 255, 255, 0.02);
-  box-shadow:
-    0 0 25px rgba(2, 137, 255, 0.2),
-    0 10px 20px rgba(0, 0, 0, 0.3);
-  transform: translateY(-2px);
-}
-
-.inputGroup input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  border-color: #00f2fe;
 }
 
 .btnRow {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   margin-top: 10px;
 }
 
 .saveBtn {
   flex: 1;
-  background: linear-gradient(135deg, #0289ff 0%, #0d00ff 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+  color: #060911;
   border: none;
-  padding: 20px;
-  border-radius: 18px;
-  font-size: 1.35rem;
-  font-weight: 800;
-  font-family: "Assistant", sans-serif;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-  box-shadow: 0 10px 25px rgba(13, 0, 255, 0.25);
-}
-
-.saveBtn:hover {
-  filter: brightness(1.15);
-  transform: translateY(-3px);
-  box-shadow: 0 15px 35px rgba(13, 0, 255, 0.4);
-}
-
-.cancelBtn {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.04);
-  color: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 20px;
-  border-radius: 18px;
-  font-size: 1.35rem;
-  font-weight: 800;
+  padding: 16px;
+  border-radius: 14px;
+  font-size: 1.5rem;
+  font-weight: 900;
   font-family: "Assistant", sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.cancelBtn:hover {
+.saveBtn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+}
+
+.cancelBtn {
+  flex: 1;
   background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 16px;
+  border-radius: 14px;
+  font-size: 1.5 rem;
+  font-weight: 800;
+  font-family: "Assistant", sans-serif;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.cancelBtn:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .successMsg {
-  color: #22c55e;
-  font-size: 1.2rem;
-  font-weight: 700;
+  color: #00ffaa;
+  font-size: 1.25rem;
+  font-weight: 800;
   text-align: center;
-  background: rgba(34, 197, 94, 0.08);
+  background: rgba(0, 255, 170, 0.15);
   padding: 12px;
   border-radius: 12px;
-  border: 1px solid rgba(34, 197, 94, 0.2);
+  border: 1px solid rgba(0, 255, 170, 0.3);
 }
 
 .errorMsg {
-  color: #ff4444;
-  font-size: 1.2rem;
-  font-weight: 700;
+  color: #ff6b52;
+  font-size: 1.25rem;
+  font-weight: 800;
   text-align: center;
-  background: rgba(255, 68, 68, 0.08);
+  background: rgba(255, 75, 43, 0.15);
   padding: 12px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 68, 68, 0.2);
+  border: 1px solid rgba(255, 75, 43, 0.3);
 }
 
 @media (max-width: 768px) {
   .profilePage {
-    padding: 40px 20px;
+    padding: 30px 16px;
   }
 
   .profileCard {
-    padding: 40px 24px;
-    gap: 35px;
-    border-radius: 28px;
-  }
-
-  .avatar {
-    width: 90px;
-    height: 90px;
-    font-size: 2.2rem;
-  }
-
-  .infoSection {
-    padding: 10px 20px;
-  }
-
-  .infoItem {
-    padding: 20px 0;
-  }
-
-  .infoLabel {
-    font-size: 1.15rem;
-  }
-
-  .infoValue {
-    font-size: 1.2rem;
-  }
-
-  .editBtn,
-  .saveBtn,
-  .cancelBtn {
-    padding: 16px;
-    font-size: 1.2rem;
-    border-radius: 16px;
-  }
-
-  .passwordForm {
-    padding: 25px 20px;
-    gap: 20px;
-  }
-
-  .inputGroup input {
-    padding: 15px 18px;
-    font-size: 1.15rem;
+    padding: 32px 20px;
+    gap: 25px;
+    border-radius: 22px;
   }
 }

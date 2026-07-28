@@ -14,6 +14,10 @@ import AdminPage from "../Pages/AdminPage/AdminPage.jsx";
 import { useUserContext } from "../context/UserContext.jsx";
 import Profile from "../Pages/Profile/Profile.jsx";
 import PublicProfile from "../Pages/PublicProfile/PublicProfile.jsx";
+import About from "../Pages/About/About.jsx";
+import Privacy from "../Pages/Privacy/Privacy.jsx";
+import Contact from "../Pages/Contact/Contact.jsx";
+import Accessibility from "../Pages/Accessibility/Accessibility.jsx";
 
 export default function App() {
   const { currentUser, isLoading } = useUserContext();
@@ -28,6 +32,16 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/productDetails/:id" element={<ProductDetails />} />
           <Route path="/profile/:id" element={<PublicProfile />} />
+
+          <Route path="/about" element={<About />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/accessibility" element={<Accessibility />} />
+
+          <Route
+            path="/login"
+            element={!currentUser ? <LogIn /> : <Navigate to="/" replace />}
+          />
 
           {currentUser?.role === "admin" && (
             <>
@@ -50,13 +64,24 @@ export default function App() {
 
           {!currentUser && (
             <>
-              <Route path="/login" element={<LogIn />} />
-              <Route path="/add-product" element={<Navigate to="/login" replace />} />
-              <Route path="/favorites" element={<Navigate to="/login" replace />} />
-              <Route path="/reports" element={<Navigate to="/login" replace />} />
+              <Route
+                path="/add-product"
+                element={<Navigate to="/login" replace />}
+              />
+              <Route
+                path="/favorites"
+                element={<Navigate to="/login" replace />}
+              />
+              <Route
+                path="/reports"
+                element={<Navigate to="/login" replace />}
+              />
               <Route path="/admin" element={<Navigate to="/login" replace />} />
               <Route path="/inbox" element={<Navigate to="/login" replace />} />
-              <Route path="/profile" element={<Navigate to="/login" replace />} />
+              <Route
+                path="/profile"
+                element={<Navigate to="/login" replace />}
+              />
             </>
           )}
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 12, 2026 at 01:29 PM
+-- Generation Time: Jul 28, 2026 at 03:07 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -72,22 +72,9 @@ CREATE TABLE `messages` (
   `productId` int(11) NOT NULL,
   `messageText` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `isRead` tinyint(1) DEFAULT 0
+  `isRead` tinyint(1) DEFAULT 0,
+  `messageType` enum('chat','notification') NOT NULL DEFAULT 'chat'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `messages`
---
-
-INSERT INTO `messages` (`id`, `senderId`, `receiverId`, `productId`, `messageText`, `created_at`, `isRead`) VALUES
-(2, 8, 8, 37, 'rgr', '2026-05-07 09:45:37', 0),
-(3, 8, 8, 37, 'hdth', '2026-05-07 09:45:39', 0),
-(4, 8, 8, 37, 'rsgh', '2026-05-07 09:45:40', 0),
-(5, 6, 8, 37, 'rgigrn', '2026-05-07 09:46:37', 0),
-(6, 6, 8, 37, 'rg', '2026-05-07 09:47:14', 0),
-(7, 6, 8, 37, 'wg', '2026-05-07 09:47:16', 0),
-(8, 6, 8, 37, 'geth', '2026-05-07 09:47:19', 0),
-(9, 6, 8, 37, 'wgrg', '2026-05-07 09:47:21', 0);
 
 -- --------------------------------------------------------
 
@@ -105,21 +92,40 @@ CREATE TABLE `products` (
   `images` text DEFAULT NULL,
   `listingType` enum('sale','donation') DEFAULT 'sale',
   `productstatus` varchar(50) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `status` varchar(20) DEFAULT 'available'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `products`
 --
 
-INSERT INTO `products` (`productId`, `productName`, `price`, `category`, `description`, `userId`, `images`, `listingType`, `productstatus`, `created_at`) VALUES
-(31, 'מחשב שולחני משרדי', 6000.00, 'אלקטרוניקה ומחשוב', 'מחשב שולחני משרדי DELL Precision T3680  I9-14900K 32GB 1TB - כולל Windwos 11 Pro  ו- 3 שנות אחריות באתר הלקוח', 1, '[\"/uploads/1778083488864-pc.jpg\"]', 'sale', 'like-new', '2026-05-06 16:04:48'),
-(32, 'תיק סטודנטים', 100.00, 'תיקים ואביזרים', 'תיק לסטודנטים במצב מצוין', 1, '[\"/uploads/1778083545408-×ª××§ ×¡×××× ×××.jpg\"]', 'sale', 'good', '2026-05-06 16:05:45'),
-(33, 'כיסא סטודנט איכותי', 0.00, 'ריהוט וציוד לחדר', 'כיסא סטודנט איכותי מתכוונן עם גב מתכוונן ומשענות ידיים נקי במצב מצויין', 1, '[\"/uploads/1778083591992-×××¡× ×¡×××× ×.jpg\"]', 'donation', 'new', '2026-05-06 16:06:31'),
-(34, 'ספרים פסיכומטרי', 0.00, 'ספרים וחומרי לימוד', 'ספרי לימוד וחזרות העוסקים בחשיבה כמותית, חשיבה מילולית ואנגלית.\r\nספר לעבודה בכיתה\r\n3 חוברות סימולציות מלאות\r\nחוברת מבחן אמצע\r\nחוברת מבחני מרתון\r\nלומדות נוספות ומאגר השאלות מהקמפוס של יואל גבע.\r\n2 מקראות לתרגול קריאה בעברית', 1, '[\"/uploads/1778083630115-×¤×¡××××××¨× ×¡×¤×¨××.jpg\"]', 'donation', 'like-new', '2026-05-06 16:07:10'),
-(35, 'מק בוק אייר 13 אינץ 512 גיגה', 5000.00, 'אלקטרוניקה ומחשוב', 'מק בוק אייר חדש כמעט ולא היה בשימוש מוכרת מק בוק אייר במצב חדש לגמרי היה בשימוש רק 4 פעמים בודדות סוללה 100 אחוז נפח512 גיגה צבע מיוחד ויפה לא סטנדרטי מגיע עם עכבר מקורי של אפל נקנה באיי דיגיטל יבואן רשמי המחשב שמור ברמה גבוהה מאוד כמו חדש מהקופסה סיבה למכירהאין לי שימוש בו גמישה במחיר לרציניים בלבד כולל ביטוח למחשב +עכבר מקורי של אפל', 1, '[\"/uploads/1778083666172-MacBook13.jpg\"]', 'sale', 'new', '2026-05-06 16:07:46'),
-(36, 'Ipad Pro 11', 2000.00, 'אלקטרוניקה ומחשוב', 'iPad Pro 11 M4 (2024) 512GB Wi-Fi + Cellular למכירה מצב מצוין – כמו חדש כולל קופסה מקורית וכבל טעינה, דגם עם סים (Cellular) זיכרון: 512GB מסך: 11 אינץ\' מעבד: M4 האייפד עובד מצוין ללא בעיות. נמכר בגלל חוסר שימוש. כולל נרתיק ,כיסוי מגן ועט סטילוס', 1, '[\"/uploads/1778083696918-ipad pro 13.jpg\"]', 'sale', 'good', '2026-05-06 16:08:16'),
-(37, 'm7md', 0.00, 'ריהוט וציוד לחדר', 'student', 8, '[\"/uploads/1778147098879-134015687351623932.jpg\",\"/uploads/1778147098902-133995791583540665.jpg\",\"/uploads/1778147098924-134071458069640213.jpg\",\"/uploads/1778147098938-134163597727642388.jpg\",\"/uploads/1778147098956-134167021220744640.jpg\",\"/uploads/1778147098974-134175719603543026.jpg\",\"/uploads/1778147099019-image_0.jpg\"]', 'donation', 'fair', '2026-05-07 09:44:59');
+INSERT INTO `products` (`productId`, `productName`, `price`, `category`, `description`, `userId`, `images`, `listingType`, `productstatus`, `created_at`, `status`) VALUES
+(50, 'מחשב נייד Apple MacBook Pro', 5000.00, 'אלקטרוניקה ומחשוב', 'מחשב נייד עוצמתי ומתקדם מבית אפל, מציע ביצועים חסרי פשרות, מסך איכותי ברזולוציה גבוהה, וסוללה לאורך זמן רב. אידיאלי לסטודנטים ולאנשי מקצוע הדורשים עוצמה ואמינות בתוכנות עריכה, פיתוח וניהול משימות מורכבות', 11, '[\"/uploads/1785226830415-img-MacBook-Pro-Retina-16-Inch-24323-scaled.jpg\"]', 'sale', 'new', '2026-07-28 08:20:30', 'available'),
+(51, 'שעון חכם Apple Watch Series 11', 0.00, 'אלקטרוניקה ומחשוב', 'שעון חכם מתקדם הכולל חיישנים לניטור מדדי בריאות וכושר, קבלת התראות מהסמארטפון ישירות לפרק היד, עיצוב אלגנטי ועמידות גבוהה לשימוש יומיומי ושגרת לימודים עמוסה', 11, '[\"/uploads/1785226920952-images (4).jpg\"]', 'donation', 'new', '2026-07-28 08:22:00', 'available'),
+(52, 'עכבר גיימינג Razer Cobra Pro', 350.00, 'אלקטרוניקה ומחשוב', 'עכבר גיימינג אלחוטי מתקדם בעל תאורת RGB מרשימה, דיוק גבוה במיוחד, לחצנים ניתנים לתכנות וארגונומיה מושלמת לנוחות לאורך שעות רבות של עבודה מול המחשב או משחקים', 11, '[\"/uploads/1785226960598-https___medias-p1.phoenix.razer.com_sys-master-phoenix-images-container_h35_hcc_9594549370910_cobra-pro-500x500-2.png\"]', 'sale', 'new', '2026-07-28 08:22:40', 'available'),
+(53, 'מקלדת מכנית ASUS ROG Strix Scope', 650.00, 'אלקטרוניקה ומחשוב', 'מקלדת גיימינג מכנית איכותית עם תאורת LED אחורית, מקשים מהירים ומגיבים היטב, עיצוב עמיד ונוח המותאם להקלדה מרובה, כתיבת עבודות אקדמיות וגיימינג', 11, '[\"/uploads/1785227002566-VEXn36V5FQLs4hMvLavM3B.jpeg\"]', 'sale', 'like-new', '2026-07-28 08:23:22', 'available'),
+(54, 'ספר לימוד Java The Comprehensive Guide', 0.00, 'ספרים וחומרי לימוד', 'מדריך מקיף ומעמיק ללימוד שפת התכנות Java, מתאים לסטודנטים למדעי המחשב ולהנדסת תוכנה. מכיל הסברים ברורים, דוגמאות קוד מתקדמות ותרגילים מעשיים מהיסוד ועד ברמה מקצועית', 11, '[\"/uploads/1785227038266-9781493222957_800.png\"]', 'donation', 'like-new', '2026-07-28 08:23:58', 'available'),
+(55, 'ספר לימוד Node.js The Comprehensive Guide', 0.00, 'ספרים וחומרי לימוד', 'ספר לימוד מקצועי לפיתוח צד שרת באמצעות Node.js, JavaScript וסביבות עבודה מתקדמות. מעולה לסטודנטים ולמתכנתים המעוניינים לבנות אפליקציות ווב חזקות, לעבוד עם מסדי נתונים ולשלוט בפיתוח Full-Stack', 11, '[\"/uploads/1785227090696-images (3).jpg\"]', 'donation', 'good', '2026-07-28 08:24:50', 'available'),
+(57, 'קלמר שחור רב תאי לסטודנטים', 0.00, 'כלי כתיבה וציוד משרדי', 'קלמר רחב ידיים בעיצוב מודרני הכולל מספר תאים ורוכסנים לארגון נוח של עטים, מרקרים, מחק, סרגלים וציוד כתיבה נדרש ללימודים אקדמיים', 11, '[\"/uploads/1785227198097-Durable-Multifunctional-Pencil-Case-for-School-Students-Girls-Boys-Large-Capacity-Adult-Pen-Maker-Pencil-Pouch-Office-Organizer.avif\"]', 'donation', 'new', '2026-07-28 08:26:38', 'available'),
+(58, 'סט עטים כדוריים (60 יחידות)', 0.00, 'כלי כתיבה וציוד משרדי', 'מארז חסכוני המכיל 60 עטים כדוריים איכותיים בכתיבה חלקה ובצבעים שימושיים, מעולה לרישום הערות בשיעורים, בחינות ופתרון תרגילים לאורך סמסטר שלם', 11, '[\"/uploads/1785227239434-61f9YD92tQL.jpg\"]', 'donation', 'new', '2026-07-28 08:27:19', 'available'),
+(59, 'מחשבון מדעי מתוקדמת FX-991ES Plus', 90.00, 'אלקטרוניקה ומחשוב', 'מחשבון מדעי מתקדם המאושר לשימוש בבחינות אקדמיות ובקורסים מתמטיים והנדסיים. תומך בחישובים סטטיסטיים, מטריצות, אינטגרלים ומשוואות מורכבות, בעל צاهל כפול (סולארי וסוללה)', 11, '[\"/uploads/1785227276641-He64ab7c7fcfd4917b8ea2240e38a3335R.avif\"]', 'sale', 'good', '2026-07-28 08:27:56', 'available'),
+(60, 'סט ספרי פסיכומטרי ומתמטיקה', 0.00, 'ספרים וחומרי לימוד', 'סט ספרי לימוד איכותיים ומקיפים הכוללים חומרי עזר ותרגילים מתקדמים להכנה למבחנים, פסיכומטרי ובגרויות. מתאים במיוחד לסטודנטים ולתלמידים המעוניינים לשפר ציון ולהעמיק את הידע', 11, '[\"/uploads/1785227350317-2016-11-10-16.57.59.jpg\"]', 'donation', 'like-new', '2026-07-28 08:29:10', 'available'),
+(61, 'שולחן עבודה משרדי עם מגירות', 450.00, 'ריהוט וציוד לחדר', 'שולחן עבודה חזק ויציב עם רגלי מתכת ומבנה עץ איכותי, כולל שתי מגירות מובנות עם מנעול לאחסון נוח של מחברות, ציוד משרדי ולפטופ. אידיאלי לחדר סטודנטים או פינת לימודים', 11, '[\"/uploads/1785227397031-images (1).jpg\"]', 'sale', 'like-new', '2026-07-28 08:29:57', 'available'),
+(62, 'כסא משרדי אורטופדי לסטודנטים', 350.00, 'ריהוט וציוד לחדר', 'כיסא ארגונומי מתקדם עם משענת גב רשת אוורירית, תמיכה מצוינת לצוואר ולגב התחתון, גלגלים חלקים וידיות מתכווננות לשעות ארוכות של ישיבה מול המחשב בלימודים או בעבודה', 11, '[\"/uploads/1785227445483-office-chair-student-plus-12.jpg\"]', 'sale', 'like-new', '2026-07-28 08:30:45', 'available'),
+(63, 'טאבלט Apple iPad Pro', 4000.00, 'אלקטרוניקה ומחשוב', 'טאבלט מתקדם ודקיק מבית אפל המציע מסך ענק ואיכותי, מעבד חזק במיוחד, ותמיכה מלאה באפליקציות פרודוקטיביות, רישום הערות בשיעורים וצריכת מדיה ברמה הגבוהה ביותר', 11, '[\"/uploads/1785227485858-images (2).jpg\"]', 'sale', 'new', '2026-07-28 08:31:25', 'available'),
+(64, 'מחשב נייד גיימינג ASUS TUF Gaming', 5498.00, 'אלקטרוניקה ומחשוב', 'מחשב נייד עוצמתי המיועד לגיימינג ולמשימות תכנות והנדסה כבדות. בעל כרטיס מסך מתקדם, מעבד חזק ומערכת קירור משוכללת להבטחת ביצועים מרביים בכל משימה', 11, '[\"/uploads/1785227532899-download.png\"]', 'sale', 'new', '2026-07-28 08:32:12', 'available'),
+(65, 'מחשב נייד דק ASUS ZenBook', 3799.00, 'אלקטרוניקה ומחשוב', 'מחשב נייד אלגנטי, דק במיוחד וקל משקל עם מסך מדהים וסוללה שמחזיקה מעמד שעות רבות. מושלם לסטודנטים שצריכים להסתובב עם המחשב בקמפוס לכל אורך היום', 11, '[\"/uploads/1785227581567-kAPLrymMPExXv9n6jKJ5RY.jpg\"]', 'sale', 'like-new', '2026-07-28 08:33:01', 'available'),
+(71, 'מארקיז אלכוהול Ohuhu (320 צבעים)', 450.00, 'כלי כתיבה וציוד משרדי', 'ערכת טושים אלכוהוליים מקצועיים הכוללת 320 צבעים ותיק נשיאה שחור חזק', 11, '[\"/uploads/1785242887500-892828229.jpg\"]', 'sale', 'like-new', '2026-07-28 12:48:07', 'available'),
+(72, 'דפדפת נייר צילום A4', 30.00, 'כלי כתיבה וציוד משרדי', 'חבילת נייר צילום והדפסה לבנה בגודל A4, מכילה 500 דפים במשקל 80 גרם, מתאימה לשימוש ביתי ומשרדי', 11, '[\"/uploads/1785242923107-487528745.avif\"]', 'sale', 'like-new', '2026-07-28 12:48:43', 'available'),
+(73, 'מאוורר עומד Hyundai', 0.00, 'אלקטרוניקה ומחשוב', 'מאורר עומד שחור בעל להבים עוצמתיים ובסיס יציב למיזוג אוויר בחדרים ומשרדים', 11, '[\"/uploads/1785242975747-231874303.jpg\"]', 'donation', 'good', '2026-07-28 12:49:35', 'available'),
+(74, 'משקפי ראייה במסגרת שחורה', 50.00, 'תיקים ואביזרים', 'משקפיים בעיצוב אלגנטי ומודרני עם מסגרת שחורה, מתאימים לשימוש יומיומי', 11, '[\"/uploads/1785243006492-472224384.jpg\"]', 'sale', 'new', '2026-07-28 12:50:06', 'available'),
+(75, 'עט אפל פרו (Apple Pencil Pro)', 500.00, 'אלקטרוניקה ומחשוב', 'עט חכם מתקדם מבית Apple המיועד לטאבלטים, מספק דיוק גבוה ותגובה מהירה לציור וכתיבה', 11, '[\"/uploads/1785243029862-976760832.png\"]', 'sale', 'new', '2026-07-28 12:50:29', 'available'),
+(77, 'אוזניות אלחוטיות Apple AirPods Pro', 950.00, 'אלקטרוניקה ומחשוב', 'אוזניות תוך-אוזן אלחוטיות עם סינון רעשים אקטיבי ומארז טעינה לבן', 11, '[\"/uploads/1785243134934-509005488.webp\"]', 'sale', 'new', '2026-07-28 12:52:14', 'available'),
+(78, 'אוזניות קשת Apple AirPods Max', 1999.00, 'אלקטרוניקה ומחשוב', 'אוזניות קשת אלחוטיות יוקרותיות בצבע תכלת, מעניקות צליל נקי ובידוד רעשים עם עיצוב נוח', 11, '[\"/uploads/1785243159524-662402131.jpg\"]', 'sale', 'like-new', '2026-07-28 12:52:39', 'available'),
+(79, 'כדורי אומגה 3 מבית BIOVEA', 0.00, 'אחר', 'תוסף תזונה שמן דגים אומגה 3 בריכוז 1200 מ\"ג למנה, מכיל 100 כמוסות רכות לתמיכה בבריאות הלב והמוח', 11, '[\"/uploads/1785243189704-428447995.jpg\"]', 'donation', 'new', '2026-07-28 12:53:09', 'available'),
+(80, 'תיק אוכל (לאנץ\' בוקס)', 0.00, 'תיקים ואביזרים', 'תיק לשמירת טמפרטורת המזון בצבע ורוד, כולל כיסים פנימיים וידית נשיאה נוחה', 11, '[\"/uploads/1785243213199-597467823.jpg\"]', 'donation', 'new', '2026-07-28 12:53:33', 'available'),
+(81, 'תיק גב שחור ללפטופ וללימודים', 150.00, 'תיקים ואביזרים', 'תיק גב אורטופדי, קל משקל ועמיד במים, המותאם במיוחד לסטודנטים. כולל תאים ייעודיים ומרופדים לנשיאת מחשב נייד, ספרים, מחברות וציוד אישי בנוחות מרבית לאורך כל היום בקמפוס', 11, '[\"/uploads/1785243941295-697001815.avif\"]', 'sale', 'new', '2026-07-28 13:05:41', 'available');
 
 -- --------------------------------------------------------
 
@@ -135,14 +141,6 @@ CREATE TABLE `reports` (
   `message` text DEFAULT NULL,
   `createdAt` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `reports`
---
-
-INSERT INTO `reports` (`reportId`, `productId`, `userId`, `reportType`, `message`, `createdAt`) VALUES
-(1, 1, 2, 'product', 'This product looks fake or misleading.', '2026-05-08 16:21:35'),
-(2, 36, 8, 'user', 'qewfq', '2026-05-08 17:59:03');
 
 -- --------------------------------------------------------
 
@@ -164,10 +162,12 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `password`, `created_at`, `role`) VALUES
-(1, 'ahmad123', 'ahmad123@gmail.com', '$2b$10$gUZj6JwjNPnyMUBkxagd7.9ac50OWtaQC.QXZENfldOzpNwxdceZa', '2026-04-25 11:53:30', 'user'),
 (6, 'm7md', 'm7md@gmail.com', '$2b$10$CxWZ9eV3noGXL6599wWPze70A3NjDwflu7EJeXh4fmFcoZB6UsomC', '2026-05-05 12:01:34', 'user'),
 (8, 'OthmanIgb', 'othman@gmail.com', '$2b$10$LxPcij4eCu9Z52smnnAQBOfPCw7VmIfc.bW5u.YD0NgP1WabPWLwK', '2026-05-05 12:03:18', 'admin'),
-(9, 'AhmadAdmin', 'ahmadadmin@gmail.com', '$2b$10$5y/kBqKDL72oT48TebEhE.aFvXKBVb6wDcruyGTqthhc5pvjEeGlW', '2026-05-06 17:22:28', 'admin');
+(9, 'AhmadAdmin', 'ahmadadmin@gmail.com', '$2b$10$5y/kBqKDL72oT48TebEhE.aFvXKBVb6wDcruyGTqthhc5pvjEeGlW', '2026-05-06 17:22:28', 'admin'),
+(10, 'ward', 'ward@gmail.com', '$2b$10$8dvHSfR8a5pDGI.jB8.IROH3xNGxRXKGhoKqnWe08w85hXKAYFcuq', '2026-07-27 14:43:47', 'user'),
+(11, 'ahmad', 'ahmad@gmail.com', '$2b$10$hl7lPiArUL/12O/xCctl0uIEglL9QZnXKAnrAHEPMMp6CLDIf9Jr2', '2026-07-28 08:03:32', 'user'),
+(12, 'user', 'user@gmail.com', '$2b$10$PoiHJaWsw/GHSRlPWdLCEeCvmRSqF/M6Zu4B9HALHaekrWVxCQWuy', '2026-07-28 09:30:19', 'user');
 
 --
 -- Indexes for dumped tables
@@ -231,31 +231,31 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `favorites`
 --
 ALTER TABLE `favorites`
-  MODIFY `favoriteId` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `favoriteId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `productId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `productId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 
 --
 -- AUTO_INCREMENT for table `reports`
 --
 ALTER TABLE `reports`
-  MODIFY `reportId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `reportId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Constraints for dumped tables
@@ -273,8 +273,7 @@ ALTER TABLE `favorites`
 --
 ALTER TABLE `messages`
   ADD CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`senderId`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`receiverId`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `messages_ibfk_3` FOREIGN KEY (`productId`) REFERENCES `products` (`productId`) ON DELETE CASCADE;
+  ADD CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`receiverId`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `products`

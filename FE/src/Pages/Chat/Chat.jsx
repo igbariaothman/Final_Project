@@ -3,59 +3,73 @@ import io from "socket.io-client";
 import classes from "./Chat.module.css";
 import { useUserContext } from "../../context/UserContext";
 
-function Chat({ productId, sellerId, sellerName, isAdminChat , onClose }) {
+function Chat({ productId, sellerId, sellerName, isAdminChat, onClose }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const scrollRef = useRef();
   const socketRef = useRef(null);
 
   const { currentUser } = useUserContext();
-  const userId = Number(currentUser?.id);
 
   useEffect(() => {
+    if (!currentUser?.id || !sellerId || !productId) return;
+
     socketRef.current = io("http://localhost:5000");
 
-    if (currentUser.id && sellerId && productId) {
-      fetch(
-        `http://localhost:5000/messages/history/${productId}/${currentUser.id}/${sellerId}`,
-      )
-        .then((res) => res.json())
-        .then((data) => setMessages(data))
-        .catch((err) => console.error("Error fetching history:", err));
+    fetch(
+      `http://localhost:5000/messages/history/${productId}/${currentUser.id}/${sellerId}`,
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) setMessages(data);
+      })
+      .catch((err) => console.error("Error fetching history:", err));
 
-      socketRef.current.emit("join_chat", { userId: currentUser.id, sellerId, productId });
 
-      socketRef.current.on("receive_message", (data) => {
-        if (Number(data.senderId) !== currentUser.id) {
-          setMessages((prev) => [...prev, data]);
-        }
-      });
-    }
+    socketRef.current.emit("join_chat", {
+      userId: currentUser.id,
+      sellerId,
+      productId,
+    });
+
+    socketRef.current.on("receive_message", (data) => {
+      if (
+        Number(data.productId) === Number(productId) &&
+        Number(data.senderId) !== Number(currentUser.id)
+      ) {
+        setMessages((prev) => [...prev, data]);
+      }
+    });
 
     return () => {
-      socketRef.current.disconnect();
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
     };
-  }, [currentUser.id, sellerId, productId]);
+  }, [currentUser?.id, sellerId, productId]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const sendMessage = () => {
-    if (newMessage.trim() === "") return;
+    if (newMessage.trim() === "" || !currentUser?.id) return;
 
     const messageData = {
       senderId: currentUser.id,
       receiverId: Number(sellerId),
       productId: Number(productId),
-      messageText: newMessage,
+      messageText: newMessage.trim(),
       messageType: "chat",
       created_at: new Date().toISOString(),
     };
 
     setMessages((prev) => [...prev, messageData]);
     setNewMessage("");
-    socketRef.current.emit("send_message", messageData);
+
+    if (socketRef.current) {
+      socketRef.current.emit("send_message", messageData);
+    }
   };
 
   const formatTime = (dateStr) => {
@@ -73,16 +87,18 @@ function Chat({ productId, sellerId, sellerName, isAdminChat , onClose }) {
         <button className={classes.closeBtn} onClick={onClose}>
           ✕
         </button>
-        <h4>צ"ט עם {sellerName}</h4>
+        <h4>צ'אט עם {sellerName}</h4>
       </div>
 
       <div className={classes.messagesArea}>
         {messages.map((msg, index) => {
-          const isOwnMessage = Number(msg.senderId) === currentUser.id;
+          const isOwnMessage = Number(msg.senderId) === Number(currentUser?.id);
           return (
             <div
               key={index}
-              className={`${classes.messageRow} ${isOwnMessage ? classes.ownMessage : classes.otherMessage}`}
+              className={`${classes.messageRow} ${
+                isOwnMessage ? classes.ownMessage : classes.otherMessage
+              }`}
             >
               <div className={classes.messageBubble}>
                 <span className={classes.messageText}>{msg.messageText}</span>
@@ -96,23 +112,21 @@ function Chat({ productId, sellerId, sellerName, isAdminChat , onClose }) {
         <div ref={scrollRef} />
       </div>
 
-      <div className={classes.inputArea}>
-        {!isAdminChat && (
-          <div>
-            <input
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="הקלד הודעה..."
-              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-            />
+      {!isAdminChat && (
+        <div className={classes.inputArea}>
+          <input
+            type="text"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder="הקלד הודעה..."
+            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          />
 
-            <button className={classes.sendButton} onClick={sendMessage}>
-              שלח
-            </button>
-          </div>
-        )}
-      </div>
+          <button className={classes.sendButton} onClick={sendMessage}>
+            שלח
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,8 +1,33 @@
+@import url("https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800;900&display=swap");
+
+:global(:root) {
+  --brand: #00f2fe;
+  --brand-hover: #4facfe;
+  --accent-2: #a855f7;
+  --accent-2-hover: #c084fc;
+  --accent-free: #00ffaa;
+  --danger: #ff4b2b;
+
+  --bg-deep: #060911;
+  --bg-mid: #0d1322;
+
+  --glow-brand: rgba(0, 242, 254, 0.2);
+  --glow-purple: rgba(168, 85, 247, 0.2);
+}
+
 :global(body) {
   margin: 0;
   padding: 0;
-  background: radial-gradient(circle at 50% 0%, #14161d 0%, #08090c 100%) fixed;
   min-height: 100vh;
+  background-color: var(--bg-deep);
+  background-image:
+    radial-gradient(at 15% 15%, rgba(0, 242, 254, 0.18) 0px, transparent 40%),
+    radial-gradient(at 85% 85%, rgba(168, 85, 247, 0.16) 0px, transparent 40%),
+    radial-gradient(at 50% 50%, rgba(13, 19, 34, 1) 0px, transparent 100%);
+  background-attachment: fixed;
+  color: #ffffff;
+  font-family: "Assistant", sans-serif;
+  overflow-x: hidden;
 }
 
 .app {

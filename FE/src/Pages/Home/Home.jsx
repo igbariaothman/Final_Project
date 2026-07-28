@@ -10,7 +10,7 @@ function Home() {
   const navigate = useNavigate();
   const { currentUser, isLoading } = useUserContext();
 
-  const PRODUCTS_PER_PAGE = 25;
+  const PRODUCTS_PER_PAGE = 16;
 
   useEffect(() => {
     fetch("http://localhost:5000/products")
@@ -22,6 +22,11 @@ function Home() {
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
+
+  function handlePageChange(newPage) {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   function filteredProduct() {
     const activeProducts = products.filter((p) => p.status !== "sold");
@@ -44,9 +49,34 @@ function Home() {
   function getImage(images) {
     if (Array.isArray(images) && images.length > 0) {
       const path = images[0];
+      if (path.startsWith("http")) return path;
       return `http://localhost:5000${path}`;
     }
     return "https://via.placeholder.com/150";
+  }
+
+  function getProductStatusLabel(status) {
+    switch (status) {
+      case "new":
+        return "חדש";
+      case "like-new":
+        return "כמו חדש";
+      case "good":
+        return "מצב טוב";
+      case "fair":
+        return "סביר";
+      default:
+        return status;
+    }
+  }
+
+  function getShortDescription(text) {
+    if (!text) return "";
+    const firstPeriod = text.indexOf(".");
+    if (firstPeriod !== -1 && firstPeriod < 60) {
+      return text.substring(0, firstPeriod + 1);
+    }
+    return text.length > 50 ? text.substring(0, 50) + "..." : text;
   }
 
   async function deleteProduct(productId) {
@@ -114,8 +144,13 @@ function Home() {
               </div>
 
               <div className={classes.textDetails}>
+                <div className={classes.statusTag}>
+                  {getProductStatusLabel(p.productstatus)}
+                </div>
                 <h2 className={classes.productName}>{p.productName}</h2>
-                <p className={classes.description}>{p.description}</p>
+                <p className={classes.description}>
+                  {getShortDescription(p.description)}
+                </p>
               </div>
             </div>
 
@@ -151,17 +186,37 @@ function Home() {
 
       {totalPages > 1 && (
         <div className={classes.pagination}>
-          {Array.from({ length: totalPages }, (_, index) => (
-            <button
-              key={index + 1}
-              onClick={() => setCurrentPage(index + 1)}
-              className={`${classes.pageBtn} ${
-                currentPage === index + 1 ? classes.activePage : ""
-              }`}
-            >
-              {index + 1}
-            </button>
-          ))}
+          <button
+            className={classes.pageArrowBtn}
+            onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            ❮
+          </button>
+
+          <div className={classes.pageNumbersWrapper}>
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index + 1}
+                onClick={() => handlePageChange(index + 1)}
+                className={`${classes.pageBtn} ${
+                  currentPage === index + 1 ? classes.activePage : ""
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
+          </div>
+
+          <button
+            className={classes.pageArrowBtn}
+            onClick={() =>
+              handlePageChange(Math.min(currentPage + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+          >
+            ❯
+          </button>
         </div>
       )}
     </div>

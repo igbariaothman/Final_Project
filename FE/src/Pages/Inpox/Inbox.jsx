@@ -67,14 +67,16 @@ function Inbox() {
                   onClick={() => setSelectedChat(conv)}
                 >
                   <div className={classes.avatar}>
-                    {conv.contactName?.charAt(0).toUpperCase() || "?"}
+                    {conv.contactRole === "admin"
+                      ? "נה"
+                      : conv.contactName?.charAt(0).toUpperCase() || "?"}
                   </div>
 
                   <div className={classes.convInfo}>
                     <div className={classes.convTop}>
                       <span className={classes.contactName}>
                         {conv.contactRole === "admin"
-                          ? "Administrator"
+                          ? "מנהל מערכת (Admin)"
                           : conv.contactName}
                       </span>
                       <span className={classes.convTime}>
@@ -102,10 +104,10 @@ function Inbox() {
           sellerId={getContactId(selectedChat)}
           sellerName={
             selectedChat.contactRole === "admin"
-              ? "Administrator"
+              ? "מנהל מערכת (Admin)"
               : selectedChat.contactName
           }
-          isAdminChat = {selectedChat.contactRole === "admin"}
+          isAdminChat={selectedChat.contactRole === "admin"}
           onClose={() => setSelectedChat(null)}
         />
       )}

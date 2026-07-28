@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import classes from "./adminPAge.module.css";
-import {useUserContext} from "../../context/UserContext";
+import { useUserContext } from "../../context/UserContext";
+import classes from "./adminPage.module.css";
 
 function AdminPage() {
   const [reports, setReports] = useState([]);
@@ -11,6 +11,7 @@ function AdminPage() {
   const [adminMessage, setAdminMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedReportId, setSelectedReportId] = useState(null);
+  const [searchProductId, setSearchProductId] = useState("");
 
   useEffect(() => {
     fetch("http://localhost:5000/reports")
@@ -23,21 +24,6 @@ function AdminPage() {
       });
   }, []);
 
-  const getProductImage = (imagesField) => {
-    if (!imagesField) return "https://via.placeholder.com/600x400";
-    try {
-      const parsed = JSON.parse(imagesField);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return `http://localhost:5000${parsed[0]}`;
-      }
-    } catch (e) {
-      if (typeof imagesField === "string" && imagesField.startsWith("/")) {
-        return `http://localhost:5000${imagesField}`;
-      }
-    }
-    return "https://via.placeholder.com/600x400";
-  };
-
   const getBadgeLabel = (type) => {
     if (type === "product") return "דיווח מוצר";
     if (type === "user") return "דיווח משתמש";
@@ -45,7 +31,6 @@ function AdminPage() {
     return type;
   };
 
-  // func to delete report  by reportid
   async function deleteReport(reportId) {
     try {
       const res = await fetch(`http://localhost:5000/reports/${reportId}`, {
@@ -54,36 +39,56 @@ function AdminPage() {
 
       if (!res.ok) return;
       setReports((prev) => prev.filter((r) => r.reportId !== reportId));
-      console.log(`Report deleted successfully: ${reportId} `);
     } catch (err) {
       console.log(err);
     }
   }
 
-  // func to delete product and report by reportid
   async function deleteProductAndReport(reportId) {
-
+    if (!reportId) return;
     try {
-      const res = await fetch (`http://localhost:5000/reports/with-product/${reportId}`,
-       {
-        method : "DELETE",
-        headers : {
-          "Content-Type": "application/json",
+      const res = await fetch(
+        `http://localhost:5000/reports/with-product/${reportId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            adminId: currentUser?.id,
+            adminMessage: adminMessage,
+          }),
         },
-        body : JSON.stringify({
-          adminId: currentUser.id,
-          adminMessage: adminMessage
-        }) ,
-      }) ;
+      );
 
-      if (!res.ok) return ;
+      if (!res.ok) return;
 
       setReports((prev) => prev.filter((r) => r.reportId !== reportId));
-      console.log(`המוצר והתלונה נמחקו בהצלחה !: ${reportId} `);
+      setAdminMessage("");
+      setSelectedReportId(null);
     } catch (err) {
       console.log(err);
-    } 
+    }
   }
+
+  const handleGoToProduct = async (e) => {
+    e.preventDefault();
+    const productId = searchProductId.trim();
+
+    if (!productId) return;
+
+    try {
+      const res = await fetch(`http://localhost:5000/products/${productId}`);
+      if (res.ok) {
+        navigate(`/productDetails/${productId}`);
+      } else {
+        alert("המוצר אינו קיים במערכת");
+      }
+    } catch (err) {
+      console.error("Error checking product existence:", err);
+      alert("שגיאה בבדיקת נתוני המוצר");
+    }
+  };
 
   const filteredReports =
     filterType === "all"
@@ -91,81 +96,108 @@ function AdminPage() {
       : reports.filter((report) => report.reportType === filterType);
 
   return (
-    <div className={classes.pageWrapper}>
-      <h1 className={classes.pageTitle}>דוחות</h1>
-      <div className={classes.filterContainer}>
-        <select
-          className={classes.filterSelect}
-          name="reportType"
-          id="reportType"
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value)}
-        >
-          <option value="all">כל הדיווחים</option>
-          <option value="product">דיווח מוצר</option>
-          <option value="user">דיווח משתמש</option>
-          <option value="chat">דיווח צ'אט</option>
-        </select>
+    <div className={classes.adminContainer}>
+      <h1 className={classes.adminTitle}>ניהול דיווחים</h1>
+
+      <div className={classes.filterBar}>
+        <form onSubmit={handleGoToProduct} className={classes.searchForm}>
+          <input
+            type="number"
+            placeholder="הכנס מזהה מוצר"
+            value={searchProductId}
+            onChange={(e) => setSearchProductId(e.target.value)}
+            className={classes.searchInput}
+          />
+          <button type="submit" className={classes.searchBtn}>
+            עבור למוצר ➔
+          </button>
+        </form>
+
+        <div>
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            className={classes.filterSelect}
+          >
+            <option value="all">כל הדיווחים במערכת</option>
+            <option value="product">דיווח מוצר</option>
+            <option value="user">דיווח משתמש</option>
+            <option value="chat">דיווח צ'אט</option>
+          </select>
+        </div>
       </div>
-      <div className={classes.cardsContainer}>
+
+      <div className={classes.reportsList}>
         {filteredReports.length === 0 ? (
-          <p className={classes.noReports}>אין דיווחים קיימים במערכת</p>
+          <div className={classes.emptyState}>
+            <p className={classes.emptyStateText}>אין דיווחים קיימים במערכת</p>
+          </div>
         ) : (
           filteredReports.map((report) => (
-            <div
-              className={classes.reportCard}
-              key={report.reportId}
-              onClick={() => navigate(`/productDetails/${report.productId}`)}
-              style={{ cursor: "pointer" }}
-            >
-              <div className={classes.imageWrapper}>
-                <img
-                  src={getProductImage(report.images)}
-                  alt={report.productName || "Product"}
-                  className={classes.image}
-                />
-                <span
-                  className={`${classes.badge} ${classes[report.reportType]}`}
-                >
-                  {getBadgeLabel(report.reportType)}
+            <div key={report.reportId} className={classes.reportCard}>
+              <div
+                className={classes.cardProductInfo}
+                onClick={() => navigate(`/productDetails/${report.productId}`)}
+              >
+                <span className={classes.badgeProductId}>
+                  מוצר #{report.productId}
                 </span>
-              </div>
-
-              <div className={classes.cardContent}>
-                <h2>{report.productName || "מוצר כללי"}</h2>
-                <p className={classes.price}>
+                <h3 className={classes.productName}>
+                  {report.productName || "מוצר כללי"}
+                </h3>
+                <span className={classes.productPrice}>
                   {report.price
                     ? `₪${Number(report.price).toLocaleString()}`
                     : "חינם / תרומה"}
-                </p>
+                </span>
+              </div>
 
-                <div className={classes.metaInfo}>
-                  <p>
-                    <strong>משתמש: </strong> {report.username || "משתמש"}
-                  </p>
-                  <p className={classes.reportMessage}>
-                    <strong>הודעה :</strong> {report.message}
-                  </p>
-                </div>
+              <div
+                className={classes.cardReporterInfo}
+                onClick={() => navigate(`/productDetails/${report.productId}`)}
+              >
+                <span className={classes.badgeReportType}>
+                  {getBadgeLabel(report.reportType)}
+                </span>
+                <p className={classes.reporterName}>
+                  <strong>מדווח:</strong> {report.username || "משתמש"}
+                </p>
+              </div>
+
+              <div className={classes.cardMessageBox}>
+                <span className={classes.messageLabel}>תוכן הדיווח:</span>
+                <p className={classes.messageText}>
+                  {report.message || "ללא הודעה מפורטת"}
+                </p>
+              </div>
+
+              <div className={classes.cardActions}>
+                <span className={classes.reportIdLabel}>
+                  דיווח #{report.reportId}
+                </span>
+
                 <button
-                  className={classes.deletebutton}
+                  type="button"
+                  className={classes.btnDeleteProduct}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedReportId(report.reportId);
+                    setAdminMessage(""); 
+                    setShowModal(true);
+                  }}
+                >
+                  מחיקת מוצר
+                </button>
+
+                <button
+                  type="button"
+                  className={classes.btnDeleteReport}
                   onClick={(e) => {
                     e.stopPropagation();
                     deleteReport(report.reportId);
                   }}
                 >
                   מחיקת תלונה
-                </button>
-                <button
-                  className={classes.deletebutton}
-                  onClick={(e) => {
-                    e.stopPropagation();
-
-                    setSelectedReportId(report.reportId);
-                    setShowModal(true);
-                  }}
-                >
-                  מחיקת מוצר
                 </button>
               </div>
             </div>
@@ -175,33 +207,34 @@ function AdminPage() {
 
       {showModal && (
         <div className={classes.modalOverlay}>
-          <div className={classes.modal}>
-            <h2>Delete Product</h2>
-
+          <div className={classes.modalBox}>
+            <h2 className={classes.modalTitle}>מחיקת מוצר וסגירת תלונה</h2>
             <textarea
               value={adminMessage}
               onChange={(e) => setAdminMessage(e.target.value)}
-              placeholder="Write message to product owner..."
+              placeholder="כתוב הודעה לבעל המוצר (סיבת המחיקה)..."
+              className={classes.modalTextarea}
             />
-
-            <div>
+            <div className={classes.modalActions}>
               <button
-                className={classes.deletebutton}
+                type="button"
+                className={classes.btnModalCancel}
                 onClick={() => {
                   setShowModal(false);
+                  setAdminMessage("");
                 }}
               >
-                Cancel
+                ביטול
               </button>
-
               <button
-                className={classes.deletebutton}
+                type="button"
+                className={classes.btnModalConfirm}
                 onClick={() => {
                   deleteProductAndReport(selectedReportId);
                   setShowModal(false);
                 }}
               >
-                Confirm Delete
+                אישור מחיקה
               </button>
             </div>
           </div>

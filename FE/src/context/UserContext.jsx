@@ -21,6 +21,7 @@ const UserContextProvider = ({ children }) => {
       setCurrentUser(res.data.user);
     } catch {
       setCurrentUser(null);
+      localStorage.removeItem("session");
     } finally {
       setIsLoading(false);
     }
@@ -40,12 +41,12 @@ const UserContextProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      const response = await axios.post("/users/register", userData);
-      setCurrentUser(response.data.user);
+      const response = await axios.post("/users/signup", userData);
       setErrorMsg("");
-      navigate("/");
+      return true;
     } catch (error) {
-      setErrorMsg(error?.response?.data?.message || "שגיאה ברישום המערכת");
+      setErrorMsg(error?.response?.data?.message || "שגיאה ברישום למערכת");
+      return false;
     }
   };
 
@@ -55,6 +56,7 @@ const UserContextProvider = ({ children }) => {
       await axios.post("/users/logout", null);
       setCurrentUser(null);
       setErrorMsg("");
+      localStorage.removeItem("session");
       navigate("/login");
     } catch (error) {
       console.log(error);

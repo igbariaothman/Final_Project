@@ -4,7 +4,7 @@ import Home from "../Home/Home";
 import { useUserContext } from "../../context/UserContext";
 
 function LogIn() {
-  const { login } = useUserContext();
+  const { login, errorMsg, register, setErrorMsg } = useUserContext();
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
 
@@ -22,7 +22,7 @@ function LogIn() {
     e.preventDefault();
     setLogMessage("");
     if (!logEmail || !logPassword) {
-      setLogMessage("נא למלא אימייל וסיסמה");
+      setErrorMsg("נא למלא אימייל וסיסמה");
       return;
     }
 
@@ -31,35 +31,37 @@ function LogIn() {
   }
 
   async function handleSignUpSubmit(e) {
-    e.preventDefault(); 
+    e.preventDefault();
     setSignMessage("");
-    if (!signEmail || !signPassword || !signUserName || !confirmPassword) {
-      setSignMessage("נא למלא את כל השדות");
+    setErrorMsg("");
+
+    if (!signUserName || !signEmail || !signPassword || !confirmPassword) {
+      setErrorMsg("נא למלא את כל השדות");
       return;
     }
+
     if (signPassword !== confirmPassword) {
-      setSignMessage("הסיסמאות אינן תואמות");
+      setErrorMsg("הסיסמאות אינן תואמות");
       return;
     }
-    try {
-      const res = await fetch("http://localhost:5000/users/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: signUserName,
-          email: signEmail,
-          password: signPassword,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setSignMessage(data.message || "שגיאה בהרשמה");
-        return;
-      }
+
+    if (signPassword.length < 8) {
+      setErrorMsg("הסיסמה חייבת להכיל לפחות 8 תווים");
+      return;
+    }
+
+    const userData = {
+      username: signUserName,
+      email: signEmail,
+      password: signPassword,
+    };
+    if (await register(userData)) {
       setSignMessage("החשבון נוצר בהצלחה! ניתן להתחבר כעת");
       setIsLoginMode(true);
-    } catch (err) {
-      setSignMessage("שגיאה בחיבור לשרת");
+      setSignUserName("");
+      setSignEmail("");
+      setSignPassword("");
+      setConfirmPassword("");
     }
   }
 
@@ -92,13 +94,20 @@ function LogIn() {
               />
               <label>סיסמה</label>
             </div>
-            {logMessage && <p className={classes.errorMessage}>{logMessage}</p>}
+            {errorMsg && <p className={classes.errorMessage}>{errorMsg}</p>}
             <button type="submit" className={classes.actionBtn}>
               התחבר
             </button>
             <p className={classes.switchText}>
               אין לך חשבון?{" "}
-              <span onClick={() => setIsLoginMode(false)}>הירשם כאן</span>
+              <span
+                onClick={() => {
+                  setIsLoginMode(false);
+                  setErrorMsg("");
+                }}
+              >
+                הירשם כאן
+              </span>
             </p>
           </form>
         ) : (
@@ -140,6 +149,7 @@ function LogIn() {
               <label>אימות סיסמה</label>
             </div>
 
+            {errorMsg && <p className={classes.errorMessage}>{errorMsg}</p>}
             {signMessage && (
               <p className={classes.infoMessage}>{signMessage}</p>
             )}
@@ -148,7 +158,14 @@ function LogIn() {
             </button>
             <p className={classes.switchText}>
               כבר יש לך חשבון?{" "}
-              <span onClick={() => setIsLoginMode(true)}>התחבר כאן</span>
+              <span
+                onClick={() => {
+                  setIsLoginMode(true);
+                  setErrorMsg("");
+                }}
+              >
+                התחבר כאן
+              </span>
             </p>
           </form>
         )}

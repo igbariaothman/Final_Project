@@ -12,65 +12,70 @@ function Profile() {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
 
- const handleChangePassword = async () => {
-  setMessage("");
+  const handleChangePassword = async () => {
+    setMessage("");
 
-  if (!currentPassword || !newPassword || !confirmPassword) {
-    setMessage("נא למלא את כל השדות");
-    setMessageType("error");
-    return;
-  }
-
-  if (newPassword !== confirmPassword) {
-    setMessage("הסיסמאות החדשות אינן תואמות");
-    setMessageType("error");
-    return;
-  }
-
-  if (newPassword.length < 8) {
-    setMessage("הסיסמה חייבת להכיל לפחות 8 תווים");
-    setMessageType("error");
-    return;
-  }
-
-  try {
-    const res = await fetch(
-      `http://localhost:5000/users/change-password/${currentUser.id}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          currentPassword,
-          newPassword,
-        }),
-      }
-    );
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      setMessage(data.message || "שגיאה בעדכון הסיסמה");
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setMessage("נא למלא את כל השדות");
       setMessageType("error");
       return;
     }
 
-    setMessage("הסיסמה עודכנה בהצלחה! ✅");
-    setMessageType("success");
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
-    setIsEditingPassword(false);
-  } catch (err) {
-    setMessage("שגיאה בחיבור לשרת");
-    setMessageType("error");
-  }
-};
+    if (newPassword !== confirmPassword) {
+      setMessage("הסיסמאות החדשות אינן תואמות");
+      setMessageType("error");
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      setMessage("הסיסמה חייבת להכיל לפחות 8 תווים");
+      setMessageType("error");
+      return;
+    }
+
+    if (currentPassword === newPassword) {
+      setMessage("הסיסמה החדשה חייבת להיות שונה מהסיסמה הנוכחית");
+      setMessageType("error");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `http://localhost:5000/users/change-password/${currentUser.id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            currentPassword,
+            newPassword,
+          }),
+        },
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMessage(data.message || "שגיאה בעדכון הסיסמה");
+        setMessageType("error");
+        return;
+      }
+
+      setMessage("הסיסמה עודכנה בהצלחה! ✅");
+      setMessageType("success");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setIsEditingPassword(false);
+    } catch (err) {
+      setMessage("שגיאה בחיבור לשרת");
+      setMessageType("error");
+    }
+  };
 
   return (
     <div className={classes.profilePage}>
       <div className={classes.profileCard}>
-
         {/* Avatar */}
         <div className={classes.avatarSection}>
           <div className={classes.avatar}>
@@ -82,7 +87,6 @@ function Profile() {
           </span>
         </div>
 
-        {/* Info */}
         <div className={classes.infoSection}>
           <div className={classes.infoItem}>
             <span className={classes.infoLabel}>שם משתמש</span>
@@ -100,14 +104,13 @@ function Profile() {
           </div>
         </div>
 
-        {/* Password Section */}
         <div className={classes.passwordSection}>
           {!isEditingPassword ? (
             <button
               className={classes.editBtn}
               onClick={() => setIsEditingPassword(true)}
             >
-              🔒 שינוי סיסמה
+              שינוי סיסמה🔒
             </button>
           ) : (
             <div className={classes.passwordForm}>
@@ -144,13 +147,22 @@ function Profile() {
               </div>
 
               {message && (
-                <p className={messageType === "success" ? classes.successMsg : classes.errorMsg}>
+                <p
+                  className={
+                    messageType === "success"
+                      ? classes.successMsg
+                      : classes.errorMsg
+                  }
+                >
                   {message}
                 </p>
               )}
 
               <div className={classes.btnRow}>
-                <button className={classes.saveBtn} onClick={handleChangePassword}>
+                <button
+                  className={classes.saveBtn}
+                  onClick={handleChangePassword}
+                >
                   שמור
                 </button>
                 <button

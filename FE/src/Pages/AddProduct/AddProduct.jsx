@@ -20,41 +20,50 @@ function Product() {
   };
 
   function handleAddProduct() {
+    if (!currentUser || !currentUser.id) {
+      setMessage("יש להתחבר כדי לפרסם מוצר");
+      return;
+    }
+
+    const trimmedName = name.trim();
+    const trimmedDesc = description.trim();
     const priceNumber = listingType === "donation" ? 0 : Number(price);
 
+
     if (
-      !name ||
-      (listingType === "sale" && !price) ||
+      !trimmedName ||
+      (listingType === "sale" && (price === "" || isNaN(priceNumber))) ||
       !category ||
-      !description ||
+      !trimmedDesc ||
       !productstatus
     ) {
-      setMessage("נא למלא את כל השדות החיוניים");
+      setMessage("נא למלא את כל השדות החיוניים כראוי");
       return;
     }
 
-    if (images && images.length > 10) {
-      setMessage("ניתן להעלות רק עד 10 תמונות");
-      return;
-    }
-
+  
     if (listingType === "sale" && priceNumber < 0) {
       setMessage("המחיר לא יכול להיות שלילי");
       return;
     }
 
-    if (!currentUser) {
-      setMessage("יש להתחבר כדי לפרסם מוצר");
+    if (!images || images.length === 0) {
+      setMessage("חובה להעלות לפחות תמונה אחת למוצר");
+      return;
+    }
+
+    if (images.length > 10) {
+      setMessage("ניתן להעלות רק עד 10 תמונות");
       return;
     }
 
     const formData = new FormData();
-    formData.append("productName", name);
+    formData.append("productName", trimmedName);
     formData.append("price", priceNumber);
     formData.append("category", category);
-    formData.append("description", description);
+    formData.append("description", trimmedDesc);
     formData.append("listingType", listingType);
-    formData.append("userId", currentUser?.id);
+    formData.append("userId", currentUser.id);
     formData.append("productstatus", productstatus);
 
     images.forEach((img) => {
@@ -64,10 +73,17 @@ function Product() {
     fetch("http://localhost:5000/products/addProduct", {
       method: "POST",
       body: formData,
+      credentials: "include", 
     })
-      .then((res) => res.json())
-      .then((data) => {
-        setMessage("המוצר פורסם בהצלחה!");
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.message || "שגיאה בהוספת המוצר");
+        }
+        return data;
+      })
+      .then(() => {
+        setMessage("המוצר פורסם בהצלחה! ✅");
         setName("");
         setPrice("");
         setCategory("");
@@ -79,7 +95,7 @@ function Product() {
       })
       .catch((err) => {
         console.error(err);
-        setMessage("שגיאה בהוספת המוצר");
+        setMessage(err.message || "שגיאה בהוספת המוצר");
       });
   }
 
@@ -93,7 +109,7 @@ function Product() {
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="מה אתה מוכר؟"
+          placeholder="מה אתה מוכר?"
         />
       </div>
 
@@ -117,6 +133,7 @@ function Product() {
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             placeholder="0.00 ₪"
+            min="0"
           />
         </div>
       )}
@@ -173,6 +190,7 @@ function Product() {
         <input
           type="file"
           multiple
+          accept="image/*"
           onChange={(e) => {
             const files = Array.from(e.target.files);
             setImages((prev) => [...prev, ...files]);
@@ -183,6 +201,7 @@ function Product() {
       </div>
 
       <div className={classes.previewContainer}>
+        <svg />
         {preview.map((img, i) => (
           <div key={i} className={classes.imageWrapper}>
             <img src={img} className={classes.imgPreview} alt="preview" />

@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800;900&display=swap');
+
+.pageContainer {
+  width: 100%;
+  max-width: 1000px;
+  margin: 5rem auto;
+  padding: 4rem 3rem;
+  background: rgba(13, 19, 34, 0.85);
+  backdrop-filter: blur(25px) saturate(200%);
+  -webkit-backdrop-filter: blur(25px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 2.4rem;
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.6);
+  direction: rtl;
+  font-family: 'Assistant', sans-serif;
+  color: #ffffff;
+  box-sizing: border-box;
+}
+
+.pageTitle {
+  font-size: 3.5rem;
+  font-weight: 900;
+  margin: 0 0 2.5rem 0;
+  background: linear-gradient(135deg, #ffffff 30%, #00f2fe 70%, #a855f7 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+}
+
+.pageContent {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  line-height: 1.9;
+  text-align: right;
+}
+
+.pageContent h2 {
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-top: 3rem;
+  margin-bottom: 1.2rem;
+  border-right: 4px solid #00f2fe;
+  padding-right: 14px;
+}
+
+.pageContent p {
+  margin-bottom: 1.5rem;
+}
+
+.pageContent ul {
+  margin-bottom: 2rem;
+  padding-right: 2rem;
+}
+
+.pageContent li {
+  margin-bottom: 0.8rem;
+  color: #cbd5e1;
+  font-size: 1.4rem;
+}
+
+.updateDate {
+  margin-top: 3.5rem;
+  font-size: 1.3rem;
+  color: #94a3b8;
+  text-align: center;
+  font-weight: 700;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 1.8rem;
+}
+
+@media (max-width: 768px) {
+  .pageContainer {
+    margin: 2rem 1.5rem;
+    padding: 2.5rem 1.5rem;
+  }
+
+  .pageTitle {
+    font-size: 2.6rem;
+  }
+
+  .pageContent {
+    font-size: 1.25rem;
+  }
+
+  .pageContent h2 {
+    font-size: 1.7rem;
+  }
+
+  .pageContent li {
+    font-size: 1.2rem;
+  }
+}
