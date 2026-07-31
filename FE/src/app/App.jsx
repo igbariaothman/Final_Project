@@ -18,6 +18,7 @@ import About from "../Pages/About/About.jsx";
 import Privacy from "../Pages/Privacy/Privacy.jsx";
 import Contact from "../Pages/Contact/Contact.jsx";
 import Accessibility from "../Pages/Accessibility/Accessibility.jsx";
+import Alert from "../Pages/Alert/Alert.jsx";
 
 export default function App() {
 
@@ -28,6 +29,7 @@ export default function App() {
   return (
     <div className={classes.app}>
       <Header />
+      <Alert />
       <main>
         <Routes>
           <Route path="/" element={<Home />} />

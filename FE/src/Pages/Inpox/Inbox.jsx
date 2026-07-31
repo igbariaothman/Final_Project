@@ -70,7 +70,7 @@ function Inbox() {
                 >
                   <div className={classes.avatar}>
                     {conv.contactRole === "admin"
-                      ? "Admin"
+                      ? "מנהל"
                       : conv.contactName?.charAt(0).toUpperCase() || "?"}
                   </div>
 

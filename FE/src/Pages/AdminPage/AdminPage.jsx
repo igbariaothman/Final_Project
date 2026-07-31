@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../../context/UserContext";
 import classes from "./adminPage.module.css";
+import { AlertContext } from "../../context/AlertContext";
 
 function AdminPage() {
   const [reports, setReports] = useState([]);
   const navigate = useNavigate();
   const [filterType, setFilterType] = useState("all");
+  const { showAlert } = useContext(AlertContext);
   const { currentUser } = useUserContext();
-  const [adminMessage, setAdminMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedReportId, setSelectedReportId] = useState(null);
   const [searchProductId, setSearchProductId] = useState("");
@@ -42,8 +43,10 @@ function AdminPage() {
 
       if (!res.ok) return;
       setReports((prev) => prev.filter((r) => r.reportId !== reportId));
+      showAlert("הדיווח נמחק בהצלחה", "success");
     } catch (err) {
       console.log(err);
+      showAlert("שגיאה במחיקת הדיווח", "error");
     }
   }
 
@@ -69,6 +72,7 @@ function AdminPage() {
 
       setReports((prev) => prev.filter((r) => r.reportId !== reportId));
       setAdminMessage("");
+      showAlert("המוצר נמחק בהצלחה והדיווח נסגר", "success");
       setSelectedReportId(null);
     } catch (err) {
       console.log(err);
