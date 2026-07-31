@@ -1,24 +1,24 @@
-import { useState } from "react";
+import { useState , useContext} from "react";
 import classes from "../Reports/report.module.css";
 import { useUserContext } from "../../context/UserContext.jsx"; 
+import { AlertContext } from "../../context/AlertContext.jsx";
 
 function Reports() {
   const [reportType, setReportType] = useState("");
   const [message, setMessage] = useState("");
-  const [alert, setAlert] = useState("");
   const { currentUser } = useUserContext();
+  const { showAlert } = useContext(AlertContext);
 
 
   async function sendMessage() {
-    setAlert(""); 
 
     if (!currentUser.id) {
-      setAlert("יש להתחבר כדי לשלוח דיווח");
+      showAlert("יש להתחבר כדי לשלוח דיווח", "error");
       return;
     }
 
     if (!reportType || !message.trim()) {
-      setAlert("נא למלא את כל השדות");
+      showAlert("נא למלא את כל השדות", "error");
       return;
     }
 
@@ -39,16 +39,16 @@ function Reports() {
       const data = await res.json();
 
       if (!res.ok) {
-        setAlert(data.message || "Error sending report");
+        showAlert(data.message || "Error sending report", "error");
         return;
       }
 
-      setAlert("הדיווח נשלח בהצלחה");
+      showAlert("הדיווח נשלח בהצלחה", "success");
       setMessage("");
       setReportType("");
     } catch (err) {
       console.error("Error sending report:", err);
-      setAlert("שגיאת שרת");
+      showAlert("שגיאת שרת", "error");
     }
   }
 
@@ -81,7 +81,6 @@ function Reports() {
       </div>
       <button onClick={sendMessage}>שלח תלונה</button>
       
-      {alert && <p className={classes.alert}>{alert}</p>}
     </div>
   );
 }

@@ -1,13 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect ,useContext} from "react";
 import { useNavigate } from "react-router-dom";
 import classes from "./favorites.module.css";
 import { useUserContext } from "../../context/UserContext";
+import {AlertContext} from "../../context/AlertContext";
 
 function Favorites() {
   const [favorite, setFavorite] = useState([]);
   const navigate = useNavigate();
 
   const { currentUser } = useUserContext();
+  const {showAlert} = useContext(AlertContext);
   const userId = currentUser?.id;
 
   useEffect(() => {
@@ -29,6 +31,7 @@ function Favorites() {
       .then((res) => res.json())
       .then(() => {
         setFavorite((prev) => prev.filter((item) => item.productId !== productId));
+        showAlert("המוצר הוסר מהמועדפים", "error");
       })
       .catch((err) => console.error(err));
   }

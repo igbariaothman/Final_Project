@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState , useContext } from "react";
 import classes from "./login.module.css";
 import Home from "../Home/Home";
 import { useUserContext } from "../../context/UserContext";
+import {AlertContext} from "../../context/AlertContext";
 
 function LogIn() {
   const { login, errorMsg, register, setErrorMsg } = useUserContext();
+  const {showAlert} = useContext(AlertContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
 
@@ -23,6 +25,7 @@ function LogIn() {
     setLogMessage("");
     if (!logEmail || !logPassword) {
       setErrorMsg("נא למלא אימייל וסיסמה");
+      showAlert("נא למלא אימייל וסיסמה", "error");
       return;
     }
 
@@ -37,16 +40,19 @@ function LogIn() {
 
     if (!signUserName || !signEmail || !signPassword || !confirmPassword) {
       setErrorMsg("נא למלא את כל השדות");
+      showAlert("נא למלא את כל השדות", "error");
       return;
     }
 
     if (signPassword !== confirmPassword) {
       setErrorMsg("הסיסמאות אינן תואמות");
+      showAlert("הסיסמאות אינן תואמות", "error");
       return;
     }
 
     if (signPassword.length < 8) {
       setErrorMsg("הסיסמה חייבת להכיל לפחות 8 תווים");
+      showAlert("הסיסמה חייבת להכיל לפחות 8 תווים", "error");
       return;
     }
 
@@ -57,6 +63,7 @@ function LogIn() {
     };
     if (await register(userData)) {
       setSignMessage("החשבון נוצר בהצלחה! ניתן להתחבר כעת");
+      showAlert("החשבון נוצר בהצלחה! ניתן להתחבר כעת", "info");
       setIsLoginMode(true);
       setSignUserName("");
       setSignEmail("");

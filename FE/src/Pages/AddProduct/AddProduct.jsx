@@ -1,15 +1,16 @@
-import { useState } from "react";
+import { useState ,useContext} from "react";
 import classes from "./addProduct.module.css";
 import { useUserContext } from "../../context/UserContext";
+import {AlertContext} from "../../context/AlertContext";
 
 function Product() {
   const { currentUser } = useUserContext();
+  const { showAlert } = useContext(AlertContext);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   const [listingType, setListingType] = useState("sale");
-  const [message, setMessage] = useState("");
   const [images, setImages] = useState([]);
   const [preview, setPreview] = useState([]);
   const [productstatus, setProductStatus] = useState("");
@@ -20,50 +21,41 @@ function Product() {
   };
 
   function handleAddProduct() {
-    if (!currentUser || !currentUser.id) {
-      setMessage("יש להתחבר כדי לפרסם מוצר");
-      return;
-    }
-
-    const trimmedName = name.trim();
-    const trimmedDesc = description.trim();
     const priceNumber = listingType === "donation" ? 0 : Number(price);
 
-
     if (
-      !trimmedName ||
-      (listingType === "sale" && (price === "" || isNaN(priceNumber))) ||
+      !name ||
+      (listingType === "sale" && !price) ||
       !category ||
-      !trimmedDesc ||
+      !description ||
       !productstatus
     ) {
-      setMessage("נא למלא את כל השדות החיוניים כראוי");
+      showAlert("נא למלא את כל השדות החיוניים", "error");
       return;
     }
 
-  
+    if (images && images.length > 10) {
+      showAlert("ניתן להעלות רק עד 10 תמונות", "error");
+      return;
+    }
+
     if (listingType === "sale" && priceNumber < 0) {
-      setMessage("המחיר לא יכול להיות שלילי");
+      showAlert("המחיר לא יכול להיות שלילי", "error");
       return;
     }
 
-    if (!images || images.length === 0) {
-      setMessage("חובה להעלות לפחות תמונה אחת למוצר");
-      return;
-    }
-
-    if (images.length > 10) {
-      setMessage("ניתן להעלות רק עד 10 תמונות");
+    if (!currentUser) {
+      showAlert("יש להתחבר כדי לפרסם מוצר", "error");
       return;
     }
 
     const formData = new FormData();
-    formData.append("productName", trimmedName);
+    formData.append("productName", name);
     formData.append("price", priceNumber);
     formData.append("category", category);
-    formData.append("description", trimmedDesc);
+    formData.append("description", description);
     formData.append("listingType", listingType);
-    formData.append("userId", currentUser.id);
+    formData.append("userId", currentUser?.id);
     formData.append("productstatus", productstatus);
 
     images.forEach((img) => {
@@ -73,17 +65,10 @@ function Product() {
     fetch("http://localhost:5000/products/addProduct", {
       method: "POST",
       body: formData,
-      credentials: "include", 
     })
-      .then(async (res) => {
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.message || "שגיאה בהוספת המוצר");
-        }
-        return data;
-      })
-      .then(() => {
-        setMessage("המוצר פורסם בהצלחה! ✅");
+      .then((res) => res.json())
+      .then((data) => {
+        showAlert("המוצר פורסם בהצלחה!", "success");
         setName("");
         setPrice("");
         setCategory("");
@@ -95,7 +80,7 @@ function Product() {
       })
       .catch((err) => {
         console.error(err);
-        setMessage(err.message || "שגיאה בהוספת המוצר");
+        showAlert("שגיאה בהוספת המוצר", "error");
       });
   }
 
@@ -109,7 +94,7 @@ function Product() {
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="מה אתה מוכר?"
+          placeholder="מה אתה מוכר؟"
         />
       </div>
 
@@ -133,7 +118,6 @@ function Product() {
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             placeholder="0.00 ₪"
-            min="0"
           />
         </div>
       )}
@@ -190,7 +174,6 @@ function Product() {
         <input
           type="file"
           multiple
-          accept="image/*"
           onChange={(e) => {
             const files = Array.from(e.target.files);
             setImages((prev) => [...prev, ...files]);
@@ -201,7 +184,6 @@ function Product() {
       </div>
 
       <div className={classes.previewContainer}>
-        <svg />
         {preview.map((img, i) => (
           <div key={i} className={classes.imageWrapper}>
             <img src={img} className={classes.imgPreview} alt="preview" />
@@ -220,8 +202,6 @@ function Product() {
       <button className={classes.shareBtn} onClick={handleAddProduct}>
         פרסם מוצר
       </button>
-
-      {message && <p className={classes.message}>{message}</p>}
     </div>
   );
 }
