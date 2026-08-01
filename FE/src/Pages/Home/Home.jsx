@@ -2,13 +2,22 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import classes from "./home.module.css";
 import { useUserContext } from "../../context/UserContext";
+import FilterSlidebar from "../FilterSlidebar/FilterSlidebar";
 
 function Home() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isSlidebarOpen, setIsSlidebarOpen] = useState(false);
   const navigate = useNavigate();
   const { currentUser, isLoading } = useUserContext();
+  const [sortType, setSortType] = useState("");
+  const [filters, setFilters] = useState({
+    category: "",
+    listingType: "",
+    productstatus: "",
+    priceRange: { min: 0, max: 500 },
+  });
 
   //num ber of products to show per page
   const PRODUCTS_PER_PAGE = 16;
@@ -21,10 +30,20 @@ function Home() {
       .catch((err) => console.error("Error fetching products:", err));
   }, []);
 
-// Reset the current page to 1 whenever the search term changes
+  // Reset the current page to 1 whenever the search term changes
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
+
+  // Reset the current page to 1 whenever sorting changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [sortType]);
+
+  // Reset the current page to 1 whenever filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
 
   // Handle page change and scroll to the top of the page
   function handlePageChange(newPage) {
@@ -32,7 +51,7 @@ function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-// Filter products based on the search term and exclude sold products
+  // Filter products based on the search term and exclude sold products
   function filteredProduct() {
     const activeProducts = products.filter((p) => p.status !== "sold");
 
@@ -110,18 +129,49 @@ function Home() {
 
   // Calculate the filtered products and pagination details
   const filtered = filteredProduct();
-  const totalPages = Math.ceil(filtered.length / PRODUCTS_PER_PAGE);
+
+  const filteredProducts = filtered.filter((product) => {
+    if (filters.category && product.category !== filters.category) return false;
+    if (filters.listingType && product.listingType !== filters.listingType)
+      return false;
+    if (
+      filters.productstatus &&
+      product.productstatus !== filters.productstatus
+    )
+      return false;
+    if (
+      filters.priceRange.min &&
+      Number(product.price) < Number(filters.priceRange.min)
+    )
+      return false;
+    if (
+      filters.priceRange.max &&
+      Number(product.price) > Number(filters.priceRange.max)
+    )
+      return false;
+    return true;
+  });
+
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (sortType === "priceLow") return Number(a.price) - Number(b.price);
+
+    if (sortType === "priceHigh") return Number(b.price) - Number(a.price);
+
+    if (sortType === "newest")
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    return 0;
+  });
+
+  const totalPages = Math.ceil(sortedProducts.length / PRODUCTS_PER_PAGE);
   const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
-  const currentProducts = filtered.slice(
+  const currentProducts = sortedProducts.slice(
     startIndex,
     startIndex + PRODUCTS_PER_PAGE,
   );
 
-
-  
   return (
     <div className={classes.container}>
-      <div className={classes.searchContainer}>
+      <div className={classes.topBar}>
         <input
           className={classes.searchInput}
           type="text"
@@ -129,7 +179,32 @@ function Home() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+
+        <div className={classes.actions}>
+          <select
+            className={classes.sortSelect}
+            value={sortType}
+            onChange={(e) => setSortType(e.target.value)}
+          >
+            <option value="">מיון</option>
+            <option value="newest">החדש ביותר</option>
+            <option value="priceLow">מחיר: מהנמוך לגבוה</option>
+            <option value="priceHigh">מחיר: מהגבוה לנמוך</option>
+          </select>
+
+          <button
+            className={classes.filterBtn}
+            onClick={() => setIsSlidebarOpen(true)}
+          >
+            ☰ סינון
+          </button>
+        </div>
       </div>
+      <FilterSlidebar
+        isOpen={isSlidebarOpen}
+        onClose={() => setIsSlidebarOpen(false)}
+        setFilters={setFilters}
+      />
 
       <h1 className={classes.mainTitle}>רשימת מוצרים</h1>
 

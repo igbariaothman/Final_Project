@@ -21,11 +21,48 @@
   -webkit-text-fill-color: transparent;
 }
 
-.searchContainer {
-  display: flex;
-  justify-content: center;
+.topBar {
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
   margin-bottom: 50px;
+  direction: rtl;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.sortSelect,
+.filterBtn {
+  display: flex;
+  align-items: center; 
+  justify-content: center; 
+  box-sizing: border-box; 
+  margin: 0;
+  height: 55px;
+  padding: 0 22px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(20, 29, 47, 0.8);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.filterBtn {
+  background: linear-gradient(135deg, #00f2fe, #a855f7);
+  border: none;
+}
+
+.sortSelect:hover,
+.filterBtn:hover {
+  transform: translateY(-2px);
 }
 
 .searchInput {
@@ -50,7 +87,7 @@
 .searchInput::placeholder {
   color: #94a3b8;
   font-weight: 600;
-  font-size: 1.50rem;
+  font-size: 1.5rem;
 }
 
 .searchInput:hover {
@@ -60,7 +97,9 @@
 .searchInput:focus {
   border-color: #00f2fe;
   background: rgba(25, 36, 58, 0.95);
-  box-shadow: 0 0 0 4px rgba(0, 242, 254, 0.25), 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+  box-shadow:
+    0 0 0 4px rgba(0, 242, 254, 0.25),
+    0 20px 40px -15px rgba(0, 0, 0, 0.7);
   transform: translateY(-2px);
 }
 
@@ -75,7 +114,11 @@
 .card {
   position: relative;
   border-radius: 26px;
-  background: linear-gradient(160deg, rgba(26, 37, 56, 0.85) 0%, rgba(13, 19, 34, 0.95) 100%);
+  background: linear-gradient(
+    160deg,
+    rgba(26, 37, 56, 0.85) 0%,
+    rgba(13, 19, 34, 0.95) 100%
+  );
   border: 1.5px solid rgba(255, 255, 255, 0.14);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -160,7 +203,7 @@
   background: rgba(0, 242, 254, 0.12);
   border: 1px solid rgba(0, 242, 254, 0.3);
   color: #00f2fe;
-  font-size: 1.20rem;
+  font-size: 1.2rem;
   font-weight: 700;
   border-radius: 10px;
   margin-bottom: 12px;
@@ -179,7 +222,7 @@
 }
 
 .description {
-  font-size: 1.20rem;
+  font-size: 1.2rem;
   font-weight: 600;
   color: #cbd5e1;
   line-height: 1.6;
@@ -234,7 +277,7 @@
   right: 16px;
   padding: 6px 16px;
   border-radius: 99px;
-  font-size: 1.30rem;
+  font-size: 1.3rem;
   font-weight: 800;
   z-index: 10;
   backdrop-filter: blur(14px);
@@ -261,7 +304,7 @@
   color: #ff6b52;
   font-family: inherit;
   font-weight: 700;
-  font-size: 1.50rem;
+  font-size: 1.5rem;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
