@@ -180,7 +180,7 @@ function ProductDetails() {
                   </span>
                 </div>
 
-                {!isSold && !isOwner && !isAdmin && (
+                {!isSold && !isOwner && !isAdmin && isLoggedIn && (
                   <div className={classes.reportButtonWrapper}>
                     <Link
                       to={"/reports"}
@@ -207,9 +207,11 @@ function ProductDetails() {
                 }}
               >
                 <h1 className={classes.productTitle}>{product.productName}</h1>
+                {isLoggedIn &&
+                
                 <button
-                  className={`${classes.favoriteBtn} ${
-                    isFavorite ? classes.activeFavorite : ""
+                className={`${classes.favoriteBtn} ${
+                  isFavorite ? classes.activeFavorite : ""
                   }`}
                   onClick={handleToggleFavorite}
                   style={{
@@ -218,9 +220,10 @@ function ProductDetails() {
                     fontSize: "3rem",
                     cursor: "pointer",
                   }}
-                >
+                  >
                   {isFavorite ? "❤️" : "🤍"}
                 </button>
+                }
               </div>
 
               <div className={classes.priceSection}>
