@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useUserContext } from "../../context/UserContext";
 import classes from "./Profile.module.css";
+import PublicProfile from "../PublicProfile/PublicProfile";
 
 function Profile() {
   const { currentUser } = useUserContext();
@@ -79,7 +80,6 @@ function Profile() {
   return (
     <div className={classes.profilePage}>
       <div className={classes.profileCard}>
-        
         <div className={classes.avatarSection}>
           <div className={classes.avatar}>
             {currentUser?.username?.charAt(0).toUpperCase() || "U"}

@@ -46,7 +46,6 @@ export default function App() {
             element={!currentUser ? <LogIn /> : <Navigate to="/" replace />}
           />
 
-
           {currentUser?.role === "admin" && (
             <>
               <Route path="/reports" element={<Report />} />
@@ -55,7 +54,6 @@ export default function App() {
               <Route path="/profile" element={<Profile />} />
             </>
           )}
-
 
           {currentUser?.role === "user" && (
             <>

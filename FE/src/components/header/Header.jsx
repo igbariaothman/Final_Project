@@ -3,6 +3,7 @@ import classes from "./header.module.css";
 import logo from "../../assets/logo.jpg";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../../context/UserContext";
+import PublicProfile from "../../Pages/PublicProfile/PublicProfile";
 
 export default function Header() {
 
@@ -47,6 +48,9 @@ export default function Header() {
                 </li>
                 <li onClick={() => navigation("/inbox")} className={classes.li}>
                   הודעות
+                </li>
+                <li onClick={() => navigation(`/profile/${currentUser.id}`)} className={classes.li}>
+                  המוצרים שלי
                 </li>
               </>
             )}

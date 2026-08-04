@@ -1,13 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect , useContext} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useUserContext } from "../../context/UserContext.jsx";
+import {AlertContext} from "../../context/AlertContext.jsx";
 import classes from "../PublicProfile/PublicProfile.module.css";
 
 function PublicProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { currentUser } = useUserContext();
+  const { showAlert } = useContext(AlertContext);
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,20 +39,15 @@ function PublicProfile() {
   // Function to handle marking a product as sold, with a confirmation prompt
   const handleMarkAsSold = async (e, productId) => {
     e.stopPropagation();
-
-    const confirmed = window.confirm(
-      "האם אתה בטוח שברצונך לסמן מוצר זה כנמכר ולהעביר אותו להיסטוריה?",
-    );
-
-    if (!confirmed) return;
-
+    
     // Make a PUT request to mark the product as sold and refresh the profile data
     try {
       await axios.put(`http://localhost:5000/products/sold/${productId}`);
       fetchProfileData();
+      showAlert("המוצר שלך סומן כנמכר בהצלחה" , "success");
     } catch (error) {
-      alert(error.response?.data?.message || "שגיאה בעדכון סטטוס המוצר");
-    }
+      showAlert("שגיאה בעדכון סטטוס המוצר", "error");
+    } 
   };
 
 
