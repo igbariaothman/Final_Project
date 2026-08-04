@@ -13,6 +13,7 @@ function AdminPage() {
   const [showModal, setShowModal] = useState(false);
   const [selectedReportId, setSelectedReportId] = useState(null);
   const [searchProductId, setSearchProductId] = useState("");
+  const [adminMessage, setAdminMessage] = useState("");
 
   //when open the page first time, fetch all the reports from the backend
   useEffect(() => {

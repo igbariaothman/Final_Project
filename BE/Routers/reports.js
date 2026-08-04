@@ -8,19 +8,112 @@ const db = dbSingleton.getConnection();
 router.post("/", (req, res) => {
   const { productId, userId, reportType, message } = req.body;
 
-  const sql = `
-    INSERT INTO reports
-    (productId, userId, reportType, message)
-    VALUES (?, ?, ?, ?)
+  const checkSql = `
+    SELECT * FROM reports
+    WHERE productId = ? AND userId = ?
   `;
 
-  db.query(sql, [productId, userId, reportType, message], (err, result) => {
+  db.query(checkSql, [productId, userId], (err, reports) => {
     if (err) {
-      console.log("REPORT ERROR:", err);
+      console.log(err);
       return res.status(500).json({ message: "Server error" });
     }
 
-    res.json({ message: "Report sent successfully" });
+    if (reports.length > 0) {
+      return res.status(400).json({
+        message: "You already reported this product",
+      });
+    }
+
+    // Get product owner first
+    db.query(
+      "SELECT userId, productName FROM products WHERE productId = ?",
+      [productId],
+      (err, productResult) => {
+        if (err || productResult.length === 0) {
+          return res.status(404).json({
+            message: "Product not found",
+          });
+        }
+
+        const ownerId = productResult[0].userId;
+        const productName = productResult[0].productName;
+
+        // Check owner
+        if (Number(ownerId) === Number(userId)) {
+          return res.status(400).json({
+            message: "You cannot report your own product",
+          });
+        }
+
+        // Insert report
+        const sql = `
+          INSERT INTO reports
+          (productId, userId, reportType, message)
+          VALUES (?, ?, ?, ?)
+        `;
+
+        db.query(sql, [productId, userId, reportType, message], (err) => {
+          if (err) {
+            console.log("REPORT ERROR:", err);
+            return res.status(500).json({
+              message: "Server error",
+            });
+          }
+
+          let messageToOwner = "";
+
+          if (reportType === "user") {
+            messageToOwner = `
+              A report has been submitted against your account.
+
+              Report type: User Report
+
+              Message:
+              ${message}
+              `;
+          } else if (reportType === "chat") {
+            messageToOwner = `
+              A report has been submitted regarding one of your conversations.
+
+              Report type: Chat Report
+
+              Message:
+              ${message}
+              `;
+          } else if (reportType === "product") {
+            messageToOwner = `
+              Your product "${productName}" has been reported.
+
+              Report type: Product Report
+
+              Message:
+              ${message}
+              `;
+          }
+          
+          const senderId = 8 ;
+          db.query(
+            `INSERT INTO messages
+              (senderId, receiverId, productId, messageText, messageType)
+              VALUES (?, ?, ?, ?, ?)`,
+            [senderId, ownerId, productId, messageToOwner, "notification"],
+            (err) => {
+              if (err) {
+                console.log("MESSAGE ERROR:", err);
+                return res.status(500).json({
+                  message: "Failed to send notification",
+                });
+              }
+
+              res.json({
+                message: "Report sent successfully",
+              });
+            },
+          );
+        });
+      },
+    );
   });
 });
 
@@ -101,7 +194,7 @@ router.delete("/with-product/:id", (req, res) => {
               message: "Product not found",
             });
           }
-console.log("Product owner:", productResult[0]);
+          console.log("Product owner:", productResult[0]);
           const ownerId = productResult[0].userId;
           const productName = productResult[0].productName;
 
