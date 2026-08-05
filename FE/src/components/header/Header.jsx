@@ -1,12 +1,9 @@
-import { useEffect, useState } from "react";
 import classes from "./header.module.css";
 import logo from "../../assets/logo.jpg";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../../context/UserContext";
-import PublicProfile from "../../Pages/PublicProfile/PublicProfile";
 
 export default function Header() {
-
   const { currentUser, logout } = useUserContext();
   const navigation = useNavigate();
 
@@ -17,7 +14,6 @@ export default function Header() {
   return (
     <header className={classes.header}>
       <div className={classes.container}>
-        
         <div className={classes.logoContainer} onClick={() => navigation("/")}>
           <img src={logo} alt="Logo" className={classes.logoImage} />
           <p className={classes.wepName}>יד שניה לסטודנטים</p>
@@ -25,8 +21,6 @@ export default function Header() {
 
         <nav className={classes.nav}>
           <ul className={classes.ul}>
-
-            {/* if the user is admin, show the admin page link */}
             {currentUser?.role === "admin" && (
               <li onClick={() => navigation("/admin")} className={classes.li}>
                 מנהל מערכת
@@ -37,19 +31,27 @@ export default function Header() {
               דף הבית
             </li>
 
-            {/* if the user is logged in show the links for it */}
             {currentUser?.role === "user" && (
               <>
-                <li onClick={() => navigation("/add-product")} className={classes.li}>
+                <li
+                  onClick={() => navigation("/add-product")}
+                  className={classes.li}
+                >
                   הוספת מוצר
                 </li>
-                <li onClick={() => navigation("/favorites")} className={classes.li}>
+                <li
+                  onClick={() => navigation("/favorites")}
+                  className={classes.li}
+                >
                   מועדפים
                 </li>
                 <li onClick={() => navigation("/inbox")} className={classes.li}>
                   הודעות
                 </li>
-                <li onClick={() => navigation(`/profile/${currentUser.id}`)} className={classes.li}>
+                <li
+                  onClick={() => navigation(`/profile/${currentUser.id}`)}
+                  className={classes.li}
+                >
                   המוצרים שלי
                 </li>
               </>
@@ -59,32 +61,30 @@ export default function Header() {
 
         <div className={classes.userActions}>
           {currentUser && (
-            <div 
-              onClick={() => navigation("/profile")} 
+            <div
+              onClick={() => navigation("/profile")}
               className={classes.profileWrapper}
               title="הפרופיל שלי"
             >
-
-              {/* design a profile icon using svg */}
               <div className={classes.profileLogoWrapper}>
-                <svg 
-                  className={classes.profileIcon} 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
+                <svg
+                  className={classes.profileIcon}
+                  viewBox="0 0 24 24"
+                  fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path 
-                    d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12Z" 
-                    stroke="currentColor" 
-                    strokeWidth="2.5" 
-                    strokeLinecap="round" 
+                  <path
+                    d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12Z"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
                     strokeLinejoin="round"
                   />
-                  <path 
-                    d="M6 21V19C6 16.79 7.79 15 10 15H14C16.21 15 18 16.79 18 19V21" 
-                    stroke="currentColor" 
-                    strokeWidth="2.5" 
-                    strokeLinecap="round" 
+                  <path
+                    d="M6 21V19C6 16.79 7.79 15 10 15H14C16.21 15 18 16.79 18 19V21"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                 </svg>
@@ -92,9 +92,11 @@ export default function Header() {
             </div>
           )}
 
-          {/* if the user is not logged in show the login button, otherwise show the logout button */}
           {!currentUser ? (
-            <button onClick={() => navigation("/login")} className={classes.loginBtn}>
+            <button
+              onClick={() => navigation("/login")}
+              className={classes.loginBtn}
+            >
               התחברות
             </button>
           ) : (
@@ -103,7 +105,6 @@ export default function Header() {
             </button>
           )}
         </div>
-
       </div>
     </header>
   );

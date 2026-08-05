@@ -7,64 +7,54 @@
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 
   width: 100%;
-  padding: 18px 0;
+  padding: 12px 0;
   direction: rtl;
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 1000;
   font-family: 'Assistant', sans-serif;
   box-sizing: border-box;
+  background: rgba(13, 19, 34, 0.9);
+  backdrop-filter: blur(25px) saturate(200%);
+  -webkit-backdrop-filter: blur(25px) saturate(200%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
 }
 
 .container {
-  max-width: 1600px;
+  max-width: 1650px;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 40px;
-  background: rgba(13, 19, 34, 0.75);
-  backdrop-filter: blur(30px) saturate(200%);
-  -webkit-backdrop-filter: blur(30px) saturate(200%);
-  border-radius: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow:
-    0 20px 40px -15px rgba(0, 0, 0, 0.8),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
-  width: 93%;
+  padding: 8px 4%;
+  width: 100%;
   box-sizing: border-box;
   position: relative;
   transition: all 0.4s var(--ease);
 }
 
-.container:hover {
-  border-color: rgba(0, 242, 254, 0.45);
-  background: rgba(13, 19, 34, 0.9);
-  box-shadow: 0 0 35px rgba(0, 242, 254, 0.25), 0 25px 50px -10px rgba(0, 0, 0, 0.85);
-}
-
 .logoContainer {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 14px;
   cursor: pointer;
   transition: transform 0.3s var(--ease);
   z-index: 10;
 }
 
 .logoContainer:hover {
-  transform: scale(1.04);
+  transform: scale(1.03);
 }
 
 .logoImage {
-  height: clamp(60px, 7vw, 82px);
+  height: clamp(48px, 6vw, 62px);
   width: auto;
   object-fit: contain;
-  filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.5));
+  filter: drop-shadow(0 0 12px rgba(0, 242, 254, 0.4));
 }
 
 .wepName {
-  font-size: clamp(1.8rem, 2.6vw, 2.5rem);
+  font-size: clamp(1.7rem, 2.3vw, 2.4rem);
   font-weight: 900;
   margin: 0;
   letter-spacing: -0.5px;
@@ -86,21 +76,21 @@
   z-index: 5;
 }
 
-.nav .ul {
+.ul {
   display: flex;
   list-style: none;
-  gap: clamp(28px, 4vw, 55px);
+  gap: clamp(24px, 3.5vw, 48px);
   margin: 0;
   padding: 0;
   align-items: center;
 }
 
 .li {
-  font-size: clamp(1.35rem, 1.8vw, 1.7rem);
+  font-size: clamp(1.3rem, 1.7vw, 1.6rem);
   font-weight: 800;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.9);
   cursor: pointer;
-  padding: 8px 0;
+  padding: 6px 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -132,7 +122,7 @@
 .userActions {
   display: flex;
   align-items: center;
-  gap: 22px;
+  gap: 18px;
   z-index: 10;
 }
 
@@ -141,15 +131,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  order: 2;
 }
 
 .profileLogoWrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.08);
   border: 1.5px solid rgba(255, 255, 255, 0.18);
@@ -157,8 +146,8 @@
 }
 
 .profileIcon {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   color: rgba(255, 255, 255, 0.85);
   transition: color 0.3s ease;
 }
@@ -166,8 +155,8 @@
 .profileWrapper:hover .profileLogoWrapper {
   background: rgba(0, 242, 254, 0.2);
   border-color: var(--brand);
-  box-shadow: 0 0 25px rgba(0, 242, 254, 0.5);
-  transform: scale(1.06);
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+  transform: scale(1.05);
 }
 
 .profileWrapper:hover .profileIcon {
@@ -177,70 +166,70 @@
 .loginBtn,
 .logoutBtn {
   background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-  padding: 12px 32px;
-  border-radius: 16px;
+  padding: 10px 24px;
+  border-radius: 14px;
   border: none;
   color: #060911;
   font-weight: 900;
-  font-size: clamp(1.2rem, 1.4vw, 1.45rem);
+  font-size: clamp(1.15rem, 1.5vw, 1.3rem);
   font-family: 'Assistant', sans-serif;
   cursor: pointer;
   transition: all 0.3s var(--ease);
-  box-shadow: 0 10px 25px rgba(0, 242, 254, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  order: 1;
+  box-shadow: 0 8px 20px rgba(0, 242, 254, 0.3);
   margin: 0;
 }
 
 .loginBtn:hover,
 .logoutBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 32px rgba(0, 242, 254, 0.55);
-  filter: brightness(1.1);
-}
-
-.loginBtn:active,
-.logoutBtn:active {
-  transform: translateY(0);
+  box-shadow: 0 12px 25px rgba(0, 242, 254, 0.45);
 }
 
 @media (max-width: 1150px) {
   .container {
-    padding: 12px 24px;
-    width: 94%;
+    flex-wrap: wrap;
+    justify-content: space-between;
   }
 
   .nav {
     position: static;
     transform: none;
-    left: auto;
-    top: auto;
+    order: 3;
+    width: 100%;
+    margin-top: 8px;
   }
 
-  .nav .ul {
-    gap: 24px;
+  .ul {
+    justify-content: center;
+    width: 100%;
+    gap: 20px;
   }
 }
 
 @media (max-width: 768px) {
   .header {
-    padding: 10px 0;
+    padding: 8px 0;
   }
 
   .container {
-    padding: 10px 18px;
-    width: 95%;
-    border-radius: 20px;
+    padding: 8px 4%;
+  }
+
+  .logoImage {
+    height: 42px;
   }
 
   .wepName {
     font-size: 1.5rem;
   }
 
-  .nav .ul {
-    gap: 16px;
+  .ul {
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .li {
+    font-size: 1.15rem;
   }
 
   .userActions {
@@ -250,31 +239,16 @@
   .loginBtn,
   .logoutBtn {
     padding: 8px 20px;
-    border-radius: 12px;
+    font-size: 1.05rem;
   }
 
   .profileLogoWrapper {
-    width: 46px;
-    height: 46px;
+    width: 42px;
+    height: 42px;
   }
 
   .profileIcon {
-    width: 24px;
-    height: 24px;
-  }
-}
-
-@media (max-width: 580px) {
-  .container {
-    flex-direction: column;
-    gap: 14px;
-    padding: 16px;
-    border-radius: 22px;
-  }
-
-  .nav .ul {
-    gap: 16px;
-    flex-wrap: wrap;
-    justify-content: center;
+    width: 20px;
+    height: 20px;
   }
 }

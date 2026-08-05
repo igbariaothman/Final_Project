@@ -1,8 +1,8 @@
-import { useState, useEffect , useContext} from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useUserContext } from "../../context/UserContext.jsx";
-import {AlertContext} from "../../context/AlertContext.jsx";
+import { AlertContext } from "../../context/AlertContext.jsx";
 import classes from "../PublicProfile/PublicProfile.module.css";
 
 function PublicProfile() {
@@ -14,7 +14,11 @@ function PublicProfile() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Function to fetch user profile data and their products
+  const [activeFilter, setActiveFilter] = useState("all");
+
+  const activeProductsRef = useRef(null);
+  const historyProductsRef = useRef(null);
+
   const fetchProfileData = () => {
     Promise.all([
       fetch(`http://localhost:5000/users/${id}`).then((res) => res.json()),
@@ -35,23 +39,18 @@ function PublicProfile() {
     fetchProfileData();
   }, [id]);
 
-
-  // Function to handle marking a product as sold, with a confirmation prompt
   const handleMarkAsSold = async (e, productId) => {
     e.stopPropagation();
-    
-    // Make a PUT request to mark the product as sold and refresh the profile data
+
     try {
       await axios.put(`http://localhost:5000/products/sold/${productId}`);
       fetchProfileData();
-      showAlert("המוצר שלך סומן כנמכר בהצלחה" , "success");
+      showAlert("המוצר שלך סומן כנמכר בהצלחה", "success");
     } catch (error) {
       showAlert("שגיאה בעדכון סטטוס המוצר", "error");
-    } 
+    }
   };
 
-
-  // Function to get the image URL for a product, handling cases where images may be missing or malformed
   const getImgUrl = (images) => {
     try {
       const arr = typeof images === "string" ? JSON.parse(images) : images;
@@ -77,11 +76,30 @@ function PublicProfile() {
       </div>
     );
 
-    
   const activeProducts = products.filter((p) => p.status !== "sold");
   const soldHistoryProducts = products.filter((p) => p.status === "sold");
 
+  const donationsList = activeProducts.filter(
+    (p) => p.listingType === "donation",
+  );
+  const salesList = activeProducts.filter((p) => p.listingType !== "donation");
+
+  const displayedActiveProducts = activeProducts.filter((p) => {
+    if (activeFilter === "donation") return p.listingType === "donation";
+    if (activeFilter === "sale") return p.listingType !== "donation";
+    return true;
+  });
+
   const isOwner = currentUser && Number(currentUser.id) === Number(id);
+
+  const scrollToActive = (filterType) => {
+    setActiveFilter(filterType);
+    activeProductsRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const scrollToHistory = () => {
+    historyProductsRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <div className={classes.profilePage}>
@@ -98,41 +116,54 @@ function PublicProfile() {
         </div>
 
         <div className={classes.statsRow}>
-          <div className={classes.statItem}>
+          <div
+            className={`${classes.statItem} ${activeFilter === "all" ? classes.activeStat : ""}`}
+            onClick={() => scrollToActive("all")}
+          >
             <span className={classes.statNumber}>{activeProducts.length}</span>
-            <span className={classes.statLabel}>מוצרים פעילים</span>
+            <span className={classes.statLabel}>כל המוצרים הפעילים</span>
           </div>
-          <div className={classes.statItem}>
+
+          <div
+            className={`${classes.statItem} ${activeFilter === "sale" ? classes.activeStat : ""}`}
+            onClick={() => scrollToActive("sale")}
+          >
+            <span className={classes.statNumber}>{salesList.length}</span>
+            <span className={classes.statLabel}>מוצרים למכירה</span>
+          </div>
+
+          <div
+            className={`${classes.statItem} ${activeFilter === "donation" ? classes.activeStat : ""}`}
+            onClick={() => scrollToActive("donation")}
+          >
+            <span className={classes.statNumber}>{donationsList.length}</span>
+            <span className={classes.statLabel}>מוצרים לתרומה</span>
+          </div>
+
+          <div className={classes.statItem} onClick={scrollToHistory}>
             <span className={classes.statNumber}>
               {soldHistoryProducts.length}
             </span>
             <span className={classes.statLabel}>היסטוריית מכירות</span>
           </div>
-          <div className={classes.statItem}>
-            <span className={classes.statNumber}>
-              {
-                activeProducts.filter((p) => p.listingType === "donation")
-                  .length
-              }
-            </span>
-            <span className={classes.statLabel}>תרומות זמינות</span>
-          </div>
         </div>
       </div>
 
-      <div className={classes.productsSection}>
+      <div className={classes.productsSection} ref={activeProductsRef}>
         <h2 className={classes.productsTitle}>
-          מוצרים זמינים של:  {user.username}
+          מוצרים זמינים של: {user.username}
+          {activeFilter === "donation" && " (תרומות בלבד)"}
+          {activeFilter === "sale" && " (למכירה בלבד)"}
         </h2>
 
-        {activeProducts.length === 0 ? (
+        {displayedActiveProducts.length === 0 ? (
           <div className={classes.emptyState}>
             <p className={classes.emptyIcon}>📦</p>
-            <p className={classes.emptyText}>אין מוצרים זמינים כרגע</p>
+            <p className={classes.emptyText}>אין מוצרים בקטגוריה זו</p>
           </div>
         ) : (
           <div className={classes.grid}>
-            {activeProducts.map((p) => (
+            {displayedActiveProducts.map((p) => (
               <div
                 key={p.productId}
                 onClick={() => navigate(`/productDetails/${p.productId}`)}
@@ -186,7 +217,7 @@ function PublicProfile() {
 
       <hr className={classes.divider} />
 
-      <div className={classes.productsSection}>
+      <div className={classes.productsSection} ref={historyProductsRef}>
         <h2 className={classes.productsTitle}>היסטוריית מוצרים (נמכרו)</h2>
 
         {soldHistoryProducts.length === 0 ? (

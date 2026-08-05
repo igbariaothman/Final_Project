@@ -26,7 +26,7 @@ function FilterSlidebar({ isOpen, onClose, setFilters }) {
         }`}
       >
         <div className={classes.header}>
-          <h2>Filters</h2>
+          <h2>סינון</h2>
           <button className={classes.closeBtn} onClick={onClose}>
             X
           </button>

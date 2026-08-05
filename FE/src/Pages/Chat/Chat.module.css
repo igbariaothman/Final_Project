@@ -187,6 +187,7 @@
   justify-content: center;
   box-shadow: 0 6px 16px rgba(0, 242, 254, 0.3);
   transition: all 0.25s ease;
+  margin-top: 0px;
 }
 
 .sendButton:hover {
