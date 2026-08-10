@@ -61,6 +61,11 @@
   box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 242, 254, 0.2);
 }
 
+.adminItem {
+  border-color: rgba(168, 85, 247, 0.4);
+  background: rgba(168, 85, 247, 0.06);
+}
+
 .unread {
   border-color: rgba(0, 242, 254, 0.5);
   background: rgba(0, 242, 254, 0.08);
@@ -79,6 +84,11 @@
   justify-content: center;
   flex-shrink: 0;
   box-shadow: 0 8px 20px rgba(0, 242, 254, 0.3);
+}
+
+.adminAvatar {
+  background: linear-gradient(135deg, #a855f7 0%, #ff4b2b 100%);
+  box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4);
 }
 
 .convInfo {
@@ -107,9 +117,10 @@
 
 .convBottom {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
 }
 
 .productName {
@@ -120,6 +131,16 @@
   padding: 4px 12px;
   border-radius: 10px;
   white-space: nowrap;
+}
+
+.reportTag {
+  font-size: 1rem;
+  color: #f4a836;
+  font-weight: 800;
+  background: rgba(244, 168, 54, 0.15);
+  border: 1px solid rgba(244, 168, 54, 0.3);
+  padding: 4px 10px;
+  border-radius: 8px;
 }
 
 .lastMessage {
@@ -138,6 +159,7 @@
   border-radius: 50%;
   background: #00f2fe;
   flex-shrink: 0;
+  margin-right: auto;
   box-shadow: 0 0 12px #00f2fe;
 }
 

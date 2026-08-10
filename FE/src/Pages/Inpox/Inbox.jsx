@@ -28,9 +28,8 @@ function Inbox() {
         console.error("Error fetching inbox:", err);
         setLoading(false);
       });
-  }, [currentUser]);
+  }, [currentUser, navigate]);
 
-  // Function to format the time for display in the inbox
   const formatTime = (dateStr) => {
     if (!dateStr) return "";
     const date = new Date(dateStr);
@@ -40,7 +39,6 @@ function Inbox() {
     });
   };
 
-  // Function to get the contact ID for a conversation, determining whether the current user is the sender or receiver
   const getContactId = (conv) => {
     return Number(conv.senderId) === currentUser.id
       ? Number(conv.receiverId)
@@ -61,36 +59,48 @@ function Inbox() {
             {conversations.map((conv, index) => {
               const isUnread =
                 conv.isRead === 0 && Number(conv.receiverId) === currentUser.id;
+              const isAdmin = conv.contactRole === "admin" || conv.isAdminChat;
 
               return (
                 <div
                   key={index}
-                  className={`${classes.conversationItem} ${isUnread ? classes.unread : ""}`}
+                  className={`${classes.conversationItem} ${
+                    isUnread ? classes.unread : ""
+                  } ${isAdmin ? classes.adminItem : ""}`}
                   onClick={() => setSelectedChat(conv)}
                 >
-                  <div className={classes.avatar}>
-                    {conv.contactRole === "admin"
-                      ? "מנהל"
+                  <div
+                    className={`${classes.avatar} ${
+                      isAdmin ? classes.adminAvatar : ""
+                    }`}
+                  >
+                    {isAdmin
+                      ? "🛡️"
                       : conv.contactName?.charAt(0).toUpperCase() || "?"}
                   </div>
 
                   <div className={classes.convInfo}>
                     <div className={classes.convTop}>
                       <span className={classes.contactName}>
-                        {conv.contactRole === "admin"
-                          ? "מנהל מערכת (Admin)"
-                          : conv.contactName}
+                        {isAdmin ? "מנהל מערכת (Admin)" : conv.contactName}
                       </span>
                       <span className={classes.convTime}>
                         {formatTime(conv.created_at)}
                       </span>
                     </div>
+
                     <div className={classes.convBottom}>
                       <span className={classes.productName}>
-                        🛍 {conv.productName}
+                        🛍 {conv.productName || "מוצר כללי"}
                       </span>
+                      {isAdmin && (
+                        <span className={classes.reportTag}>
+                          שיחה מול הנהלה
+                        </span>
+                      )}
                       {isUnread && <span className={classes.unreadDot} />}
                     </div>
+
                     <p className={classes.lastMessage}>{conv.messageText}</p>
                   </div>
                 </div>
@@ -105,11 +115,13 @@ function Inbox() {
           productId={selectedChat.productId}
           sellerId={getContactId(selectedChat)}
           sellerName={
-            selectedChat.contactRole === "admin"
+            selectedChat.contactRole === "admin" || selectedChat.isAdminChat
               ? "מנהל מערכת (Admin)"
               : selectedChat.contactName
           }
-          isAdminChat={selectedChat.contactRole === "admin"}
+          isAdminChat={
+            selectedChat.contactRole === "admin" || selectedChat.isAdminChat
+          }
           onClose={() => setSelectedChat(null)}
         />
       )}

@@ -1,8 +1,9 @@
-import React, { useEffect, useState ,useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../../context/UserContext";
 import classes from "./adminPage.module.css";
 import { AlertContext } from "../../context/AlertContext";
+import Chat from "../Chat/Chat";
 
 function AdminPage() {
   const [reports, setReports] = useState([]);
@@ -14,8 +15,8 @@ function AdminPage() {
   const [selectedReportId, setSelectedReportId] = useState(null);
   const [searchProductId, setSearchProductId] = useState("");
   const [adminMessage, setAdminMessage] = useState("");
+  const [selectedAdminChat, setSelectedAdminChat] = useState(null);
 
-  //when open the page first time, fetch all the reports from the backend
   useEffect(() => {
     fetch("http://localhost:5000/reports")
       .then((res) => res.json())
@@ -27,7 +28,6 @@ function AdminPage() {
       });
   }, []);
 
-  // Function to get the label for the badge based on report type
   const getBadgeLabel = (type) => {
     if (type === "product") return "דיווח מוצר";
     if (type === "user") return "דיווח משתמש";
@@ -35,7 +35,6 @@ function AdminPage() {
     return type;
   };
 
-  // Function to delete a report by its ID
   async function deleteReport(reportId) {
     try {
       const res = await fetch(`http://localhost:5000/reports/${reportId}`, {
@@ -51,7 +50,6 @@ function AdminPage() {
     }
   }
 
-  // Function to delete a product and its associated report
   async function deleteProductAndReport(reportId) {
     if (!reportId) return;
     try {
@@ -80,7 +78,6 @@ function AdminPage() {
     }
   }
 
-  // Function to handle navigation to a product's details page based on the entered product ID
   const handleGoToProduct = async (e) => {
     e.preventDefault();
     const productId = searchProductId.trim();
@@ -107,13 +104,13 @@ function AdminPage() {
 
   return (
     <div className={classes.adminContainer}>
-      <h1 className={classes.adminTitle}>ניהול דיווחים</h1>
+      <h1 className={classes.adminTitle}>ניהול דיווחים ומודעות</h1>
 
       <div className={classes.filterBar}>
         <form onSubmit={handleGoToProduct} className={classes.searchForm}>
           <input
             type="number"
-            placeholder="הכנס מזהה מוצר"
+            placeholder="הכנס מזהה מוצר..."
             value={searchProductId}
             onChange={(e) => setSearchProductId(e.target.value)}
             className={classes.searchInput}
@@ -145,33 +142,38 @@ function AdminPage() {
         ) : (
           filteredReports.map((report) => (
             <div key={report.reportId} className={classes.reportCard}>
+              <div className={classes.cardTopHeader}>
+                <span className={classes.badgeReportType}>
+                  {getBadgeLabel(report.reportType)}
+                </span>
+                <span className={classes.reporterName}>
+                  <strong>מדווח:</strong> {report.username || "משתמש"}
+                </span>
+                <span className={classes.sellerNameBadge}>
+                  <strong>בעל המוצר:</strong> {report.sellerName || "לא צוין"}
+                </span>
+                <span className={classes.reportIdLabel}>
+                  דיווח #{report.reportId}
+                </span>
+              </div>
+
               <div
                 className={classes.cardProductInfo}
                 onClick={() => navigate(`/productDetails/${report.productId}`)}
               >
-                <span className={classes.badgeProductId}>
-                  מוצר #{report.productId}
-                </span>
-                <h3 className={classes.productName}>
-                  {report.productName || "מוצר כללי"}
-                </h3>
+                <div className={classes.productTitleRow}>
+                  <span className={classes.badgeProductId}>
+                    מוצר #{report.productId}
+                  </span>
+                  <h3 className={classes.productName}>
+                    {report.productName || "מוצר כללי"}
+                  </h3>
+                </div>
                 <span className={classes.productPrice}>
                   {report.price
                     ? `₪${Number(report.price).toLocaleString()}`
                     : "חינם / תרומה"}
                 </span>
-              </div>
-
-              <div
-                className={classes.cardReporterInfo}
-                onClick={() => navigate(`/productDetails/${report.productId}`)}
-              >
-                <span className={classes.badgeReportType}>
-                  {getBadgeLabel(report.reportType)}
-                </span>
-                <p className={classes.reporterName}>
-                  <strong>מדווח:</strong> {report.username || "משתמש"}
-                </p>
               </div>
 
               <div className={classes.cardMessageBox}>
@@ -181,10 +183,29 @@ function AdminPage() {
                 </p>
               </div>
 
+              {report.userReply && (
+                <div className={classes.cardReplyBox}>
+                  <span className={classes.replyLabel}>
+                    תגובת בעל המוצר/המשתמש:
+                  </span>
+                  <p className={classes.replyText}>{report.userReply}</p>
+                </div>
+              )}
+
               <div className={classes.cardActions}>
-                <span className={classes.reportIdLabel}>
-                  דיווח #{report.reportId}
-                </span>
+                <button
+                  type="button"
+                  className={classes.btnContactSeller}
+                  onClick={() =>
+                    setSelectedAdminChat({
+                      productId: report.productId,
+                      sellerId: report.sellerId || report.userId,
+                      sellerName: report.sellerName || "בעל המוצר",
+                    })
+                  }
+                >
+                  💬 צ'אט מול בעל המוצר
+                </button>
 
                 <button
                   type="button"
@@ -249,6 +270,16 @@ function AdminPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {selectedAdminChat && (
+        <Chat
+          productId={selectedAdminChat.productId}
+          sellerId={selectedAdminChat.sellerId}
+          sellerName={selectedAdminChat.sellerName}
+          isAdminChat={true}
+          onClose={() => setSelectedAdminChat(null)}
+        />
       )}
     </div>
   );
