@@ -4,6 +4,7 @@ import { useUserContext } from "../../context/UserContext";
 import classes from "./adminPage.module.css";
 import { AlertContext } from "../../context/AlertContext";
 import Chat from "../Chat/Chat";
+import AdminStats from "../AdminStats/AdminStats";
 
 function AdminPage() {
   const [reports, setReports] = useState([]);
@@ -105,6 +106,9 @@ function AdminPage() {
   return (
     <div className={classes.adminContainer}>
       <h1 className={classes.adminTitle}>ניהול דיווחים ומודעות</h1>
+
+      {/* דאשבורד סטטיסטיקות וגרפים */}
+      <AdminStats />
 
       <div className={classes.filterBar}>
         <form onSubmit={handleGoToProduct} className={classes.searchForm}>

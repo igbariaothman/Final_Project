@@ -1,0 +1,153 @@
+@import url("https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800;900&display=swap");
+
+.statsContainer {
+  margin-bottom: 3.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.2rem;
+  direction: rtl;
+  font-family: "Assistant", sans-serif;
+}
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.8rem;
+}
+
+.kpiCard {
+  background: rgba(17, 24, 39, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1.8rem;
+  padding: 2.2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.2rem;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.kpiCard:hover {
+  transform: translateY(-4px);
+}
+
+.kpiCyan:hover {
+  border-color: rgba(0, 242, 254, 0.5);
+  box-shadow: 0 1rem 3rem rgba(0, 242, 254, 0.15);
+}
+
+.kpiOrange:hover {
+  border-color: rgba(244, 168, 54, 0.5);
+  box-shadow: 0 1rem 3rem rgba(244, 168, 54, 0.15);
+}
+
+.kpiPurple:hover {
+  border-color: rgba(168, 85, 247, 0.5);
+  box-shadow: 0 1rem 3rem rgba(168, 85, 247, 0.15);
+}
+
+.kpiGreen:hover {
+  border-color: rgba(0, 255, 170, 0.5);
+  box-shadow: 0 1rem 3rem rgba(0, 255, 170, 0.15);
+}
+
+.kpiHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.kpiIcon {
+  font-size: 1.6rem;
+}
+
+.kpiLabel {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.kpiValue {
+  font-size: 2.6rem;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.chartsGrid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 2rem;
+}
+
+.chartCard {
+  background: rgba(17, 24, 39, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1.8rem;
+  padding: 2.2rem;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+}
+
+.fullWidthChart {
+  grid-column: 1 / -1;
+}
+
+.chartTitle {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-top: 0;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.loading {
+  color: #cbd5e1;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  padding: 3rem 0;
+}
+
+.customTooltip {
+  background: rgba(13, 19, 34, 0.95);
+  border: 1px solid #00f2fe;
+  border-radius: 12px;
+  padding: 12px 16px;
+  direction: rtl;
+  text-align: right;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+}
+
+.tooltipTitle {
+  margin: 0 0 6px 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #00f2fe;
+}
+
+.tooltipCount {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.tooltipCount strong {
+  color: #00ffaa;
+  font-size: 1.1rem;
+}
+@media (max-width: 1024px) {
+  .chartsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .fullWidthChart {
+    grid-column: span 1;
+  }
+}
