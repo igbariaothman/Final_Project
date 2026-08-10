@@ -4,7 +4,7 @@ const dbSingleton = require("../db/dbSingleton");
 
 const db = dbSingleton.getConnection();
 
-//Send a report about a product
+// Send a report about a product
 router.post("/", (req, res) => {
   const { productId, userId, reportType, message } = req.body;
 
@@ -25,7 +25,6 @@ router.post("/", (req, res) => {
       });
     }
 
-    // Get product owner first
     db.query(
       "SELECT userId, productName FROM products WHERE productId = ?",
       [productId],
@@ -39,14 +38,12 @@ router.post("/", (req, res) => {
         const ownerId = productResult[0].userId;
         const productName = productResult[0].productName;
 
-        // Check owner
         if (Number(ownerId) === Number(userId)) {
           return res.status(400).json({
             message: "You cannot report your own product",
           });
         }
 
-        // Insert report
         const sql = `
           INSERT INTO reports
           (productId, userId, reportType, message)
@@ -64,35 +61,20 @@ router.post("/", (req, res) => {
           let messageToOwner = "";
 
           if (reportType === "user") {
-            messageToOwner = `
-              A report has been submitted against your account.
-
-              Report type: User Report
-
-              Message:
-              ${message}
-              `;
+            messageToOwner = `A report has been submitted against your account.
+Report type: User Report
+Message: ${message}`;
           } else if (reportType === "chat") {
-            messageToOwner = `
-              A report has been submitted regarding one of your conversations.
-
-              Report type: Chat Report
-
-              Message:
-              ${message}
-              `;
+            messageToOwner = `A report has been submitted regarding one of your conversations.
+Report type: Chat Report
+Message: ${message}`;
           } else if (reportType === "product") {
-            messageToOwner = `
-              Your product "${productName}" has been reported.
-
-              Report type: Product Report
-
-              Message:
-              ${message}
-              `;
+            messageToOwner = `Your product "${productName}" has been reported.
+Report type: Product Report
+Message: ${message}`;
           }
-          
-          const senderId = 8 ;
+
+          const senderId = 14;
           db.query(
             `INSERT INTO messages
               (senderId, receiverId, productId, messageText, messageType)
@@ -109,30 +91,26 @@ router.post("/", (req, res) => {
               res.json({
                 message: "Report sent successfully",
               });
-            },
+            }
           );
         });
-      },
+      }
     );
   });
 });
 
-// get all reports for admin review
+// Get all reports for admin review
 router.get("/", (req, res) => {
   const sql = `
     SELECT 
       reports.*,
       users.username,
       products.*
-
     FROM reports
-
     JOIN users
       ON reports.userId = users.id
-
     JOIN products
       ON reports.productId = products.productId
-
     ORDER BY reports.createdAt DESC
   `;
 
@@ -146,43 +124,50 @@ router.get("/", (req, res) => {
   });
 });
 
-// delete a report by reportId (admin only)
+// Delete a report by reportId (admin only) -> מחיקת תלונה ונעילת צ'אט
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
 
-  const sql = "DELETE FROM reports WHERE reportId = ?";
-
-  db.query(sql, [id], (err, result) => {
-    if (err) {
-      console.log("DELETE REPORT ERROR:", err);
-      return res.status(500).json({ message: "Server error" });
-    }
-
-    if (result.affectedRows === 0) {
+  db.query("SELECT * FROM reports WHERE reportId = ?", [id], (err, reportResult) => {
+    if (err || reportResult.length === 0) {
       return res.status(404).json({ message: "Report not found" });
     }
 
-    res.json({ message: "Report deleted successfully" });
+    const report = reportResult[0];
+    const adminId = 14;
+    const lockMessage = "התלונה נסגרה על ידי המנהל. הצ'אט ננעל לפניות נוספות.";
+
+    db.query(
+      `INSERT INTO messages (senderId, receiverId, productId, messageText, messageType)
+       VALUES (?, ?, ?, ?, 'closed')`,
+      [adminId, report.userId, report.productId, lockMessage],
+      () => {
+        db.query("DELETE FROM reports WHERE reportId = ?", [id], (err) => {
+          if (err) return res.status(500).json({ message: "Server error" });
+          res.json({ message: "Report deleted successfully" });
+        });
+      }
+    );
   });
 });
 
-// delete product and report by productId (admin only) - also deletes all related reports
+
+// delete product and report by productId (admin only)
 router.delete("/with-product/:id", (req, res) => {
   const reportId = req.params.id;
   const { adminId, adminMessage } = req.body;
 
-  // 1) Get product id from report
+  // 1) Get product id and reporter id from report
   db.query(
-    "SELECT productId FROM reports WHERE reportId = ?",
+    "SELECT productId, userId FROM reports WHERE reportId = ?",
     [reportId],
     (err, reportResult) => {
       if (err || reportResult.length === 0) {
-        return res.status(404).json({
-          message: "Report not found",
-        });
+        return res.status(404).json({ message: "Report not found" });
       }
 
       const productId = reportResult[0].productId;
+      const reporterId = reportResult[0].userId;
 
       // 2) Get product owner
       db.query(
@@ -190,57 +175,46 @@ router.delete("/with-product/:id", (req, res) => {
         [productId],
         (err, productResult) => {
           if (err || productResult.length === 0) {
-            return res.status(404).json({
-              message: "Product not found",
-            });
+            return res.status(404).json({ message: "Product not found" });
           }
-          console.log("Product owner:", productResult[0]);
+
           const ownerId = productResult[0].userId;
           const productName = productResult[0].productName;
 
-          // 3) Send message to product owner
-          const message = `Your product "${productName}" was removed by an administrator.
+          const closingMessage = `המוצר "${productName}" הוסר מהמערכת על ידי המנהל. סיבה: ${adminMessage || "ללא פירוט"}. הפנייה נסגרה.`;
 
-          Admin message:
-          ${adminMessage}`;
+          // 3) שליחת הודעת סגירה ונעילה לבעל המוצר
           db.query(
             `INSERT INTO messages
             (senderId, receiverId, productId, messageText, messageType)
             VALUES (?, ?, ?, ?, ?)`,
-            [adminId, ownerId, productId, message, "notification"],
-            (err, result) => {
-              if (err) {
-                console.log("MESSAGE ERROR:", err);
-                return res.status(500).json({
-                  message: "Failed to send message",
-                });
-              }
+            [adminId || 14, ownerId, productId, closingMessage, "closed"],
+            (err) => {
+              if (err) console.log("MESSAGE ERROR OWNER:", err);
 
-              console.log("MESSAGE INSERTED:", result);
-
+              // 4) שליחת הודעת סגירה ונעילה למדווח
               db.query(
-                "SELECT * FROM messages ORDER BY id DESC LIMIT 1",
-                (err, rows) => {
-                  console.log("LAST MESSAGE:", rows);
-                },
+                `INSERT INTO messages
+                (senderId, receiverId, productId, messageText, messageType)
+                VALUES (?, ?, ?, ?, ?)`,
+                [adminId || 14, reporterId, productId, `הפנייה בנושא המוצר "${productName}" נסגרה. המוצר הוסר מהמערכת.`, "closed"],
+                (err) => {
+                  if (err) console.log("MESSAGE ERROR REPORTER:", err);
+
+                  // 5) מחיקת המוצר והדיווח
+                  db.query("DELETE FROM products WHERE productId = ?", [productId]);
+                  db.query("DELETE FROM reports WHERE reportId = ?", [reportId]);
+
+                  res.json({
+                    message: "Product, report deleted, and chat closed successfully",
+                  });
+                }
               );
-              // delete product...
-
-              // 4) Delete product
-              db.query("DELETE FROM products WHERE productId = ?", [productId]);
-
-              // 5) Delete report
-              db.query("DELETE FROM reports WHERE reportId = ?", [reportId]);
-
-              res.json({
-                message: "Product, report deleted and user notified",
-              });
-            },
+            }
           );
-        },
+        }
       );
-    },
+    }
   );
 });
-
 module.exports = router;

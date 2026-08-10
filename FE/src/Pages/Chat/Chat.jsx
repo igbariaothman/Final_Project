@@ -32,12 +32,7 @@ function Chat({ productId, sellerId, sellerName, isAdminChat, onClose }) {
     });
 
     socketRef.current.on("receive_message", (data) => {
-      if (
-        Number(data.productId) === Number(productId) &&
-        Number(data.senderId) !== Number(currentUser.id)
-      ) {
-        setMessages((prev) => [...prev, data]);
-      }
+      setMessages((prev) => [...prev, data]);
     });
 
     return () => {
@@ -51,8 +46,17 @@ function Chat({ productId, sellerId, sellerName, isAdminChat, onClose }) {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // בדיקת נעילה - אם קיימת הודעת סגירה מסוג closed או הודעת הסרת מוצר
+  const isChatLocked = messages.some(
+    (msg) =>
+      msg.messageType === "closed" ||
+      (msg.messageText &&
+        msg.messageText.includes("was removed by an administrator")) ||
+      (msg.messageText && msg.messageText.includes("הוסר מהמערכת")),
+  );
+
   const sendMessage = () => {
-    if (newMessage.trim() === "" || !currentUser?.id) return;
+    if (newMessage.trim() === "" || !currentUser?.id || isChatLocked) return;
 
     const messageData = {
       senderId: currentUser.id,
@@ -96,6 +100,18 @@ function Chat({ productId, sellerId, sellerName, isAdminChat, onClose }) {
       <div className={classes.messagesArea}>
         {messages.map((msg, index) => {
           const isOwnMessage = Number(msg.senderId) === Number(currentUser?.id);
+          const isClosedType = msg.messageType === "closed";
+
+          if (isClosedType) {
+            return (
+              <div key={index} className={classes.systemMessageRow}>
+                <div className={classes.systemMessageBubble}>
+                  🔒 {msg.messageText}
+                </div>
+              </div>
+            );
+          }
+
           return (
             <div
               key={index}
@@ -115,22 +131,27 @@ function Chat({ productId, sellerId, sellerName, isAdminChat, onClose }) {
         <div ref={scrollRef} />
       </div>
 
-      <div className={classes.inputArea}>
-        <input
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder={isAdminChat ? "כתוב הודעה למנהל..." : "הקלד הודעה..."}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-        />
+      {isChatLocked ? (
+        <div className={classes.lockedNotice}>
+          🔒 פנייה זו נסגרה והמוצר הוסר. לא ניתן להשיב בצ'אט זה.
+        </div>
+      ) : (
+        <div className={classes.inputArea}>
+          <input
+            type="text"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder={isAdminChat ? "כתוב הודעה למנהל..." : "הקלד הודעה..."}
+            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          />
 
-        <button className={classes.sendButton} onClick={sendMessage}>
-          שלח
-        </button>
-      </div>
+          <button className={classes.sendButton} onClick={sendMessage}>
+            שלח
+          </button>
+        </div>
+      )}
     </div>
   );
 }
 
 export default Chat;
-  
