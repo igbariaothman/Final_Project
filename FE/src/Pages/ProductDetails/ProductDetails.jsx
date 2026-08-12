@@ -82,7 +82,6 @@ function ProductDetails() {
 
   if (!product) return <h2 className={classes.loading}>טוען...</h2>;
 
-
   // Function to handle sending a message to the product owner
   const handleSendMessage = () => {
     if (!isLoggedIn) {
@@ -103,11 +102,9 @@ function ProductDetails() {
     return `http://localhost:5000${path}`;
   };
 
-  
   const isSold = product.status === "sold";
   const isOwner = Number(userId) === Number(product.userId);
   const isAdmin = currentUser?.role === "admin";
-
 
   return (
     <>
@@ -188,7 +185,7 @@ function ProductDetails() {
                         localStorage.setItem("productId", product.productId)
                       }
                     >
-                      דיווח 
+                      דיווח
                     </Link>
                   </div>
                 )}
@@ -207,23 +204,22 @@ function ProductDetails() {
                 }}
               >
                 <h1 className={classes.productTitle}>{product.productName}</h1>
-                {isLoggedIn &&
-                
-                <button
-                className={`${classes.favoriteBtn} ${
-                  isFavorite ? classes.activeFavorite : ""
-                  }`}
-                  onClick={handleToggleFavorite}
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    fontSize: "3rem",
-                    cursor: "pointer",
-                  }}
+                {isLoggedIn && (
+                  <button
+                    className={`${classes.favoriteBtn} ${
+                      isFavorite ? classes.activeFavorite : ""
+                    }`}
+                    onClick={handleToggleFavorite}
+                    style={{
+                      background: "transparent",
+                      border: "none",
+                      fontSize: "3rem",
+                      cursor: "pointer",
+                    }}
                   >
-                  {isFavorite ? "❤️" : "🤍"}
-                </button>
-                }
+                    {isFavorite ? "❤️" : "🤍"}
+                  </button>
+                )}
               </div>
 
               <div className={classes.priceSection}>
@@ -263,7 +259,7 @@ function ProductDetails() {
               )}
 
               <div className={classes.sellerInfo}>
-                <p className={classes.sellerLabel}>על המכר :  </p>
+                <p className={classes.sellerLabel}>על המכר : </p>
                 <div className={classes.sellerRow}>
                   <div
                     className={classes.avatar}

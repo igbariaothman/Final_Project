@@ -35,10 +35,14 @@ const UserContextProvider = ({ children }) => {
   const login = async (userData) => {
     try {
       const response = await axios.post("/users/login", userData);
-      setCurrentUser(response.data.user);
+      const user = response.data.user;
+      setCurrentUser(user);
       setErrorMsg("");
       localStorage.setItem("session", "true");
-      navigate("/");
+      if (user.role === "admin") 
+        navigate("/admin");
+      if (user.role === "user")
+        navigate("/");
     } catch (error) {
       setErrorMsg(error?.response?.data?.message || "שגיאה בהתחברות למערכת");
     }

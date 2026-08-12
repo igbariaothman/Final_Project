@@ -1,4 +1,3 @@
-
 import classes from "./filterSlidebar.module.css";
 import { useState } from "react";
 
@@ -15,6 +14,24 @@ function FilterSlidebar({ isOpen, onClose, setFilters }) {
       productstatus,
       priceRange: { min: priceRange.min, max: priceRange.max },
     });
+    onClose(false) ;
+  };
+
+  const handleResetFilters = () => {
+    setCategory("");
+    setListingType("sale");
+    setProductStatus("");
+    
+    setFilters({
+      category: "",
+      listingType: "sale",
+      productstatus: "",
+      priceRange: {
+        min: 0,
+        max: 5000,
+      },
+    });
+    onClose(false);
   };
 
   return (
@@ -128,12 +145,7 @@ function FilterSlidebar({ isOpen, onClose, setFilters }) {
 
         <button
           className={classes.resetBtn}
-          onClick={() => {
-            setCategory("");
-            setListingType("sale");
-            setProductStatus("");
-            setPriceRange({ min: 0, max: 500 });
-          }}
+          onClick={() => {handleResetFilters()}}
         >
           איפוס סינון
         </button>

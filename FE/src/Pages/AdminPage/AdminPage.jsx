@@ -107,9 +107,6 @@ function AdminPage() {
     <div className={classes.adminContainer}>
       <h1 className={classes.adminTitle}>ניהול דיווחים ומודעות</h1>
 
-      {/* דאשבורד סטטיסטיקות וגרפים */}
-      <AdminStats />
-
       <div className={classes.filterBar}>
         <form onSubmit={handleGoToProduct} className={classes.searchForm}>
           <input
@@ -285,6 +282,11 @@ function AdminPage() {
           onClose={() => setSelectedAdminChat(null)}
         />
       )}
+
+      <div className={classes.state}>
+        {/* דאשבורד סטטיסטיקות וגרפים */}
+        <AdminStats />
+      </div>
     </div>
   );
 }

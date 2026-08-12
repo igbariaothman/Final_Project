@@ -20,6 +20,12 @@ function Chat({ productId, sellerId, sellerName, isAdminChat, onClose }) {
       `http://localhost:5000/messages/history/${productId}/${currentUser.id}/${sellerId}`,
     )
       .then((res) => res.json())
+      .then ((data) => {
+        console.log("chat history" , data)
+        if (Array.isArray(data)) {
+          setMessages(data);
+        }})
+
       .then((data) => {
         if (Array.isArray(data)) setMessages(data);
       })

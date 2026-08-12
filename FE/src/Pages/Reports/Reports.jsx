@@ -2,24 +2,26 @@ import { useState , useContext} from "react";
 import classes from "../Reports/report.module.css";
 import { useUserContext } from "../../context/UserContext.jsx"; 
 import { AlertContext } from "../../context/AlertContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 function Reports() {
   const [reportType, setReportType] = useState("");
   const [message, setMessage] = useState("");
   const { currentUser } = useUserContext();
   const { showAlert } = useContext(AlertContext);
+  const navigate = useNavigate();
 
 
   // Function to send a report to the server
   async function sendMessage() {
 
     if (!currentUser.id) {
-      showAlert("יש להתחבר כדי לשלוח דיווח", "error");
+      showAlert("יש להתחבר כדי לשלוח דיווח", "warning");
       return;
     }
 
     if (!reportType || !message.trim()) {
-      showAlert("נא למלא את כל השדות", "error");
+      showAlert("נא למלא את כל השדות", "warning");
       return;
     }
 
@@ -47,6 +49,7 @@ function Reports() {
       showAlert("הדיווח נשלח בהצלחה", "success");
       setMessage("");
       setReportType("");
+      navigate("/");
     } catch (err) {
       console.error("Error sending report:", err);
       showAlert("שגיאת שרת", "error");

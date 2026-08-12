@@ -422,6 +422,11 @@
   font-family: "Assistant", sans-serif;
 }
 
+.state {
+  margin-top: 60px;
+  padding-top :60px
+}
+
 @media (max-width: 768px) {
   .filterBar {
     flex-direction: column;

@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import classes from "./home.module.css";
 import { useUserContext } from "../../context/UserContext";
 import FilterSlidebar from "../FilterSlidebar/FilterSlidebar";
+import { AlertContext } from "../../context/AlertContext";
 
 function Home() {
   const [products, setProducts] = useState([]);
@@ -11,6 +12,7 @@ function Home() {
   const [isSlidebarOpen, setIsSlidebarOpen] = useState(false);
   const navigate = useNavigate();
   const { currentUser } = useUserContext();
+  const { showAlert } = useContext(AlertContext);
   const [sortType, setSortType] = useState("");
   const [filters, setFilters] = useState({
     category: "",
@@ -94,13 +96,13 @@ function Home() {
       if (!res.ok) return;
 
       setProducts((prev) => prev.filter((p) => p.productId !== productId));
+      showAlert("המוצר נמחק בהצלחה", "success");
     } catch (err) {
-      console.log(err);
+      showAlert("שגיאה במחיקת המוצר", "error");
     }
   }
 
   const filtered = filteredProduct();
-
   const filteredProducts = filtered.filter((product) => {
     if (filters.category && product.category !== filters.category) return false;
     if (filters.listingType && product.listingType !== filters.listingType)

@@ -21,7 +21,7 @@ router.post("/", (req, res) => {
 
     if (reports.length > 0) {
       return res.status(400).json({
-        message: "You already reported this product",
+        message: "כבר דיווחת על מוצר זה",
       });
     }
 
@@ -62,16 +62,16 @@ router.post("/", (req, res) => {
 
           if (reportType === "user") {
             messageToOwner = `A report has been submitted against your account.
-Report type: User Report
-Message: ${message}`;
+            Report type: User Report
+            Message: ${message}`;
           } else if (reportType === "chat") {
             messageToOwner = `A report has been submitted regarding one of your conversations.
-Report type: Chat Report
-Message: ${message}`;
+            Report type: Chat Report
+            Message: ${message}`;
           } else if (reportType === "product") {
             messageToOwner = `Your product "${productName}" has been reported.
-Report type: Product Report
-Message: ${message}`;
+            Report type: Product Report
+            Message: ${message}`;
           }
 
           const senderId = 14;
@@ -91,10 +91,10 @@ Message: ${message}`;
               res.json({
                 message: "Report sent successfully",
               });
-            }
+            },
           );
         });
-      }
+      },
     );
   });
 });
@@ -125,32 +125,140 @@ router.get("/", (req, res) => {
 });
 
 // Delete a report by reportId (admin only) -> מחיקת תלונה ונעילת צ'אט
+// router.delete("/:id", (req, res) => {
+//   const { id } = req.params;
+
+//   db.query(
+//     "SELECT * FROM reports WHERE reportId = ?",
+//     [id],
+//     (err, reportResult) => {
+//       if (err || reportResult.length === 0) {
+//         return res.status(404).json({ message: "Report not found" });
+//       }
+
+//       const report = reportResult[0];
+//       const adminId = 14;
+//       const lockMessage =
+//         "התלונה נסגרה על ידי המנהל. הצ'אט ננעל לפניות נוספות.";
+
+//       db.query(
+//         `UPDATE messages
+//         SET messageType = 'closed'
+//         WHERE productId = ?
+//         AND messageType = 'chat'`,
+//         [report.productId],
+//         (err) => {
+//           if (err) {
+//             console.log("UPDATE MESSAGE TYPE ERROR:", err);
+//             return res.status(500).json({
+//               message: "Failed to update chat messages",
+//             });
+//           }
+
+//         },
+//       );
+
+//       db.query(
+//         `INSERT INTO messages (senderId, receiverId, productId, messageText, messageType)
+//        VALUES (?, ?, ?, ?, 'closed')`,
+//         [adminId, report.userId, report.productId, lockMessage],
+//         () => {
+//           db.query("DELETE FROM reports WHERE reportId = ?", [id], (err) => {
+//             if (err) return res.status(500).json({ message: "Server error" });
+//             res.json({ message: "Report deleted successfully" });
+//           });
+//         },
+//       );
+//     },
+//   );
+// });
+
+
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
 
-  db.query("SELECT * FROM reports WHERE reportId = ?", [id], (err, reportResult) => {
-    if (err || reportResult.length === 0) {
-      return res.status(404).json({ message: "Report not found" });
-    }
-
-    const report = reportResult[0];
-    const adminId = 14;
-    const lockMessage = "התלונה נסגרה על ידי המנהל. הצ'אט ננעל לפניות נוספות.";
-
-    db.query(
-      `INSERT INTO messages (senderId, receiverId, productId, messageText, messageType)
-       VALUES (?, ?, ?, ?, 'closed')`,
-      [adminId, report.userId, report.productId, lockMessage],
-      () => {
-        db.query("DELETE FROM reports WHERE reportId = ?", [id], (err) => {
-          if (err) return res.status(500).json({ message: "Server error" });
-          res.json({ message: "Report deleted successfully" });
+  // 1. Get the report
+  db.query(
+    "SELECT * FROM reports WHERE reportId = ?",
+    [id],
+    (err, reportResult) => {
+      if (err) {
+        console.log("GET REPORT ERROR:", err);
+        return res.status(500).json({
+          message: "Server error",
         });
       }
-    );
-  });
-});
 
+      if (reportResult.length === 0) {
+        return res.status(404).json({
+          message: "Report not found",
+        });
+      }
+
+      const report = reportResult[0];
+
+      const adminId = 14;
+
+      const lockMessage =
+        "התלונה נסגרה על ידי המנהל. הצ'אט ננעל לפניות נוספות.";
+
+      // 2. Change all chat messages for this product to closed
+      db.query(
+        `UPDATE messages
+         SET messageType = 'closed'
+         WHERE productId = ?
+         AND messageType = 'chat'`,
+        [report.productId],
+        (err) => {
+          if (err) {
+            console.log("UPDATE MESSAGE TYPE ERROR:", err);
+
+            return res.status(500).json({
+              message: "Failed to close chat",
+            });
+          }
+
+          // 3. Add closing message
+          db.query(
+            `INSERT INTO messages
+            (senderId, receiverId, productId, messageText, messageType)
+            VALUES (?, ?, ?, ?, ?)`,
+            [adminId, report.userId, report.productId, lockMessage, "closed"],
+            (err) => {
+              if (err) {
+                console.log("INSERT CLOSED MESSAGE ERROR:", err);
+
+                return res.status(500).json({
+                  message: "Failed to send closing message",
+                });
+              }
+
+              // 4. Delete the report
+              db.query(
+                "DELETE FROM reports WHERE reportId = ?",
+                [id],
+                (err) => {
+                  if (err) {
+                    console.log("DELETE REPORT ERROR:", err);
+
+                    return res.status(500).json({
+                      message: "Failed to delete report",
+                    });
+                  }
+
+                  // 5. Everything finished
+                  res.json({
+                    message: "Report deleted and chat closed successfully",
+                  });
+                },
+              );
+            },
+          );
+        },
+      );
+    },
+  );
+});
 
 // delete product and report by productId (admin only)
 router.delete("/with-product/:id", (req, res) => {
@@ -197,24 +305,35 @@ router.delete("/with-product/:id", (req, res) => {
                 `INSERT INTO messages
                 (senderId, receiverId, productId, messageText, messageType)
                 VALUES (?, ?, ?, ?, ?)`,
-                [adminId || 14, reporterId, productId, `הפנייה בנושא המוצר "${productName}" נסגרה. המוצר הוסר מהמערכת.`, "closed"],
+                [
+                  adminId || 14,
+                  reporterId,
+                  productId,
+                  `הפנייה בנושא המוצר "${productName}" נסגרה. המוצר הוסר מהמערכת.`,
+                  "closed",
+                ],
                 (err) => {
                   if (err) console.log("MESSAGE ERROR REPORTER:", err);
 
                   // 5) מחיקת המוצר והדיווח
-                  db.query("DELETE FROM products WHERE productId = ?", [productId]);
-                  db.query("DELETE FROM reports WHERE reportId = ?", [reportId]);
+                  db.query("DELETE FROM products WHERE productId = ?", [
+                    productId,
+                  ]);
+                  db.query("DELETE FROM reports WHERE reportId = ?", [
+                    reportId,
+                  ]);
 
                   res.json({
-                    message: "Product, report deleted, and chat closed successfully",
+                    message:
+                      "Product, report deleted, and chat closed successfully",
                   });
-                }
+                },
               );
-            }
+            },
           );
-        }
+        },
       );
-    }
+    },
   );
 });
 module.exports = router;
