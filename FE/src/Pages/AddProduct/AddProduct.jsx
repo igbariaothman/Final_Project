@@ -21,21 +21,27 @@ function Product() {
     setPreview((prev) => prev.filter((_, i) => i !== index));
   };
 
-  function handleAddProduct() {
+function handleAddProduct() {
     const priceNumber = listingType === "donation" ? 0 : Number(price);
 
     if (
-      !name ||
-      (listingType === "sale" && !price) ||
+      !name.trim() ||
+      (listingType === "sale" && price === "") ||
       !category ||
-      !description ||
+      !description.trim() ||
       !productstatus
     ) {
       showAlert("נא למלא את כל השדות החיוניים", "error");
       return;
     }
 
-    if (images && images.length > 10) {
+    // בדיקת קיום תמונות
+    if (!images || images.length === 0) {
+      showAlert("חובה להעלות לפחות תמונה אחת של המוצר", "error");
+      return;
+    }
+
+    if (images.length > 10) {
       showAlert("ניתן להעלות רק עד 10 תמונות", "error");
       return;
     }
@@ -52,10 +58,10 @@ function Product() {
 
     // Prepare form data for submission
     const formData = new FormData();
-    formData.append("productName", name);
+    formData.append("productName", name.trim());
     formData.append("price", priceNumber);
     formData.append("category", category);
-    formData.append("description", description);
+    formData.append("description", description.trim());
     formData.append("listingType", listingType);
     formData.append("userId", currentUser?.id);
     formData.append("productstatus", productstatus);
@@ -64,13 +70,20 @@ function Product() {
     images.forEach((img) => {
       formData.append("images", img);
     });
-  // Send the form data to the backend
+
+    // Send the form data to the backend
     fetch("http://localhost:5000/products/addProduct", {
       method: "POST",
       body: formData,
     })
-      .then((res) => res.json())
-      .then((data) => {
+      .then(async (res) => {
+        const data = await res.json();
+        
+        // בדיקת תקינות התשובה מהשרת
+        if (!res.ok) {
+          throw new Error(data.message || "שגיאה בהוספת המוצר");
+        }
+
         showAlert("המוצר פורסם בהצלחה!", "success");
         setName("");
         setPrice("");
@@ -83,10 +96,9 @@ function Product() {
       })
       .catch((err) => {
         console.error(err);
-        showAlert("שגיאה בהוספת המוצר", "error");
+        showAlert(err.message || "שגיאה בהוספת המוצר", "error");
       });
   }
-
 
   return (
     <div className={classes.container}>

@@ -21,7 +21,10 @@ function PublicProfile() {
 
   const fetchProfileData = () => {
     Promise.all([
-      fetch(`http://localhost:5000/users/${id}`).then((res) => res.json()),
+      fetch(`http://localhost:5000/users/${id}`).then((res) => {
+        if (!res.ok) throw new Error("User not found");
+        return res.json();
+      }),
       fetch(`http://localhost:5000/products`).then((res) => res.json()),
     ])
       .then(([userData, allProducts]) => {
@@ -31,6 +34,7 @@ function PublicProfile() {
       })
       .catch((err) => {
         console.error(err);
+        setUser(null);
         setLoading(false);
       });
   };
@@ -107,11 +111,21 @@ function PublicProfile() {
         <div className={classes.heroBg} />
         <div className={classes.heroContent}>
           <div className={classes.avatar}>
-            {user.username?.charAt(0).toUpperCase() || "U"}
+            {user.profileImage ? (
+              <img
+                src={`http://localhost:5000${user.profileImage}`}
+                alt={user.username}
+                style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" }}
+              />
+            ) : (
+              user.username?.charAt(0).toUpperCase() || "U"
+            )}
           </div>
           <div className={classes.heroInfo}>
             <h1 className={classes.username}>{user.username}</h1>
-            <span className={classes.roleBadge}>משתמש רשום</span>
+            <span className={classes.roleBadge}>
+              {user.role === "admin" ? "מנהל מערכת" : "משתמש רשום"}
+            </span>
           </div>
         </div>
 

@@ -68,31 +68,45 @@ io.on("connection", (socket) => {
     socket.join(roomId);
     console.log(`User ${userId} joined room: ${roomId}`);
   });
+
+
+  
 // Handle sending messages
-  socket.on("send_message", (data) => {
-    const { senderId, receiverId, productId, messageText } = data;
+socket.on("send_message", (data) => {
+    const { senderId, receiverId, productId, messageText, messageType } = data;
     const roomId = `chat_${productId}_${Math.min(senderId, receiverId)}_${Math.max(senderId, receiverId)}`;
 
-    const sqlInsert =
-      "INSERT INTO messages (senderId, receiverId, productId, messageText, isRead) VALUES (?, ?, ?, ?, 0)";
-
+    // בדיקה במסד האם יש כבר הודעת סגירה למוצר זה
     db.query(
-      sqlInsert,
-      [senderId, receiverId, productId, messageText],
-      (err, result) => {
-        if (err) {
-          console.error("Error saving message:", err);
+      "SELECT id FROM messages WHERE productId = ? AND messageType = 'closed' LIMIT 1",
+      [productId],
+      (err, rows) => {
+        if (rows && rows.length > 0) {
+          console.log(`Blocked: Chat for product ${productId} is closed.`);
           return;
         }
 
-        const finalMessage = {
-          ...data,
-          id: result.insertId,
-          created_at: new Date().toISOString(),
-        };
+        const sqlInsert =
+          "INSERT INTO messages (senderId, receiverId, productId, messageText, messageType, isRead) VALUES (?, ?, ?, ?, ?, 0)";
 
-        socket.to(roomId).emit("receive_message", finalMessage);
-        console.log(`Message sent in room: ${roomId}`);
+        db.query(
+          sqlInsert,
+          [senderId, receiverId, productId, messageText, messageType || 'chat'],
+          (err, result) => {
+            if (err) {
+              console.error("Error saving message:", err);
+              return;
+            }
+
+            const finalMessage = {
+              ...data,
+              id: result.insertId,
+              created_at: new Date().toISOString(),
+            };
+
+            socket.to(roomId).emit("receive_message", finalMessage);
+          }
+        );
       }
     );
   });

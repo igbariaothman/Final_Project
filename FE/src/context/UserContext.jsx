@@ -60,6 +60,10 @@ const UserContextProvider = ({ children }) => {
     }
   };
 
+  const updateProfileData = (updatedUser) => {
+    setCurrentUser(updatedUser);
+  };
+  
   // Logout function 
   const logout = async () => {
     setIsLoading(true);

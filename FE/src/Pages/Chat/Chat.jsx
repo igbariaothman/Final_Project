@@ -53,14 +53,12 @@ function Chat({ productId, sellerId, sellerName, isAdminChat, onClose }) {
   }, [messages]);
 
   // בדיקת נעילה - אם קיימת הודעת סגירה מסוג closed או הודעת הסרת מוצר
-  const isChatLocked = messages.some(
+const isChatLocked = messages.some(
     (msg) =>
       msg.messageType === "closed" ||
-      (msg.messageText &&
-        msg.messageText.includes("was removed by an administrator")) ||
-      (msg.messageText && msg.messageText.includes("הוסר מהמערכת")),
+      (msg.messageText && msg.messageText.includes("התלונה נסגרה על ידי המנהל")) ||
+      (msg.messageText && msg.messageText.includes("הוסר מהמערכת"))
   );
-
   const sendMessage = () => {
     if (newMessage.trim() === "" || !currentUser?.id || isChatLocked) return;
 
@@ -139,7 +137,7 @@ function Chat({ productId, sellerId, sellerName, isAdminChat, onClose }) {
 
       {isChatLocked ? (
         <div className={classes.lockedNotice}>
-          🔒 פנייה זו נסגרה והמוצר הוסר. לא ניתן להשיב בצ'אט זה.
+           פנייה זו נסגרה והמוצר הוסר. לא ניתן להשיב בצ'אט זה 🔒
         </div>
       ) : (
         <div className={classes.inputArea}>

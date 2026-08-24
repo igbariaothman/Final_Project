@@ -125,11 +125,14 @@ function Home() {
     return true;
   });
 
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
+const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (sortType === "priceLow") return Number(a.price) - Number(b.price);
     if (sortType === "priceHigh") return Number(b.price) - Number(a.price);
-    if (sortType === "newest")
-      return new Date(b.createdAt) - new Date(a.createdAt);
+    if (sortType === "newest") {
+      const dateA = new Date(a.created_at || a.createdAt || 0);
+      const dateB = new Date(b.created_at || b.createdAt || 0);
+      return dateB - dateA;
+    }
     return 0;
   });
 
