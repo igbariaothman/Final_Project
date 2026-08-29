@@ -306,7 +306,9 @@
   justify-content: center;
   font-size: 2.0rem;
   font-weight: 900;
-  box-shadow: 0 8px 20px rgba(0, 242, 254, 0.3);
+  box-shadow: none;
+  border: none;
+  outline: none;
 }
 
 .sellerName {

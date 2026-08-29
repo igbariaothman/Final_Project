@@ -75,8 +75,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 15px 35px rgba(0, 242, 254, 0.4);
-  border: 3px solid rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+  border: none;
+  outline: none;
 }
 
 .heroInfo {
@@ -447,11 +448,15 @@
     gap: 20px;
   }
 
+@media (max-width: 768px) {
   .avatar {
     width: 90px;
     height: 90px;
     font-size: 2.4rem;
+    box-shadow: none;
+    border: none;
   }
+}
 
   .statsRow {
     gap: 12px;

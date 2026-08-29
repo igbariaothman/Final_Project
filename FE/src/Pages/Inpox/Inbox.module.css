@@ -67,10 +67,31 @@
 }
 
 .unread {
-  border-color: rgba(0, 242, 254, 0.5);
-  background: rgba(0, 242, 254, 0.08);
+  border-color: #00f2fe !important;
+  background: rgba(0, 242, 254, 0.12) !important;
+  box-shadow: 0 10px 30px -5px rgba(0, 242, 254, 0.35) !important;
+  position: relative;
 }
 
+.unreadAvatar {
+  box-shadow: 0 0 20px #00f2fe !important;
+  border: 2px solid #ffffff;
+}
+
+.newBadge {
+  background: #00f2fe;
+  color: #060911;
+  font-size: 0.9rem;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 6px;
+  box-shadow: 0 0 10px #00f2fe;
+}
+
+.unreadMessageText {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
 .avatar {
   width: 60px;
   height: 60px;
@@ -154,13 +175,14 @@
 }
 
 .unreadDot {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: #00f2fe;
   flex-shrink: 0;
   margin-right: auto;
-  box-shadow: 0 0 12px #00f2fe;
+  box-shadow: 0 0 15px #00f2fe, 0 0 5px #ffffff;
+  animation: pulseDot 1.5s infinite alternate ease-in-out;
 }
 
 @media (max-width: 768px) {
@@ -177,5 +199,16 @@
     width: 50px;
     height: 50px;
     font-size: 1.35rem;
+  }
+}
+
+@keyframes pulseDot {
+  0% {
+    transform: scale(0.9);
+    box-shadow: 0 0 8px #00f2fe;
+  }
+  100% {
+    transform: scale(1.2);
+    box-shadow: 0 0 18px #00f2fe, 0 0 10px #00ffaa;
   }
 }

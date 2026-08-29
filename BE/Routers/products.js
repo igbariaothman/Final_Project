@@ -79,7 +79,7 @@ router.get("/", (req, res) => {
 router.get("/:id", (req, res) => {
   const id = req.params.id;
   const query = `
-    SELECT p.*, u.username 
+    SELECT p.*, u.username , u.profileImage
     FROM products p 
     JOIN users u ON p.userId = u.id 
     WHERE p.productId = ?

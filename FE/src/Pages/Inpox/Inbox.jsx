@@ -45,6 +45,34 @@ function Inbox() {
       : Number(conv.senderId);
   };
 
+  const handleOpenChat = (conv) => {
+    const contactId = getContactId(conv);
+
+    // עדכון מיידי בממשק ללא צורך בריענון
+    setConversations((prev) =>
+      prev.map((c) => {
+        const cContactId = getContactId(c);
+        if (c.productId === conv.productId && cContactId === contactId) {
+          return { ...c, isRead: 1 };
+        }
+        return c;
+      })
+    );
+
+    // עדכון בשרת
+    fetch(`http://localhost:5000/messages/mark-read`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        productId: conv.productId,
+        userId: currentUser.id,
+        contactId: contactId,
+      }),
+    }).catch(() => {});
+
+    setSelectedChat(conv);
+  };
+
   return (
     <div className={classes.inboxPage}>
       <div className={classes.inboxContainer}>
@@ -58,7 +86,7 @@ function Inbox() {
           <div className={classes.conversationList}>
             {conversations.map((conv, index) => {
               const isUnread =
-                conv.isRead === 0 && Number(conv.receiverId) === currentUser.id;
+                conv.isRead === 0 && Number(conv.receiverId) === Number(currentUser.id);
               const isAdmin = conv.contactRole === "admin" || conv.isAdminChat;
 
               return (
@@ -67,12 +95,12 @@ function Inbox() {
                   className={`${classes.conversationItem} ${
                     isUnread ? classes.unread : ""
                   } ${isAdmin ? classes.adminItem : ""}`}
-                  onClick={() => setSelectedChat(conv)}
+                  onClick={() => handleOpenChat(conv)}
                 >
                   <div
                     className={`${classes.avatar} ${
                       isAdmin ? classes.adminAvatar : ""
-                    }`}
+                    } ${isUnread ? classes.unreadAvatar : ""}`}
                   >
                     {isAdmin
                       ? "🛡️"
@@ -98,10 +126,19 @@ function Inbox() {
                           שיחה מול הנהלה
                         </span>
                       )}
+                      {isUnread && (
+                        <span className={classes.newBadge}>חדש!</span>
+                      )}
                       {isUnread && <span className={classes.unreadDot} />}
                     </div>
 
-                    <p className={classes.lastMessage}>{conv.messageText}</p>
+                    <p
+                      className={`${classes.lastMessage} ${
+                        isUnread ? classes.unreadMessageText : ""
+                      }`}
+                    >
+                      {conv.messageText}
+                    </p>
                   </div>
                 </div>
               );

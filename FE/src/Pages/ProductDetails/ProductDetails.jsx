@@ -261,13 +261,26 @@ function ProductDetails() {
               <div className={classes.sellerInfo}>
                 <p className={classes.sellerLabel}>על המכר : </p>
                 <div className={classes.sellerRow}>
-                  <div
-                    className={classes.avatar}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigate(`/profile/${product.userId}`)}
-                  >
-                    {product.username?.charAt(0).toUpperCase() || "U"}
-                  </div>
+                                      <div
+                            className={classes.avatar}
+                            onClick={() => navigate(`/profile/${product.userId}`)}
+                            style={{ cursor: "pointer" }}
+                          >
+                            {product.profileImage ? (
+                              <img
+                                src={getImgUrl(product.profileImage)}
+                                alt={product.username || "מוכר"}
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  borderRadius: "50%",
+                                  objectFit: "cover",
+                                }}
+                              />
+                            ) : (
+                              product.username?.charAt(0).toUpperCase() || "U"
+                            )}
+                          </div>
                   <div className={classes.sellerMeta}>
                     <p
                       className={classes.sellerName}

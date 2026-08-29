@@ -13,11 +13,11 @@
   z-index: 1000;
   font-family: 'Assistant', sans-serif;
   box-sizing: border-box;
-  background: rgba(13, 19, 34, 0.9);
+  background: rgba(13, 19, 34, 0.92);
   backdrop-filter: blur(25px) saturate(200%);
   -webkit-backdrop-filter: blur(25px) saturate(200%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 10px 35px -10px rgba(0, 0, 0, 0.85);
 }
 
 .container {
@@ -79,44 +79,113 @@
 .ul {
   display: flex;
   list-style: none;
-  gap: clamp(24px, 3.5vw, 48px);
+  gap: clamp(18px, 2.8vw, 40px);
   margin: 0;
   padding: 0;
   align-items: center;
 }
 
+/* עיצוב קישורי ניווט ואפקט Aura Glow יוקרתי */
 .li {
-  font-size: clamp(1.3rem, 1.7vw, 1.6rem);
+  font-size: clamp(1.3rem, 1.7vw, 1.55rem);
   font-weight: 800;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.85);
   cursor: pointer;
-  padding: 6px 0;
+  padding: 6px 14px;
+  border-radius: 99px;
   display: flex;
   align-items: center;
   justify-content: center;
   white-space: nowrap;
   position: relative;
-  transition: color 0.3s var(--ease);
+  transition: all 0.3s var(--ease);
+  letter-spacing: 0.2px;
 }
 
-.li::after {
+.li::before {
   content: "";
   position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 0;
-  height: 3.5px;
+  inset: -2px;
   border-radius: 99px;
-  background: linear-gradient(90deg, var(--brand), var(--accent-2));
-  transition: width 0.3s var(--ease);
+  background: radial-gradient(circle at center, rgba(0, 242, 254, 0.35) 0%, rgba(168, 85, 247, 0.15) 60%, transparent 80%);
+  opacity: 0;
+  transform: scale(0.7);
+  transition: all 0.35s var(--ease);
+  z-index: -1;
+  filter: blur(6px);
 }
 
 .li:hover {
   color: #ffffff;
+  transform: translateY(-2px);
+  text-shadow: 0 0 16px rgba(0, 242, 254, 0.9), 0 0 30px rgba(168, 85, 247, 0.6);
 }
 
-.li:hover::after {
-  width: 100%;
+.li:hover::before {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+.li:active {
+  transform: translateY(0);
+}
+
+/* התראה זוהרת על כפתור ההודעות */
+.glowingInboxNav {
+  color: #00f2fe !important;
+  text-shadow: 0 0 16px rgba(0, 242, 254, 0.9), 0 0 28px rgba(168, 85, 247, 0.8) !important;
+}
+
+/* בועת מספר התראות חדשה וחדה במיוחד */
+.unreadBadge {
+  position: relative;
+  background: linear-gradient(135deg, #ff0844 0%, #ff4e50 100%);
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 900;
+  line-height: 1;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 99px;
+  margin-right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 16px rgba(255, 8, 68, 0.95), 0 4px 10px rgba(0, 0, 0, 0.6);
+  box-sizing: border-box;
+  animation: badgePop 1.8s infinite ease-in-out;
+}
+
+.unreadBadge::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 99px;
+  border: 1.5px solid rgba(255, 78, 80, 0.7);
+  animation: pulseRing 1.8s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+  z-index: -1;
+}
+
+@keyframes badgePop {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+@keyframes pulseRing {
+  0% {
+    transform: scale(0.9);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
 }
 
 .userActions {
@@ -202,7 +271,7 @@
   .ul {
     justify-content: center;
     width: 100%;
-    gap: 20px;
+    gap: 12px;
   }
 }
 
@@ -224,12 +293,13 @@
   }
 
   .ul {
-    gap: 14px;
+    gap: 8px;
     flex-wrap: wrap;
   }
 
   .li {
     font-size: 1.15rem;
+    padding: 6px 10px;
   }
 
   .userActions {

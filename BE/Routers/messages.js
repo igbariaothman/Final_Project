@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const dbSingleton = require("../db/dbSingleton");
-const { param, validationResult } = require("express-validator");
+const { param, body, validationResult } = require("express-validator");
 
 const db = dbSingleton.getConnection();
 
@@ -19,24 +19,30 @@ const chatParamsValidation = [
   param("user2").isInt().withMessage("מזהה משתמש 2 לא תקין"),
 ];
 
-// History with automatic mark-as-read integration
+// Get Chat History & Auto-mark as read
 router.get("/history/:productId/:user1/:user2", chatParamsValidation, validate, (req, res) => {
   const { productId, user1, user2 } = req.params;
-  
+
   const query = `
     SELECT * FROM messages 
     WHERE productId = ? 
     AND ((senderId = ? AND receiverId = ?) OR (senderId = ? AND receiverId = ?))
-    ORDER BY created_at ASC`;
+    ORDER BY created_at ASC
+  `;
 
   db.query(query, [productId, user1, user2, user2, user1], (err, results) => {
     if (err) return res.status(500).json({ message: "שגיאה בטעינת היסטוריית ההודעות" });
-    
+
+    // סימון הודעות כנקראו (שנשלחו אל המשתמש הפותח)
     const updateReadQuery = `
-      UPDATE messages SET isRead = 1 
-      WHERE productId = ? AND senderId = ? AND receiverId = ? AND isRead = 0`;
-    
-    db.query(updateReadQuery, [productId, user2, user1], (updateErr) => {
+      UPDATE messages 
+      SET isRead = 1 
+      WHERE productId = ? 
+      AND ((senderId = ? AND receiverId = ?) OR (senderId = ? AND receiverId = ?))
+      AND isRead = 0
+    `;
+
+    db.query(updateReadQuery, [productId, user2, user1, user1, user2], (updateErr) => {
       if (updateErr) console.error("Error auto-updating read status:", updateErr);
     });
 
@@ -44,7 +50,7 @@ router.get("/history/:productId/:user1/:user2", chatParamsValidation, validate, 
   });
 });
 
-// Inbox - Enhanced query to handle regular chats, system messages, and Admin notifications cleanly
+// Get Inbox
 router.get("/inbox/:userId", [param("userId").isInt().withMessage("מזהה משתמש לא תקין")], validate, (req, res) => {
   const { userId } = req.params;
   const query = `
@@ -52,7 +58,15 @@ router.get("/inbox/:userId", [param("userId").isInt().withMessage("מזהה מש
         m.*,
         u.username AS contactName,
         u.role AS contactRole,
-        COALESCE(p.productName, 'הודעת מערכת / כללי') AS productName
+        COALESCE(p.productName, 'הודעת מערכת / כללי') AS productName,
+        (
+          SELECT COUNT(*)
+          FROM messages unread_m
+          WHERE unread_m.productId = m.productId
+            AND unread_m.receiverId = ?
+            AND unread_m.senderId = IF(m.senderId = ?, m.receiverId, m.senderId)
+            AND unread_m.isRead = 0
+        ) AS unreadCount
       FROM messages m
       JOIN users u
         ON u.id = IF(m.senderId = ?, m.receiverId, m.senderId)
@@ -64,23 +78,54 @@ router.get("/inbox/:userId", [param("userId").isInt().withMessage("מזהה מש
           FROM messages
           GROUP BY productId, LEAST(senderId, receiverId), GREATEST(senderId, receiverId)
         )
-      ORDER BY m.created_at DESC`;
+      ORDER BY m.created_at DESC
+  `;
 
-  db.query(query, [userId, userId, userId], (err, results) => {
-    if (err) return res.status(500).json({ message: "שגיאה בטעינת תיבת הדואר הנכנס" });
+  db.query(query, [userId, userId, userId, userId, userId], (err, results) => {
+    if (err) {
+      console.error("Inbox DB Error:", err);
+      return res.status(500).json({ message: "שגיאה בטעינת תיבת הדואר הנכנס" });
+    }
     res.json(results);
   });
 });
 
-// Mark as read explicitly
+// Mark as read via JSON Body (מותאם לקריאה מ-Inbox.jsx)
+router.put(
+  "/mark-read",
+  [
+    body("productId").isInt().withMessage("מזהה מוצר לא תקין"),
+    body("userId").isInt().withMessage("מזהה משתמש לא תקין"),
+    body("contactId").isInt().withMessage("מזהה איש קשר לא תקין"),
+  ],
+  validate,
+  (req, res) => {
+    const { productId, userId, contactId } = req.body;
+    const query = `
+      UPDATE messages 
+      SET isRead = 1 
+      WHERE productId = ? AND receiverId = ? AND senderId = ?
+    `;
+
+    db.query(query, [productId, userId, contactId], (err) => {
+      if (err) return res.status(500).json({ message: "עדכון מצב ההודעות נכשל" });
+      res.json({ success: true, message: "ההודעות סומנו כנקראו" });
+    });
+  }
+);
+
+// Mark as read 
 router.put("/read/:productId/:senderId/:receiverId", (req, res) => {
   const { productId, senderId, receiverId } = req.params;
-  const query =
-    "UPDATE messages SET isRead = 1 WHERE productId = ? AND senderId = ? AND receiverId = ?";
+  const query = `
+    UPDATE messages 
+    SET isRead = 1 
+    WHERE productId = ? AND senderId = ? AND receiverId = ?
+  `;
 
   db.query(query, [productId, senderId, receiverId], (err) => {
     if (err) return res.status(500).json({ message: "שגיאה בעדכון סטטוס ההודעות" });
-    res.json({ message: "ההודעות סומנו כנקראו" });
+    res.json({ success: true, message: "ההודעות סומנו כנקראו" });
   });
 });
 

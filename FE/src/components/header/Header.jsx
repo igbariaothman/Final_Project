@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import classes from "./header.module.css";
 import logo from "../../assets/logo.jpg";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +7,30 @@ import { useUserContext } from "../../context/UserContext";
 export default function Header() {
   const { currentUser, logout } = useUserContext();
   const navigation = useNavigate();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    if (!currentUser?.id) return;
+
+    const fetchUnread = () => {
+      fetch(`http://localhost:5000/messages/inbox/${currentUser.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (Array.isArray(data)) {
+            const count = data.filter(
+              (conv) =>
+                conv.isRead === 0 && Number(conv.receiverId) === Number(currentUser.id)
+            ).length;
+            setUnreadCount(count);
+          }
+        })
+        .catch(() => {});
+    };
+
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 4000);
+    return () => clearInterval(interval);
+  }, [currentUser?.id]);
 
   function handleLogOut() {
     logout();
@@ -45,8 +70,14 @@ export default function Header() {
                 >
                   מועדפים
                 </li>
-                <li onClick={() => navigation("/inbox")} className={classes.li}>
-                  הודעות
+                <li
+                  onClick={() => navigation("/inbox")}
+                  className={`${classes.li} ${unreadCount > 0 ? classes.glowingInboxNav : ""}`}
+                >
+                  <span>הודעות</span>
+                  {unreadCount > 0 && (
+                    <span className={classes.unreadBadge}>{unreadCount}</span>
+                  )}
                 </li>
                 <li
                   onClick={() => navigation(`/profile/${currentUser.id}`)}
