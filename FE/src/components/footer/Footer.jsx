@@ -1,12 +1,19 @@
+/**
+ * מודול: כותרת תחתונה
+ * תפקיד: הצגת קישורי מידע כלליים, מדיניות האתר וזכויות יוצרים דינמיות
+ */
+
 import { Link } from "react-router-dom";
 import classes from "./footer.module.css";
 
 export default function Footer() {
+  // חישוב השנה הנוכחית להצגת זכויות יוצרים עדכניות
   const date = new Date().getFullYear();
 
   return (
     <footer className={classes.footer}>
       <div className={classes.container}>
+        {/* קישורי ניווט לעמודי מידע ותקנון */}
         <div className={classes.linksWrapper}>
           <Link to="/about" className={classes.footerLink}>
             אודות
@@ -22,6 +29,7 @@ export default function Footer() {
           </Link>
         </div>
 
+        {/* שורת זכויות יוצרים */}
         <div className={classes.copyrightWrapper}>
           <p className={classes.text}>
             <span>&copy;</span> {date} יד שנייה לסטודנטים. כל הזכויות שמורות.

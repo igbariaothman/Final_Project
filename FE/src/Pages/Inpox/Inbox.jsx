@@ -1,77 +1,77 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Chat from "../Chat/Chat";
 import classes from "./Inbox.module.css";
 import { useUserContext } from "../../context/UserContext";
 
+/**
+ * מודול: תיבת דואר נכנס ושיחות
+ * תפקיד: הצגת רשימת כל השיחות הפעילות של המשתמש, סימון הודעות שנקראו ופתיחת חלון צ'אט
+ */
+
+// חישוב מזהה איש הקשר בשיחה ביחס למשתמש הנוכחי
+function getContactId(conv, currentUserId) {
+  return Number(conv.senderId) === currentUserId ? Number(conv.receiverId) : Number(conv.senderId);
+}
+
+// משיכת רשימת השיחות של המשתמש מהשרת
+function fetchUserInbox(userId, setConversations, setLoading) {
+  fetch(`http://localhost:5000/messages/inbox/${userId}`)
+    .then((res) => res.json())
+    .then((data) => {
+      setConversations(data);
+      setLoading(false);
+    })
+    .catch((err) => {
+      console.error(err);
+      setLoading(false);
+    });
+}
+
+// עדכון סטטוס ההודעות כנקראו בשרת
+function markConversationAsRead(productId, currentUserId, contactId) {
+  fetch("http://localhost:5000/messages/mark-read", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ productId, userId: currentUserId, contactId }),
+  }).catch(() => {});
+}
+
 function Inbox() {
   const [conversations, setConversations] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
   const { currentUser } = useUserContext();
 
+  // בדיקת אימות וטעינת נתוני תיבת ההודעות
   useEffect(() => {
-    if (!currentUser) {
-      navigate("/login");
-      return;
-    }
-
-    fetch(`http://localhost:5000/messages/inbox/${currentUser.id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setConversations(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching inbox:", err);
-        setLoading(false);
-      });
+    if (!currentUser) return navigate("/login");
+    fetchUserInbox(currentUser.id, setConversations, setLoading);
   }, [currentUser, navigate]);
 
-  const formatTime = (dateStr) => {
-    if (!dateStr) return "";
-    const date = new Date(dateStr);
-    return date.toLocaleTimeString("he-IL", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  const getContactId = (conv) => {
-    return Number(conv.senderId) === currentUser.id
-      ? Number(conv.receiverId)
-      : Number(conv.senderId);
-  };
-
+  // פתיחת חלון השיחה וסימון ההודעות כנקראו
   const handleOpenChat = (conv) => {
-    const contactId = getContactId(conv);
+    const contactId = getContactId(conv, currentUser.id);
 
-    // עדכון מיידי בממשק ללא צורך בריענון
     setConversations((prev) =>
       prev.map((c) => {
-        const cContactId = getContactId(c);
-        if (c.productId === conv.productId && cContactId === contactId) {
-          return { ...c, isRead: 1 };
-        }
-        return c;
+        const cContactId = getContactId(c, currentUser.id);
+        return c.productId === conv.productId && cContactId === contactId ? { ...c, isRead: 1 } : c;
       })
     );
 
-    // עדכון בשרת
-    fetch(`http://localhost:5000/messages/mark-read`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        productId: conv.productId,
-        userId: currentUser.id,
-        contactId: contactId,
-      }),
-    }).catch(() => {});
-
+    markConversationAsRead(conv.productId, currentUser.id, contactId);
     setSelectedChat(conv);
   };
+
+  // עיצוב תצוגת שעת קבלת ההודעה
+  const formatTime = (dateStr) => {
+    if (!dateStr) return "";
+    return new Date(dateStr).toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" });
+  };
+
 
   return (
     <div className={classes.inboxPage}>
@@ -85,60 +85,32 @@ function Inbox() {
         ) : (
           <div className={classes.conversationList}>
             {conversations.map((conv, index) => {
-              const isUnread =
-                conv.isRead === 0 && Number(conv.receiverId) === Number(currentUser.id);
+              const isUnread = conv.isRead === 0 && Number(conv.receiverId) === Number(currentUser.id);
               const isAdmin = conv.contactRole === "admin" || conv.isAdminChat;
 
               return (
                 <div
                   key={index}
-                  className={`${classes.conversationItem} ${
-                    isUnread ? classes.unread : ""
-                  } ${isAdmin ? classes.adminItem : ""}`}
+                  className={`${classes.conversationItem} ${isUnread ? classes.unread : ""} ${isAdmin ? classes.adminItem : ""}`}
                   onClick={() => handleOpenChat(conv)}
                 >
-                  <div
-                    className={`${classes.avatar} ${
-                      isAdmin ? classes.adminAvatar : ""
-                    } ${isUnread ? classes.unreadAvatar : ""}`}
-                  >
-                    {isAdmin
-                      ? "🛡️"
-                      : conv.contactName?.charAt(0).toUpperCase() || "?"}
+                  <div className={`${classes.avatar} ${isAdmin ? classes.adminAvatar : ""} ${isUnread ? classes.unreadAvatar : ""}`}>
+                    {isAdmin ? "🛡️" : conv.contactName?.charAt(0).toUpperCase() || "?"}
                   </div>
 
                   <div className={classes.convInfo}>
                     <div className={classes.convTop}>
-                      <span className={classes.contactName}>
-                        {isAdmin ? "מנהל מערכת (Admin)" : conv.contactName}
-                      </span>
-                      <span className={classes.convTime}>
-                        {formatTime(conv.created_at)}
-                      </span>
+                      <span className={classes.contactName}>{isAdmin ? "מנהל מערכת (Admin)" : conv.contactName}</span>
+                      <span className={classes.convTime}>{formatTime(conv.created_at)}</span>
                     </div>
 
                     <div className={classes.convBottom}>
-                      <span className={classes.productName}>
-                        🛍 {conv.productName || "מוצר כללי"}
-                      </span>
-                      {isAdmin && (
-                        <span className={classes.reportTag}>
-                          שיחה מול הנהלה
-                        </span>
-                      )}
-                      {isUnread && (
-                        <span className={classes.newBadge}>חדש!</span>
-                      )}
-                      {isUnread && <span className={classes.unreadDot} />}
+                      <span className={classes.productName}>🛍 {conv.productName || "מוצר כללי"}</span>
+                      {isAdmin && <span className={classes.reportTag}>שיחה מול הנהלה</span>}
+                      {isUnread && <span className={classes.newBadge}>חדש!</span>}
                     </div>
 
-                    <p
-                      className={`${classes.lastMessage} ${
-                        isUnread ? classes.unreadMessageText : ""
-                      }`}
-                    >
-                      {conv.messageText}
-                    </p>
+                    <p className={`${classes.lastMessage} ${isUnread ? classes.unreadMessageText : ""}`}>{conv.messageText}</p>
                   </div>
                 </div>
               );
@@ -150,15 +122,9 @@ function Inbox() {
       {selectedChat && (
         <Chat
           productId={selectedChat.productId}
-          sellerId={getContactId(selectedChat)}
-          sellerName={
-            selectedChat.contactRole === "admin" || selectedChat.isAdminChat
-              ? "מנהל מערכת (Admin)"
-              : selectedChat.contactName
-          }
-          isAdminChat={
-            selectedChat.contactRole === "admin" || selectedChat.isAdminChat
-          }
+          sellerId={getContactId(selectedChat, currentUser.id)}
+          sellerName={selectedChat.contactRole === "admin" || selectedChat.isAdminChat ? "מנהל מערכת (Admin)" : selectedChat.contactName}
+          isAdminChat={selectedChat.contactRole === "admin" || selectedChat.isAdminChat}
           onClose={() => setSelectedChat(null)}
         />
       )}

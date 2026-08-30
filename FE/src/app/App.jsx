@@ -1,3 +1,8 @@
+/**
+ * מודול: רכיב היישום הראשי
+ * תפקיד: ניהול מערך הניתובים בצד הלקוח והגבלת גישה לדפים לפי הרשאות משתמש
+ */
+
 import { Routes, Route, Navigate } from "react-router-dom";
 import Header from "../components/header/Header";
 import Footer from "../components/footer/Footer";
@@ -20,8 +25,47 @@ import Contact from "../Pages/Contact/Contact.jsx";
 import Accessibility from "../Pages/Accessibility/Accessibility.jsx";
 import Alert from "../Pages/Alert/Alert.jsx";
 
-export default function App() {
+// נתיבי מנהל מערכת
+function AdminRoutes() {
+  return (
+    <>
+      <Route path="/reports" element={<Report />} />
+      <Route path="/admin" element={<AdminPage />} />
+      <Route path="/inbox" element={<Inbox />} />
+      <Route path="/profile" element={<Profile />} />
+    </>
+  );
+}
 
+// נתיבי משתמש רשום
+function UserRoutes() {
+  return (
+    <>
+      <Route path="/add-product" element={<AddProduct />} />
+      <Route path="/favorites" element={<Favorites />} />
+      <Route path="/reports" element={<Report />} />
+      <Route path="/inbox" element={<Inbox />} />
+      <Route path="/profile" element={<Profile />} />
+    </>
+  );
+}
+
+// חסימת גישה והפניה להתחברות עבור אורחים
+function GuestRoutes() {
+  return (
+    <>
+      <Route path="/add-product" element={<Navigate to="/login" replace />} />
+      <Route path="/favorites" element={<Navigate to="/login" replace />} />
+      <Route path="/reports" element={<Navigate to="/login" replace />} />
+      <Route path="/admin" element={<Navigate to="/login" replace />} />
+      <Route path="/inbox" element={<Navigate to="/login" replace />} />
+      <Route path="/profile" element={<Navigate to="/login" replace />} />
+    </>
+  );
+}
+
+// קומפוננטת הניתוב הראשית של היישום
+export default function App() {
   const { currentUser, isLoading } = useUserContext();
 
   if (isLoading) return null;
@@ -35,58 +79,15 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/productDetails/:id" element={<ProductDetails />} />
           <Route path="/profile/:id" element={<PublicProfile />} />
-
           <Route path="/about" element={<About />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/accessibility" element={<Accessibility />} />
+          <Route path="/login" element={!currentUser ? <LogIn /> : <Navigate to="/" replace />} />
 
-          <Route
-            path="/login"
-            element={!currentUser ? <LogIn /> : <Navigate to="/" replace />}
-          />
-
-          {currentUser?.role === "admin" && (
-            <>
-              <Route path="/reports" element={<Report />} />
-              <Route path="/admin" element={<AdminPage />} />
-              <Route path="/inbox" element={<Inbox />} />
-              <Route path="/profile" element={<Profile />} />
-            </>
-          )}
-
-          {currentUser?.role === "user" && (
-            <>
-              <Route path="/add-product" element={<AddProduct />} />
-              <Route path="/favorites" element={<Favorites />} />
-              <Route path="/reports" element={<Report />} />
-              <Route path="/inbox" element={<Inbox />} />
-              <Route path="/profile" element={<Profile />} />
-            </>
-          )}
-
-          {!currentUser && (
-            <>
-              <Route
-                path="/add-product"
-                element={<Navigate to="/login" replace />}
-              />
-              <Route
-                path="/favorites"
-                element={<Navigate to="/login" replace />}
-              />
-              <Route
-                path="/reports"
-                element={<Navigate to="/login" replace />}
-              />
-              <Route path="/admin" element={<Navigate to="/login" replace />} />
-              <Route path="/inbox" element={<Navigate to="/login" replace />} />
-              <Route
-                path="/profile"
-                element={<Navigate to="/login" replace />}
-              />
-            </>
-          )}
+          {currentUser?.role === "admin" && AdminRoutes()}
+          {currentUser?.role === "user" && UserRoutes()}
+          {!currentUser && GuestRoutes()}
 
           <Route path="*" element={<NotFound />} />
         </Routes>

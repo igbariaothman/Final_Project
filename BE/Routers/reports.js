@@ -1,3 +1,8 @@
+/**
+ * מודול: נתיבי שרת לניהול דיווחים ותלונות (Reports Routes)
+ * תפקיד: קליטת דיווחי משתמשים, הצגת דיווחים למנהל, סגירת תלונות ומחיקת מוצרים מפרים עם נעילת שיחות
+ */
+
 const express = require("express");
 const router = express.Router();
 const dbSingleton = require("../db/dbSingleton");
@@ -5,7 +10,7 @@ const dbSingleton = require("../db/dbSingleton");
 const db = dbSingleton.getConnection();
 const ADMIN_ID = 14;
 
-// Send a report about a product
+// שליחת דיווח חדש על מוצר, משתמש או שיחת צ'אט
 router.post("/", (req, res) => {
   const { productId, userId, reportType, message } = req.body;
 
@@ -14,6 +19,7 @@ router.post("/", (req, res) => {
     WHERE productId = ? AND userId = ?
   `;
 
+  // בדיקה האם המשתמש כבר דיווח בעבר על אותו מוצר
   db.query(checkSql, [productId, userId], (err, reports) => {
     if (err) {
       console.log(err);
@@ -26,6 +32,7 @@ router.post("/", (req, res) => {
       });
     }
 
+    // שליפת פרטי המוצר לווידוא קיומו ומניעת דיווח עצמי
     db.query(
       "SELECT userId, productName FROM products WHERE productId = ?",
       [productId],
@@ -51,6 +58,7 @@ router.post("/", (req, res) => {
           VALUES (?, ?, ?, ?)
         `;
 
+        // שמירת הדיווח בטבלת הדיווחים
         db.query(sql, [productId, userId, reportType, message], (err) => {
           if (err) {
             console.log("REPORT ERROR:", err);
@@ -61,6 +69,7 @@ router.post("/", (req, res) => {
 
           let messageToOwner = "";
 
+          // ניסוח הודעת התראה לבעל המוצר בהתאם לסוג הדיווח
           if (reportType === "user") {
             messageToOwner = `A report has been submitted against your account.\nReport type: User Report\nMessage: ${message}`;
           } else if (reportType === "chat") {
@@ -69,6 +78,7 @@ router.post("/", (req, res) => {
             messageToOwner = `Your product "${productName}" has been reported.\nReport type: Product Report\nMessage: ${message}`;
           }
 
+          // שליחת הודעת מערכת מהמנהל לבעל המוצר
           db.query(
             `INSERT INTO messages
               (senderId, receiverId, productId, messageText, messageType)
@@ -90,7 +100,7 @@ router.post("/", (req, res) => {
   });
 });
 
-// Get all reports for admin review
+// שליפת כלל הדיווחים עבור ממשק הניהול
 router.get("/", (req, res) => {
   const sql = `
     SELECT 
@@ -117,7 +127,7 @@ router.get("/", (req, res) => {
   });
 });
 
-// Delete report & close chat for both reporter and owner
+// מחיקת דיווח ונעילת הצ'אט עבור המדווח ובעל המוצר
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
 
@@ -143,9 +153,10 @@ router.delete("/:id", (req, res) => {
         "SELECT userId FROM products WHERE productId = ?",
         [productId],
         (prodErr, prodResult) => {
-          const ownerId = (prodResult && prodResult.length > 0) ? prodResult[0].userId : null;
+          const ownerId =
+            prodResult && prodResult.length > 0 ? prodResult[0].userId : null;
 
-          // 1. עדכון כל ההודעות הקיימות הקשורות למוצר זה ל-closed
+          // 1. עדכון כל ההודעות הקיימות הקשורות למוצר זה לסטטוס closed
           db.query(
             "UPDATE messages SET messageType = 'closed' WHERE productId = ?",
             [productId],
@@ -168,13 +179,21 @@ router.delete("/:id", (req, res) => {
                 );
               }
 
-              // 4. מחיקת הדיווח
-              db.query("DELETE FROM reports WHERE reportId = ?", [id], (delErr) => {
-                if (delErr) {
-                  return res.status(500).json({ message: "Failed to delete report" });
+              // 4. מחיקת הדיווח ממסד הנתונים
+              db.query(
+                "DELETE FROM reports WHERE reportId = ?",
+                [id],
+                (delErr) => {
+                  if (delErr) {
+                    return res
+                      .status(500)
+                      .json({ message: "Failed to delete report" });
+                  }
+                  res.json({
+                    message: "Report deleted and chat closed successfully",
+                  });
                 }
-                res.json({ message: "Report deleted and chat closed successfully" });
-              });
+              );
             }
           );
         }
@@ -183,7 +202,7 @@ router.delete("/:id", (req, res) => {
   );
 });
 
-// Delete product and report by reportId
+// מחיקת מוצר מפר, סגירת תלונה ושליחת הודעת נימוק למוכר
 router.delete("/with-product/:id", (req, res) => {
   const reportId = req.params.id;
   const { adminMessage } = req.body;
@@ -209,32 +228,57 @@ router.delete("/with-product/:id", (req, res) => {
 
           const ownerId = productResult[0].userId;
           const productName = productResult[0].productName;
-          const closingMessage = `המוצר "${productName}" הוסר מהמערכת על ידי המנהל. סיבה: ${adminMessage || "ללא פירוט"}. הפנייה נסגרה.`;
+          const closingMessage = `המוצר "${productName}" הוסר מהמערכת על ידי המנהל. סיבה: ${
+            adminMessage || "ללא פירוט"
+          }. הפנייה נסגרה.`;
 
+          // 1. שליחת הודעת נעילה לבעל המוצר
           db.query(
             `INSERT INTO messages (senderId, receiverId, productId, messageText, messageType)
              VALUES (?, ?, ?, ?, 'closed')`,
             [ADMIN_ID, ownerId, productId, closingMessage],
             () => {
+              // 2. שליחת הודעת נעילה למדווח
               db.query(
                 `INSERT INTO messages (senderId, receiverId, productId, messageText, messageType)
                  VALUES (?, ?, ?, ?, 'closed')`,
-                [ADMIN_ID, reporterId, productId, `הפנייה בנושא המוצר "${productName}" נסגרה. המוצר הוסר מהמערכת.`],
+                [
+                  ADMIN_ID,
+                  reporterId,
+                  productId,
+                  `הפנייה בנושא המוצר "${productName}" נסגרה. המוצר הוסר מהמערכת.`,
+                ],
                 () => {
-                  db.query("DELETE FROM reports WHERE productId = ?", [productId], () => {
-                    db.query("DELETE FROM messages WHERE productId = ?", [productId], () => {
-                      db.query("DELETE FROM favorites WHERE productId = ?", [productId], () => {
-                        db.query("DELETE FROM products WHERE productId = ?", [productId], (finalErr) => {
-                          if (finalErr) {
-                            return res.status(500).json({ message: "Failed to delete product" });
-                          }
-                          res.json({
-                            message: "Product, report deleted, and chat closed successfully",
-                          });
-                        });
-                      });
-                    });
-                  });
+                  // 3. מחיקת הדיווחים הקשורים
+                  db.query(
+                    "DELETE FROM reports WHERE productId = ?",
+                    [productId],
+                    () => {
+                      // 4. מחיקה מהמועדפים
+                      db.query(
+                        "DELETE FROM favorites WHERE productId = ?",
+                        [productId],
+                        () => {
+                          // 5. מחיקת המוצר עצמו (ללא מחיקת ה-messages כדי שההודעה תישאר ב-Inbox)
+                          db.query(
+                            "DELETE FROM products WHERE productId = ?",
+                            [productId],
+                            (finalErr) => {
+                              if (finalErr) {
+                                return res.status(500).json({
+                                  message: "Failed to delete product",
+                                });
+                              }
+                              res.json({
+                                message:
+                                  "Product, report deleted, and chat closed successfully",
+                              });
+                            }
+                          );
+                        }
+                      );
+                    }
+                  );
                 }
               );
             }

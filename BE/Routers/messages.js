@@ -1,3 +1,8 @@
+/**
+ * מודול: נתיבי שרת לניהול הודעות ושיחות (Messages Routes)
+ * תפקיד: שליפת היסטוריית שיחות, ניהול תיבת דואר נכנס (Inbox) ועדכון סטטוס קריאת הודעות
+ */
+
 const express = require("express");
 const router = express.Router();
 const dbSingleton = require("../db/dbSingleton");
@@ -5,6 +10,7 @@ const { param, body, validationResult } = require("express-validator");
 
 const db = dbSingleton.getConnection();
 
+// פונקציית תיווך לאימות תקינות נתוני הבקשה
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -13,13 +19,14 @@ const validate = (req, res, next) => {
   next();
 };
 
+// הגדרת בדיקות תקינות לפרמטרי היסטוריית צ'אט
 const chatParamsValidation = [
   param("productId").isInt().withMessage("מזהה מוצר לא תקין"),
   param("user1").isInt().withMessage("מזהה משתמש 1 לא תקין"),
   param("user2").isInt().withMessage("מזהה משתמש 2 לא תקין"),
 ];
 
-// Get Chat History & Auto-mark as read
+// שליפת היסטוריית הודעות בין שני משתמשים עבור מוצר ועדכון אוטומטי של הודעות שנקראו
 router.get("/history/:productId/:user1/:user2", chatParamsValidation, validate, (req, res) => {
   const { productId, user1, user2 } = req.params;
 
@@ -50,7 +57,7 @@ router.get("/history/:productId/:user1/:user2", chatParamsValidation, validate, 
   });
 });
 
-// Get Inbox
+// שליפת כל השיחות הפעילות של המשתמש עבור תיבת הדואר הנכנס כולל ספירת הודעות שלא נקראו
 router.get("/inbox/:userId", [param("userId").isInt().withMessage("מזהה משתמש לא תקין")], validate, (req, res) => {
   const { userId } = req.params;
   const query = `
@@ -90,7 +97,7 @@ router.get("/inbox/:userId", [param("userId").isInt().withMessage("מזהה מש
   });
 });
 
-// Mark as read via JSON Body (מותאם לקריאה מ-Inbox.jsx)
+// עדכון סטטוס הודעות כנקראו באמצעות גוף הבקשה (JSON Body)
 router.put(
   "/mark-read",
   [
@@ -114,7 +121,7 @@ router.put(
   }
 );
 
-// Mark as read 
+// עדכון סטטוס הודעות כנקראו באמצעות פרמטרים בנתיב (URL Params)
 router.put("/read/:productId/:senderId/:receiverId", (req, res) => {
   const { productId, senderId, receiverId } = req.params;
   const query = `

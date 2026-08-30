@@ -1,3 +1,8 @@
+/**
+ * מודול: לוח בקרה וניהול מנהל מערכת
+ * תפקיד: ניהול דיווחי תוכן, מחיקת מודעות פוגעניות, נעילת פניות וצפייה בסטטיסטיקות
+ */
+
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../../context/UserContext";
@@ -7,6 +12,7 @@ import Chat from "../Chat/Chat";
 import AdminStats from "../AdminStats/AdminStats";
 
 function AdminPage() {
+  // ניהול מצבי רשימת הדיווחים, סינון, חלון מודאלי וצ'אט מנהל
   const [reports, setReports] = useState([]);
   const navigate = useNavigate();
   const [filterType, setFilterType] = useState("all");
@@ -18,6 +24,7 @@ function AdminPage() {
   const [adminMessage, setAdminMessage] = useState("");
   const [selectedAdminChat, setSelectedAdminChat] = useState(null);
 
+  // טעינת רשימת הדיווחים בעת עליית הרכיב
   useEffect(() => {
     fetch("http://localhost:5000/reports")
       .then((res) => res.json())
@@ -29,6 +36,7 @@ function AdminPage() {
       });
   }, []);
 
+  // תרגום סוג הדיווח לתווית תצוגה
   const getBadgeLabel = (type) => {
     if (type === "product") return "דיווח מוצר";
     if (type === "user") return "דיווח משתמש";
@@ -36,6 +44,7 @@ function AdminPage() {
     return type;
   };
 
+  // מחיקת דיווח בודד וסגירת התלונה במערכת
   async function deleteReport(reportId) {
     try {
       const res = await fetch(`http://localhost:5000/reports/${reportId}`, {
@@ -51,6 +60,7 @@ function AdminPage() {
     }
   }
 
+  // מחיקת מוצר מפר וסגירת התלונה המשויכת עם שליחת הודעת נימוק למוכר
   async function deleteProductAndReport(reportId) {
     if (!reportId) return;
     try {
@@ -79,6 +89,7 @@ function AdminPage() {
     }
   }
 
+  // בדיקת קיום מוצר לפי מזהה ומעבר לעמוד המוצר
   const handleGoToProduct = async (e) => {
     e.preventDefault();
     const productId = searchProductId.trim();
@@ -98,6 +109,7 @@ function AdminPage() {
     }
   };
 
+  // סינון הדיווחים בהתאם לסוג שנבחר
   const filteredReports =
     filterType === "all"
       ? reports
@@ -107,6 +119,7 @@ function AdminPage() {
     <div className={classes.adminContainer}>
       <h1 className={classes.adminTitle}>ניהול דיווחים ומודעות</h1>
 
+      {/* סרגל חיפוש לפי מזהה מוצר וסינון לפי סוג דיווח */}
       <div className={classes.filterBar}>
         <form onSubmit={handleGoToProduct} className={classes.searchForm}>
           <input
@@ -135,6 +148,7 @@ function AdminPage() {
         </div>
       </div>
 
+      {/* רשימת כרטיסי הדיווחים */}
       <div className={classes.reportsList}>
         {filteredReports.length === 0 ? (
           <div className={classes.emptyState}>
@@ -143,6 +157,7 @@ function AdminPage() {
         ) : (
           filteredReports.map((report) => (
             <div key={report.reportId} className={classes.reportCard}>
+              {/* כותרת עליונה של כרטיס הדיווח */}
               <div className={classes.cardTopHeader}>
                 <span className={classes.badgeReportType}>
                   {getBadgeLabel(report.reportType)}
@@ -158,6 +173,7 @@ function AdminPage() {
                 </span>
               </div>
 
+              {/* מידע מקוצר על המוצר המדווח ולחיצה למעבר אליו */}
               <div
                 className={classes.cardProductInfo}
                 onClick={() => navigate(`/productDetails/${report.productId}`)}
@@ -177,6 +193,7 @@ function AdminPage() {
                 </span>
               </div>
 
+              {/* גוף תוכן הדיווח */}
               <div className={classes.cardMessageBox}>
                 <span className={classes.messageLabel}>תוכן הדיווח:</span>
                 <p className={classes.messageText}>
@@ -184,6 +201,7 @@ function AdminPage() {
                 </p>
               </div>
 
+              {/* תגובת המשתמש או בעל המוצר במידה וקיימת */}
               {report.userReply && (
                 <div className={classes.cardReplyBox}>
                   <span className={classes.replyLabel}>
@@ -193,6 +211,7 @@ function AdminPage() {
                 </div>
               )}
 
+              {/* כפתורי פעולות ניהול */}
               <div className={classes.cardActions}>
                 <button
                   type="button"
@@ -237,6 +256,7 @@ function AdminPage() {
         )}
       </div>
 
+      {/* חלון מודאלי להזנת סיבת מחיקת מוצר ואישור */}
       {showModal && (
         <div className={classes.modalOverlay}>
           <div className={classes.modalBox}>
@@ -273,6 +293,7 @@ function AdminPage() {
         </div>
       )}
 
+      {/* חלון צ'אט מול בעל המוצר מתוך מסך הניהול */}
       {selectedAdminChat && (
         <Chat
           productId={selectedAdminChat.productId}
@@ -283,8 +304,8 @@ function AdminPage() {
         />
       )}
 
+      {/* אזור הצגת דאשבורד סטטיסטיקות וגרפים */}
       <div className={classes.state}>
-        {/* דאשבורד סטטיסטיקות וגרפים */}
         <AdminStats />
       </div>
     </div>

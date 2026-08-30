@@ -1,24 +1,29 @@
+
+
 import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * מודול: ניהול מצב משתמש גלובלי
+ * תפקיד: שיתוף נתוני המשתמש המחובר, ביצוע התחברות, הרשמה, התנתקות וטעינת נתוני הפעלה
+ */
+
 const UserContext = createContext();
 
-
-const UserContextProvider = ({ children }) => {
+export const UserContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Load the current user from the server if there is a session in localStorage
+  // טעינת נתוני המשתמש מהשרת במידה וקיימת הפעלה שמורה
   useEffect(() => {
     if (localStorage.getItem("session")) loadMe();
     else setIsLoading(false);
   }, []);
 
-
-  // Load the current user from the server
+  // שליפת פרטי המשתמש המחובר מהשרת
   async function loadMe() {
     try {
       const res = await axios.get("/users/profile");
@@ -31,27 +36,24 @@ const UserContextProvider = ({ children }) => {
     }
   }
 
-// Login function
+  // ביצוע התחברות למערכת וניתוב לפי הרשאה
   const login = async (userData) => {
     try {
-      const response = await axios.post("/users/login", userData);
-      const user = response.data.user;
+      const res = await axios.post("/users/login", userData);
+      const user = res.data.user;
       setCurrentUser(user);
       setErrorMsg("");
       localStorage.setItem("session", "true");
-      if (user.role === "admin") 
-        navigate("/admin");
-      if (user.role === "user")
-        navigate("/");
+      navigate(user.role === "admin" ? "/admin" : "/");
     } catch (error) {
       setErrorMsg(error?.response?.data?.message || "שגיאה בהתחברות למערכת");
     }
   };
 
-  // Register function
+  // הרשמת משתמש חדש
   const register = async (userData) => {
     try {
-      const response = await axios.post("/users/signup", userData);
+      await axios.post("/users/signup", userData);
       setErrorMsg("");
       return true;
     } catch (error) {
@@ -60,11 +62,7 @@ const UserContextProvider = ({ children }) => {
     }
   };
 
-  const updateProfileData = (updatedUser) => {
-    setCurrentUser(updatedUser);
-  };
-  
-  // Logout function 
+  // התנתקות מהמערכת ומחיקת נתוני ההפעלה
   const logout = async () => {
     setIsLoading(true);
     try {
@@ -74,13 +72,12 @@ const UserContextProvider = ({ children }) => {
       localStorage.removeItem("session");
       navigate("/login");
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  //
   return (
     <UserContext.Provider
       value={{

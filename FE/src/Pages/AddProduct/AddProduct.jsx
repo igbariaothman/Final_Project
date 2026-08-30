@@ -1,11 +1,18 @@
-import { useState ,useContext} from "react";
+/**
+ * מודול: טופס הוספת ופרסום מוצר חדש
+ * תפקיד: קליטת פרטי המוצר, העלאת תמונות, תצוגה מקדימה, אימות נתונים ושליחה לשרת
+ */
+
+import { useState, useContext } from "react";
 import classes from "./addProduct.module.css";
 import { useUserContext } from "../../context/UserContext";
-import {AlertContext} from "../../context/AlertContext";
+import { AlertContext } from "../../context/AlertContext";
 
 function Product() {
   const { currentUser } = useUserContext();
   const { showAlert } = useContext(AlertContext);
+
+  // ניהול מצבי שדות הטופס, קובצי התמונות והתצוגה המקדימה
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
@@ -15,15 +22,17 @@ function Product() {
   const [preview, setPreview] = useState([]);
   const [productstatus, setProductStatus] = useState("");
 
-  // Function to handle image removal
+  // הסרת תמונה שנבחרה מהמערך ומהתצוגה המקדימה
   const handleRemoveImage = (index) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
     setPreview((prev) => prev.filter((_, i) => i !== index));
   };
 
-function handleAddProduct() {
+  // אימות נתוני הטופס ושליחת המוצר לשרת
+  function handleAddProduct() {
     const priceNumber = listingType === "donation" ? 0 : Number(price);
 
+    // בדיקת מילוי שדות החובה
     if (
       !name.trim() ||
       (listingType === "sale" && price === "") ||
@@ -35,7 +44,7 @@ function handleAddProduct() {
       return;
     }
 
-    // בדיקת קיום תמונות
+    // בדיקת קיום תמונות ומגבלת כמות
     if (!images || images.length === 0) {
       showAlert("חובה להעלות לפחות תמונה אחת של המוצר", "error");
       return;
@@ -46,17 +55,19 @@ function handleAddProduct() {
       return;
     }
 
+    // בדיקת תקינות המחיר
     if (listingType === "sale" && priceNumber < 0) {
       showAlert("המחיר לא יכול להיות שלילי", "error");
       return;
     }
 
+    // בדיקת אימות משתמש מחובר
     if (!currentUser) {
       showAlert("יש להתחבר כדי לפרסם מוצר", "error");
       return;
     }
 
-    // Prepare form data for submission
+    // בניית אובייקט FormData לשליחת נתונים וקבצים
     const formData = new FormData();
     formData.append("productName", name.trim());
     formData.append("price", priceNumber);
@@ -66,24 +77,25 @@ function handleAddProduct() {
     formData.append("userId", currentUser?.id);
     formData.append("productstatus", productstatus);
 
-    // Append images to form data
+    // הוספת קובצי התמונות לטופס
     images.forEach((img) => {
       formData.append("images", img);
     });
 
-    // Send the form data to the backend
+    // שליחת הנתונים לשרת
     fetch("http://localhost:5000/products/addProduct", {
       method: "POST",
       body: formData,
     })
       .then(async (res) => {
         const data = await res.json();
-        
+
         // בדיקת תקינות התשובה מהשרת
         if (!res.ok) {
           throw new Error(data.message || "שגיאה בהוספת המוצר");
         }
 
+        // הצגת הודעת הצלחה ואיפוס כל שדות הטופס
         showAlert("המוצר פורסם בהצלחה!", "success");
         setName("");
         setPrice("");
@@ -104,6 +116,7 @@ function handleAddProduct() {
     <div className={classes.container}>
       <h2 className={classes.title}>הוספת מוצר חדש</h2>
 
+      {/* הזנת שם המוצר */}
       <div className={classes.inputGroup}>
         <label>שם המוצר</label>
         <input
@@ -114,6 +127,7 @@ function handleAddProduct() {
         />
       </div>
 
+      {/* בחירת סוג מודעה (מכירה / תרומה) */}
       <div className={classes.inputGroup}>
         <label>סוג המודעה</label>
         <select
@@ -126,6 +140,7 @@ function handleAddProduct() {
         </select>
       </div>
 
+      {/* הזנת מחיר עבור מודעות למכירה בלבד */}
       {listingType === "sale" && (
         <div className={classes.inputGroup}>
           <label>מחיר (₪)</label>
@@ -138,6 +153,7 @@ function handleAddProduct() {
         </div>
       )}
 
+      {/* בחירת קטגוריית המוצר */}
       <div className={classes.inputGroup}>
         <label>קטגוריה</label>
         <select
@@ -159,6 +175,7 @@ function handleAddProduct() {
         </select>
       </div>
 
+      {/* בחירת מצב המוצר */}
       <div className={classes.inputGroup}>
         <label>מצב</label>
         <select
@@ -176,6 +193,7 @@ function handleAddProduct() {
         </select>
       </div>
 
+      {/* הזנת תיאור מפורט של המוצר */}
       <div className={classes.inputGroup}>
         <label>תיאור המוצר</label>
         <textarea
@@ -185,6 +203,7 @@ function handleAddProduct() {
         />
       </div>
 
+      {/* העלאת קובצי תמונות */}
       <div className={classes.inputGroup}>
         <label>העלאת תמונות</label>
         <input
@@ -199,6 +218,7 @@ function handleAddProduct() {
         />
       </div>
 
+      {/* תצוגה מקדימה של התמונות שהועלו עם אפשרות הסרה */}
       <div className={classes.previewContainer}>
         {preview.map((img, i) => (
           <div key={i} className={classes.imageWrapper}>
@@ -215,6 +235,7 @@ function handleAddProduct() {
         ))}
       </div>
 
+      {/* כפתור אישור ושליחת המוצר לפרסום */}
       <button className={classes.shareBtn} onClick={handleAddProduct}>
         פרסם מוצר
       </button>

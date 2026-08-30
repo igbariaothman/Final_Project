@@ -1,15 +1,15 @@
+/**
+ * מודול: ביצוע שאילתות
+ * תפקיד: הרצת שאילתות מול מסד הנתונים והחזרת התוצאות
+ */
+
 const getDbConnection = require("./dbSingleton");
 
-/**
- * Execute a single query
- * @param {*} sql
- * @returns query result
- */
+// הרצת שאילתה בודדת עם פרמטרים מוגנים
 async function doQuery(sql, params = []) {
   const db = await getDbConnection();
   const result = await db.query(sql, params);
 
-  // console.log(result[0], '😆 in doQuery');
   return result[0];
 }
 

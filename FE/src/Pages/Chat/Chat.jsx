@@ -1,28 +1,35 @@
+/**
+ * מודול: חלון שיחה בזמן אמת
+ * תפקיד: ניהול חלון צ'אט נגרר עם שינוי גודל, שליחה וקבלה של הודעות באמצעות תקשורת Socket.io
+ */
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import io from "socket.io-client";
 import classes from "./Chat.module.css";
 import { useUserContext } from "../../context/UserContext";
 
 function Chat({ productId, sellerId, sellerName, isAdminChat, onClose }) {
+  // ניהול מצבי הודעות, קלט חדש והקשר משתמש
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const scrollRef = useRef();
   const socketRef = useRef(null);
   const { currentUser } = useUserContext();
 
-  // גודל ומיקום החלון
+  // ניהול גודל ומיקום החלון על גבי המסך
   const [size, setSize] = useState({ width: 400, height: 580 });
   const [position, setPosition] = useState({
     x: Math.max(20, window.innerWidth - 440),
     y: Math.max(20, window.innerHeight - 620),
   });
 
+  // ניהול מצבי גרירה ושינוי גודל
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const dragStart = useRef({ x: 0, y: 0 });
   const resizeStart = useRef({ x: 0, y: 0, w: 0, h: 0 });
 
-  // התחלת גרירה מה-Header
+  // התחלת גרירה מכותרת החלון (Header)
   const handleDragMouseDown = (e) => {
     if (e.target.closest(`.${classes.closeBtn}`)) return;
     e.preventDefault();
@@ -33,7 +40,7 @@ function Chat({ productId, sellerId, sellerName, isAdminChat, onClose }) {
     };
   };
 
-  // התחלת שינוי גודל מימין למטה
+  // התחלת שינוי גודל החלון מהפינה התחתונה
   const handleResizeMouseDown = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -46,27 +53,45 @@ function Chat({ productId, sellerId, sellerName, isAdminChat, onClose }) {
     };
   };
 
-  const handleMouseMove = useCallback((e) => {
-    if (isDragging) {
-      const newX = Math.min(Math.max(10, e.clientX - dragStart.current.x), window.innerWidth - size.width - 10);
-      const newY = Math.min(Math.max(10, e.clientY - dragStart.current.y), window.innerHeight - size.height - 10);
-      setPosition({ x: newX, y: newY });
-    } else if (isResizing) {
-      const deltaX = e.clientX - resizeStart.current.startX;
-      const deltaY = e.clientY - resizeStart.current.startY;
-      
-      const newWidth = Math.min(Math.max(320, resizeStart.current.startW + deltaX), 800);
-      const newHeight = Math.min(Math.max(380, resizeStart.current.startH + deltaY), window.innerHeight - 50);
-      
-      setSize({ width: newWidth, height: newHeight });
-    }
-  }, [isDragging, isResizing, size.width, size.height]);
+  // חישוב תנועת עכבר עבור גרירה או שינוי גודל בתוך גבולות המסך
+  const handleMouseMove = useCallback(
+    (e) => {
+      if (isDragging) {
+        const newX = Math.min(
+          Math.max(10, e.clientX - dragStart.current.x),
+          window.innerWidth - size.width - 10
+        );
+        const newY = Math.min(
+          Math.max(10, e.clientY - dragStart.current.y),
+          window.innerHeight - size.height - 10
+        );
+        setPosition({ x: newX, y: newY });
+      } else if (isResizing) {
+        const deltaX = e.clientX - resizeStart.current.startX;
+        const deltaY = e.clientY - resizeStart.current.startY;
 
+        const newWidth = Math.min(
+          Math.max(320, resizeStart.current.startW + deltaX),
+          800
+        );
+        const newHeight = Math.min(
+          Math.max(380, resizeStart.current.startH + deltaY),
+          window.innerHeight - 50
+        );
+
+        setSize({ width: newWidth, height: newHeight });
+      }
+    },
+    [isDragging, isResizing, size.width, size.height]
+  );
+
+  // סיום פעולת הגרירה או שינוי הגודל
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
     setIsResizing(false);
   }, []);
 
+  // האזנה לאירועי תנועת עכבר גלובליים
   useEffect(() => {
     if (isDragging || isResizing) {
       window.addEventListener("mousemove", handleMouseMove);
@@ -83,6 +108,7 @@ function Chat({ productId, sellerId, sellerName, isAdminChat, onClose }) {
     };
   }, [isDragging, isResizing, handleMouseMove, handleMouseUp]);
 
+  // חיבור ל-Socket.io, הצטרפות לחדר שיחה ושליפת היסטוריית הודעות
   useEffect(() => {
     if (!currentUser?.id || !sellerId || !productId) return;
 
@@ -112,17 +138,21 @@ function Chat({ productId, sellerId, sellerName, isAdminChat, onClose }) {
     };
   }, [currentUser?.id, sellerId, productId]);
 
+  // גלילה אוטומטית להודעה האחרונה עם כל עדכון ברשימה
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // בדיקה האם השיחה ננעלה בעקבות סגירת פנייה או הסרת מוצר
   const isChatLocked = messages.some(
     (msg) =>
       msg.messageType === "closed" ||
-      (msg.messageText && msg.messageText.includes("התלונה נסגרה על ידי המנהל")) ||
+      (msg.messageText &&
+        msg.messageText.includes("התלונה נסגרה על ידי המנהל")) ||
       (msg.messageText && msg.messageText.includes("הוסר מהמערכת"))
   );
 
+  // שיגור הודעה חדשה לשרת ולעדכון המצב המקומי
   const sendMessage = () => {
     if (newMessage.trim() === "" || !currentUser?.id || isChatLocked) return;
 
@@ -143,6 +173,7 @@ function Chat({ productId, sellerId, sellerName, isAdminChat, onClose }) {
     }
   };
 
+  // עיצוב שעת ההודעה לפי אזור זמן מקומי
   const formatTime = (dateStr) => {
     if (!dateStr) return "";
     const date = new Date(dateStr);
@@ -162,6 +193,7 @@ function Chat({ productId, sellerId, sellerName, isAdminChat, onClose }) {
         height: `${size.height}px`,
       }}
     >
+      {/* כותרת חלון הצ'אט וכפתור סגירה */}
       <div className={classes.chatHeader} onMouseDown={handleDragMouseDown}>
         <button className={classes.closeBtn} onClick={onClose}>
           ✕
@@ -173,6 +205,7 @@ function Chat({ productId, sellerId, sellerName, isAdminChat, onClose }) {
         </h4>
       </div>
 
+      {/* אזור תצוגת ההודעות וההיסטוריה */}
       <div className={classes.messagesArea}>
         {messages.map((msg, index) => {
           const isOwnMessage = Number(msg.senderId) === Number(currentUser?.id);
@@ -207,6 +240,7 @@ function Chat({ productId, sellerId, sellerName, isAdminChat, onClose }) {
         <div ref={scrollRef} />
       </div>
 
+      {/* אזור הזנת הודעה או חיווי על נעילת השיחה */}
       {isChatLocked ? (
         <div className={classes.lockedNotice}>
           פנייה זו נסגרה והמוצר הוסר. לא ניתן להשיב בצ'אט זה 🔒
@@ -217,7 +251,9 @@ function Chat({ productId, sellerId, sellerName, isAdminChat, onClose }) {
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            placeholder={isAdminChat ? "כתוב הודעה למנהל..." : "הקלד הודעה..."}
+            placeholder={
+              isAdminChat ? "כתוב הודעה למנהל..." : "הקלד הודעה..."
+            }
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           />
           <button className={classes.sendButton} onClick={sendMessage}>
@@ -226,8 +262,11 @@ function Chat({ productId, sellerId, sellerName, isAdminChat, onClose }) {
         </div>
       )}
 
-      
-      <div className={classes.resizeHandle} onMouseDown={handleResizeMouseDown}>
+      {/* ידית שינוי גודל החלון בפינה */}
+      <div
+        className={classes.resizeHandle}
+        onMouseDown={handleResizeMouseDown}
+      >
         <span>◢</span>
       </div>
     </div>

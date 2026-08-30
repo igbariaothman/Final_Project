@@ -1,3 +1,8 @@
+/**
+ * מודול: סרגל ניווט עליון
+ * תפקיד: הצגת תפריט האתר, ניהול ניווט מותאם הרשאות, חיווי הודעות שלא נקראו וביצוע התנתקות
+ */
+
 import { useEffect, useState } from "react";
 import classes from "./header.module.css";
 import logo from "../../assets/logo.jpg";
@@ -9,6 +14,7 @@ export default function Header() {
   const navigation = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
 
+  // משיכת כמות ההודעות שלא נקראו במרווחי זמן קבועים
   useEffect(() => {
     if (!currentUser?.id) return;
 
@@ -32,6 +38,7 @@ export default function Header() {
     return () => clearInterval(interval);
   }, [currentUser?.id]);
 
+  // ביצוע התנתקות מהמערכת
   function handleLogOut() {
     logout();
   }
@@ -39,11 +46,13 @@ export default function Header() {
   return (
     <header className={classes.header}>
       <div className={classes.container}>
+        {/* לוגו האתר וחזרה לדף הבית */}
         <div className={classes.logoContainer} onClick={() => navigation("/")}>
           <img src={logo} alt="Logo" className={classes.logoImage} />
           <p className={classes.wepName}>יד שניה לסטודנטים</p>
         </div>
 
+        {/* תפריט ניווט דינמי לפי סוג משתמש */}
         <nav className={classes.nav}>
           <ul className={classes.ul}>
             {currentUser?.role === "admin" && (
@@ -90,6 +99,7 @@ export default function Header() {
           </ul>
         </nav>
 
+        {/* כפתורי פעולה: פרופיל, התחברות והתנתקות */}
         <div className={classes.userActions}>
           {currentUser && (
             <div

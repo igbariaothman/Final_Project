@@ -1,3 +1,8 @@
+/**
+ * מודול: שרת ראשי והגדרות מערכת (Server Entry Point)
+ * תפקיד: אתחול שרת Express, חיבור למסד נתוני MySQL, ניתוב נתיבים (Routers) ותקשורת בזמן אמת באמצעות Socket.io
+ */
+
 const path = require("path");
 const express = require("express");
 const cors = require("cors");
@@ -16,20 +21,28 @@ const server = http.createServer(app);
 const port = 5000;
 const FRONTEND_URL = "http://localhost:3000";
 
-app.use(cors({
-  origin: FRONTEND_URL,
-  credentials: true,
-}));
+// הגדרות מדיניות שיתוף משאבים (CORS)
+app.use(
+  cors({
+    origin: FRONTEND_URL,
+    credentials: true,
+  })
+);
 
+// פענוח בקשות בפורמט JSON
 app.use(express.json());
 
-app.use(session({
-  secret: "your-secret-key",
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false },
-}));
+// הגדרת ניהול הפעלות משתמש (Session Management)
+app.use(
+  session({
+    secret: "your-secret-key",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false },
+  })
+);
 
+// יצירת חיבור למסד הנתונים MySQL
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -37,6 +50,7 @@ const db = mysql.createConnection({
   database: "myproject",
 });
 
+// בדיקת תקינות החיבור למסד הנתונים
 db.connect((err) => {
   if (err) {
     console.error("MySQL connection error:", err);
@@ -45,6 +59,7 @@ db.connect((err) => {
   }
 });
 
+// אתחול שרת Socket.io לתקשורת צ'אט בזמן אמת
 const io = new Server(server, {
   cors: {
     origin: FRONTEND_URL,
@@ -53,26 +68,27 @@ const io = new Server(server, {
   },
 });
 
+// הגדרת תיקיית קבצים סטטיים להעלאות תמונות
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// רישום נתיבי ה-API השונים
 app.use("/users", userRouter);
 app.use("/products", productsRouter);
 app.use("/messages", messagesRouter);
 app.use("/favorites", favoritesRouter);
 app.use("/reports", reportRouter);
 
-
-// Socket.io connection handling
+// ניהול אירועי התחברות ותקשורת בזמן אמת באמצעות Socket.io
 io.on("connection", (socket) => {
+  // הצטרפות משתמש לחדר שיחה ייעודי למוצר
   socket.on("join_chat", ({ userId, sellerId, productId }) => {
     const roomId = `chat_${productId}_${Math.min(userId, sellerId)}_${Math.max(userId, sellerId)}`;
     socket.join(roomId);
     console.log(`User ${userId} joined room: ${roomId}`);
   });
 
-
-  
-// Handle sending messages
-socket.on("send_message", (data) => {
+  // טיפול בקבלת הודעה, שמירתה במסד הנתונים ושידורה לצד השני
+  socket.on("send_message", (data) => {
     const { senderId, receiverId, productId, messageText, messageType } = data;
     const roomId = `chat_${productId}_${Math.min(senderId, receiverId)}_${Math.max(senderId, receiverId)}`;
 
@@ -91,7 +107,7 @@ socket.on("send_message", (data) => {
 
         db.query(
           sqlInsert,
-          [senderId, receiverId, productId, messageText, messageType || 'chat'],
+          [senderId, receiverId, productId, messageText, messageType || "chat"],
           (err, result) => {
             if (err) {
               console.error("Error saving message:", err);
@@ -104,6 +120,7 @@ socket.on("send_message", (data) => {
               created_at: new Date().toISOString(),
             };
 
+            // שידור ההודעה לכל המשתמשים בחדר השיחה
             socket.to(roomId).emit("receive_message", finalMessage);
           }
         );
@@ -111,13 +128,13 @@ socket.on("send_message", (data) => {
     );
   });
 
-  // Handle user disconnection
+  // טיפול בניתוק משתמש מהשרת
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
   });
 });
 
-// Start the server
+// הפעלת והאזנת השרת לפורט המוגדר
 server.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

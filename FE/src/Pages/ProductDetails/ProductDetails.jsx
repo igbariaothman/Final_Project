@@ -1,3 +1,8 @@
+  /**
+ * מודול: מסך פרטי מוצר מלאים
+ * תפקיד: הצגת מפרט פריט, גלריית תמונות אינטראקטיבית, הוספה למועדפים ויצירת קשר עם המוכר
+ */
+
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import classes from "./productDetails.module.css";
@@ -8,6 +13,8 @@ function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { currentUser } = useUserContext();
+
+  // ניהול נתוני המוצר, תצוגת התמונות, פתיחת מודאלים ומועדפים
   const [product, setProduct] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,6 +24,8 @@ function ProductDetails() {
   const userId = currentUser?.id;
   const isLoggedIn = !!currentUser;
 
+ 
+  // מיפוי קטגוריות מתורגמות
   const categoryMap = {
     electronics: "אלקטרוניקה ומחשוב",
     books: "ספרים וחומרי לימוד",
@@ -28,13 +37,14 @@ function ProductDetails() {
     other: "אחר",
   };
 
-  // Function to handle adding or removing the product from favorites
+ 
+  // הוספה או הסרה של המוצר מרשימת המועדפים
   const handleToggleFavorite = async () => {
     if (!isLoggedIn) {
       navigate("/login");
       return;
     }
-    // If the product is already a favorite, remove it; otherwise, add it to favorites
+
     if (isFavorite) {
       try {
         const response = await fetch(
@@ -43,7 +53,7 @@ function ProductDetails() {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ userId }),
-          },
+          }
         );
         if (response.ok) setIsFavorite(false);
       } catch (err) {
@@ -63,7 +73,7 @@ function ProductDetails() {
     }
   };
 
-  // Fetch product details and check if it's a favorite when the component mounts or when the product ID changes
+  // שליפת פרטי המוצר ובדיקת סטטוס מועדף
   useEffect(() => {
     fetch(`http://localhost:5000/products/${id}`)
       .then((res) => res.json())
@@ -72,7 +82,7 @@ function ProductDetails() {
 
     if (isLoggedIn) {
       fetch(
-        `http://localhost:5000/favorites/check?userId=${userId}&productId=${id}`,
+        `http://localhost:5000/favorites/check?userId=${userId}&productId=${id}`
       )
         .then((res) => res.json())
         .then((data) => setIsFavorite(data.isFavorite))
@@ -82,7 +92,7 @@ function ProductDetails() {
 
   if (!product) return <h2 className={classes.loading}>טוען...</h2>;
 
-  // Function to handle sending a message to the product owner
+  // פתיחת חלון שיחה מול בעל המוצר
   const handleSendMessage = () => {
     if (!isLoggedIn) {
       navigate("/login");
@@ -95,7 +105,7 @@ function ProductDetails() {
     setOpenChat(true);
   };
 
-  // Function to get the image URL for a product, handling cases where images may be missing or malformed
+  // חילוץ ועיבוד כתובת תמונה
   const getImgUrl = (path) => {
     if (!path) return "https://via.placeholder.com/600x400";
     if (path.startsWith("http")) return path;
@@ -110,7 +120,9 @@ function ProductDetails() {
     <>
       <div className={classes.pageWrapper}>
         <div className={classes.mainContent}>
+          {/* עמודה ימנית: תמונות ומפרט המוצר */}
           <div className={classes.rightColumn}>
+            {/* גלריית תמונות ראשית ומעבר בין תמונות */}
             <div
               className={classes.imageMainWrapper}
               onClick={() => setIsModalOpen(true)}
@@ -128,7 +140,7 @@ function ProductDetails() {
                     onClick={(e) => {
                       e.stopPropagation();
                       setCurrentIndex(
-                        (prev) => (prev + 1) % product.images.length,
+                        (prev) => (prev + 1) % product.images.length
                       );
                     }}
                   >
@@ -141,7 +153,7 @@ function ProductDetails() {
                       setCurrentIndex(
                         (prev) =>
                           (prev - 1 + product.images.length) %
-                          product.images.length,
+                          product.images.length
                       );
                     }}
                   >
@@ -151,6 +163,7 @@ function ProductDetails() {
               )}
             </div>
 
+            {/* פרטים מתחת לתמונה: תיאור ומצב */}
             <div className={classes.detailsUnderImage}>
               <div className={classes.descriptionSection}>
                 <h3 className={classes.sectionTitle}>תיאור המוצר</h3>
@@ -177,6 +190,7 @@ function ProductDetails() {
                   </span>
                 </div>
 
+                {/* כפתור דיווח על מודעה */}
                 {!isSold && !isOwner && !isAdmin && isLoggedIn && (
                   <div className={classes.reportButtonWrapper}>
                     <Link
@@ -193,6 +207,7 @@ function ProductDetails() {
             </div>
           </div>
 
+          {/* עמודה שמאלית: כרטיס רכישה ופרטי מוכר */}
           <div className={classes.leftColumn}>
             <div className={classes.actionCard}>
               <div
@@ -222,6 +237,7 @@ function ProductDetails() {
                 )}
               </div>
 
+              {/* תג המחיר או תרומה */}
               <div className={classes.priceSection}>
                 {product.listingType === "donation" ? (
                   <span className={classes.freeText}>חינם</span>
@@ -232,6 +248,7 @@ function ProductDetails() {
                 )}
               </div>
 
+              {/* כפתור יצירת קשר */}
               {!isSold && isLoggedIn && !isOwner && (
                 <button
                   onClick={handleSendMessage}
@@ -241,6 +258,7 @@ function ProductDetails() {
                 </button>
               )}
 
+              {/* חיווי מוצר שנמכר */}
               {isSold && (
                 <div
                   style={{
@@ -258,29 +276,30 @@ function ProductDetails() {
                 </div>
               )}
 
+              {/* פרטי המוכר ומעבר לפרופיל */}
               <div className={classes.sellerInfo}>
                 <p className={classes.sellerLabel}>על המכר : </p>
                 <div className={classes.sellerRow}>
-                                      <div
-                            className={classes.avatar}
-                            onClick={() => navigate(`/profile/${product.userId}`)}
-                            style={{ cursor: "pointer" }}
-                          >
-                            {product.profileImage ? (
-                              <img
-                                src={getImgUrl(product.profileImage)}
-                                alt={product.username || "מוכר"}
-                                style={{
-                                  width: "100%",
-                                  height: "100%",
-                                  borderRadius: "50%",
-                                  objectFit: "cover",
-                                }}
-                              />
-                            ) : (
-                              product.username?.charAt(0).toUpperCase() || "U"
-                            )}
-                          </div>
+                  <div
+                    className={classes.avatar}
+                    onClick={() => navigate(`/profile/${product.userId}`)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {product.profileImage ? (
+                      <img
+                        src={getImgUrl(product.profileImage)}
+                        alt={product.username || "מוכר"}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          borderRadius: "50%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    ) : (
+                      product.username?.charAt(0).toUpperCase() || "U"
+                    )}
+                  </div>
                   <div className={classes.sellerMeta}>
                     <p
                       className={classes.sellerName}
@@ -297,6 +316,7 @@ function ProductDetails() {
         </div>
       </div>
 
+      {/* חלון צ'אט מול המוכר */}
       {openChat && isLoggedIn && (
         <Chat
           productId={product.productId}
@@ -306,6 +326,7 @@ function ProductDetails() {
         />
       )}
 
+      {/* מודאל תצוגת תמונה מוגדלת */}
       {isModalOpen && (
         <div
           className={classes.imageModal}

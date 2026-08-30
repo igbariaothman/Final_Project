@@ -1,3 +1,8 @@
+/**
+ * מודול: דף פרופיל ציבורי של משתמש
+ * תפקיד: הצגת פרטי מוכר, מוצרים פעילים (מכירה ותרומה), היסטוריית מוצרים שנמכרו ועדכון סטטוס מכירה
+ */
+
 import { useState, useEffect, useContext, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -10,15 +15,17 @@ function PublicProfile() {
   const navigate = useNavigate();
   const { currentUser } = useUserContext();
   const { showAlert } = useContext(AlertContext);
+
+  // ניהול מצבי נתוני משתמש, רשימת מוצרים, טעינה וסינון
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [activeFilter, setActiveFilter] = useState("all");
 
   const activeProductsRef = useRef(null);
   const historyProductsRef = useRef(null);
 
+  // טעינת פרטי המשתמש וכלל המוצרים שלו מהשרת
   const fetchProfileData = () => {
     Promise.all([
       fetch(`http://localhost:5000/users/${id}`).then((res) => {
@@ -39,10 +46,12 @@ function PublicProfile() {
       });
   };
 
+  // הפעלת טעינת הנתונים בעת טעינת הרכיב או שינוי מזהה המשתמש
   useEffect(() => {
     fetchProfileData();
   }, [id]);
 
+  // עדכון סטטוס מוצר כנמכר על ידי בעל המוצר
   const handleMarkAsSold = async (e, productId) => {
     e.stopPropagation();
 
@@ -55,6 +64,7 @@ function PublicProfile() {
     }
   };
 
+  // חילוץ ועיבוד כתובת התמונה הראשית
   const getImgUrl = (images) => {
     try {
       const arr = typeof images === "string" ? JSON.parse(images) : images;
@@ -66,6 +76,7 @@ function PublicProfile() {
     }
   };
 
+  // תצוגת מצב טעינה
   if (loading)
     return (
       <div className={classes.loadingPage}>
@@ -73,6 +84,7 @@ function PublicProfile() {
       </div>
     );
 
+  // תצוגת מצב משתמש לא נמצא
   if (!user)
     return (
       <div className={classes.loadingPage}>
@@ -80,14 +92,16 @@ function PublicProfile() {
       </div>
     );
 
+  // פילוח המוצרים למוצרים פעילים ומוצרים שנמכרו
   const activeProducts = products.filter((p) => p.status !== "sold");
   const soldHistoryProducts = products.filter((p) => p.status === "sold");
 
   const donationsList = activeProducts.filter(
-    (p) => p.listingType === "donation",
+    (p) => p.listingType === "donation"
   );
   const salesList = activeProducts.filter((p) => p.listingType !== "donation");
 
+  // סינון המוצרים המוצגים לפי בחירת המשתמש
   const displayedActiveProducts = activeProducts.filter((p) => {
     if (activeFilter === "donation") return p.listingType === "donation";
     if (activeFilter === "sale") return p.listingType !== "donation";
@@ -96,17 +110,20 @@ function PublicProfile() {
 
   const isOwner = currentUser && Number(currentUser.id) === Number(id);
 
+  // גלילה חלקה לאזור המוצרים הפעילים עם החלת מסנן
   const scrollToActive = (filterType) => {
     setActiveFilter(filterType);
     activeProductsRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // גלילה חלקה לאזור היסטוריית המכירות
   const scrollToHistory = () => {
     historyProductsRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <div className={classes.profilePage}>
+      {/* אזור כותרת ופרטי הפרופיל */}
       <div className={classes.heroSection}>
         <div className={classes.heroBg} />
         <div className={classes.heroContent}>
@@ -115,7 +132,12 @@ function PublicProfile() {
               <img
                 src={`http://localhost:5000${user.profileImage}`}
                 alt={user.username}
-                style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" }}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                }}
               />
             ) : (
               user.username?.charAt(0).toUpperCase() || "U"
@@ -129,9 +151,12 @@ function PublicProfile() {
           </div>
         </div>
 
+        {/* כרטיסי סטטיסטיקה וסינון מהיר */}
         <div className={classes.statsRow}>
           <div
-            className={`${classes.statItem} ${activeFilter === "all" ? classes.activeStat : ""}`}
+            className={`${classes.statItem} ${
+              activeFilter === "all" ? classes.activeStat : ""
+            }`}
             onClick={() => scrollToActive("all")}
           >
             <span className={classes.statNumber}>{activeProducts.length}</span>
@@ -139,7 +164,9 @@ function PublicProfile() {
           </div>
 
           <div
-            className={`${classes.statItem} ${activeFilter === "sale" ? classes.activeStat : ""}`}
+            className={`${classes.statItem} ${
+              activeFilter === "sale" ? classes.activeStat : ""
+            }`}
             onClick={() => scrollToActive("sale")}
           >
             <span className={classes.statNumber}>{salesList.length}</span>
@@ -147,7 +174,9 @@ function PublicProfile() {
           </div>
 
           <div
-            className={`${classes.statItem} ${activeFilter === "donation" ? classes.activeStat : ""}`}
+            className={`${classes.statItem} ${
+              activeFilter === "donation" ? classes.activeStat : ""
+            }`}
             onClick={() => scrollToActive("donation")}
           >
             <span className={classes.statNumber}>{donationsList.length}</span>
@@ -163,6 +192,7 @@ function PublicProfile() {
         </div>
       </div>
 
+      {/* אזור מוצרים פעילים וזמינים */}
       <div className={classes.productsSection} ref={activeProductsRef}>
         <h2 className={classes.productsTitle}>
           מוצרים זמינים של: {user.username}
@@ -181,7 +211,11 @@ function PublicProfile() {
               <div
                 key={p.productId}
                 onClick={() => navigate(`/productDetails/${p.productId}`)}
-                className={`${classes.card} ${p.listingType === "donation" ? classes.donationBg : classes.saleBg}`}
+                className={`${classes.card} ${
+                  p.listingType === "donation"
+                    ? classes.donationBg
+                    : classes.saleBg
+                }`}
               >
                 <div className={classes.badge}>
                   {p.listingType === "donation" ? "תרומה" : "מכירה"}
@@ -231,6 +265,7 @@ function PublicProfile() {
 
       <hr className={classes.divider} />
 
+      {/* אזור היסטוריית מוצרים שנמכרו */}
       <div className={classes.productsSection} ref={historyProductsRef}>
         <h2 className={classes.productsTitle}>היסטוריית מוצרים (נמכרו)</h2>
 

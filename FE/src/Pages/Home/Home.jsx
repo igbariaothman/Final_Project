@@ -1,3 +1,8 @@
+/**
+ * מודול: דף הבית ותצוגת מוצרים
+ * תפקיד: הצגת קטלוג המוצרים, חיפוש מבוסס מילות מפתח, סינון מתקדם, מיון וחלוקה לעמודים
+ */
+
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import classes from "./home.module.css";
@@ -6,13 +11,11 @@ import FilterSlidebar from "../FilterSlidebar/FilterSlidebar";
 import { AlertContext } from "../../context/AlertContext";
 
 function Home() {
+  // ניהול מצבי נתונים, שדות חיפוש, פגינציה ומסננים
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [isSlidebarOpen, setIsSlidebarOpen] = useState(false);
-  const navigate = useNavigate();
-  const { currentUser } = useUserContext();
-  const { showAlert } = useContext(AlertContext);
   const [sortType, setSortType] = useState("");
   const [filters, setFilters] = useState({
     category: "",
@@ -21,8 +24,13 @@ function Home() {
     priceRange: { min: 0, max: 500 },
   });
 
+  const navigate = useNavigate();
+  const { currentUser } = useUserContext();
+  const { showAlert } = useContext(AlertContext);
+
   const PRODUCTS_PER_PAGE = 16;
 
+  // טעינת רשימת המוצרים בעת עליית הרכיב
   useEffect(() => {
     fetch("http://localhost:5000/products")
       .then((res) => res.json())
@@ -30,15 +38,18 @@ function Home() {
       .catch((err) => console.error("Error fetching products:", err));
   }, []);
 
+  // איפוס עמוד הפגינציה ל-1 בעת שינוי מסנן או חיפוש
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, sortType, filters]);
 
+  // מעבר בין עמודים וגלילה לראש המסך
   function handlePageChange(newPage) {
     setCurrentPage(newPage);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  // סינון מוצרים לפי סטטוס פעיל ומילות חיפוש
   function filteredProduct() {
     const activeProducts = products.filter((p) => p.status !== "sold");
     const searchLower = searchTerm.toLowerCase().trim();
@@ -54,6 +65,7 @@ function Home() {
     });
   }
 
+  // חילוץ כתובת תמונה ראשית מהמערך
   function getImage(images) {
     if (Array.isArray(images) && images.length > 0) {
       const path = images[0];
@@ -63,6 +75,7 @@ function Home() {
     return "https://via.placeholder.com/150";
   }
 
+  // תרגום סטטוס המוצר לתווית תצוגה
   function getProductStatusLabel(status) {
     switch (status) {
       case "new":
@@ -78,6 +91,7 @@ function Home() {
     }
   }
 
+  // קיצור תיאור המוצר עבור תצוגת הכרטיס
   function getShortDescription(text) {
     if (!text) return "";
     const firstPeriod = text.indexOf(".");
@@ -87,6 +101,7 @@ function Home() {
     return text.length > 50 ? text.substring(0, 50) + "..." : text;
   }
 
+  // מחיקת מוצר ישירה על ידי מנהל מערכת
   async function deleteProduct(productId) {
     try {
       const res = await fetch(`http://localhost:5000/products/${productId}`, {
@@ -102,6 +117,7 @@ function Home() {
     }
   }
 
+  // סינון מתקדם לפי קטגוריה, סוג מודעה, מצב וטווח מחירים
   const filtered = filteredProduct();
   const filteredProducts = filtered.filter((product) => {
     if (filters.category && product.category !== filters.category) return false;
@@ -125,7 +141,8 @@ function Home() {
     return true;
   });
 
-const sortedProducts = [...filteredProducts].sort((a, b) => {
+  // מיון המוצרים לפי מחיר או תאריך העלאה
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (sortType === "priceLow") return Number(a.price) - Number(b.price);
     if (sortType === "priceHigh") return Number(b.price) - Number(a.price);
     if (sortType === "newest") {
@@ -136,6 +153,7 @@ const sortedProducts = [...filteredProducts].sort((a, b) => {
     return 0;
   });
 
+  // חישוב עמודים ופילוח מוצרים לעמוד הנוכחי
   const totalPages = Math.ceil(sortedProducts.length / PRODUCTS_PER_PAGE);
   const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
   const currentProducts = sortedProducts.slice(
@@ -145,6 +163,7 @@ const sortedProducts = [...filteredProducts].sort((a, b) => {
 
   return (
     <div className={classes.container}>
+      {/* סרגל חיפוש ראשי */}
       <div className={classes.topBar}>
         <div className={classes.searchWrapper}>
           <span className={classes.searchIcon}>🔍︎</span>
@@ -158,6 +177,7 @@ const sortedProducts = [...filteredProducts].sort((a, b) => {
         </div>
       </div>
 
+      {/* סרגל צדדי לסינון */}
       <FilterSlidebar
         isOpen={isSlidebarOpen}
         onClose={() => setIsSlidebarOpen(false)}
@@ -166,6 +186,7 @@ const sortedProducts = [...filteredProducts].sort((a, b) => {
 
       <h1 className={classes.mainTitle}>רשימת מוצרים</h1>
 
+      {/* סרגל פעולות: פתיחת מסננים ובחירת מיון */}
       <div className={classes.actionsContainer}>
         <button
           className={classes.filterBtn}
@@ -186,6 +207,7 @@ const sortedProducts = [...filteredProducts].sort((a, b) => {
         </select>
       </div>
 
+      {/* גריד כרטיסי מוצר */}
       <div className={classes.grid}>
         {currentProducts.map((p) => (
           <div
@@ -249,6 +271,7 @@ const sortedProducts = [...filteredProducts].sort((a, b) => {
         ))}
       </div>
 
+      {/* רכיב פגינציה ומעבר בין עמודים */}
       {totalPages > 1 && (
         <div className={classes.pagination}>
           <button

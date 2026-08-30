@@ -1,12 +1,19 @@
+/**
+ * מודול: סרגל סינון צדדי
+ * תפקיד: סינון מתקדם של רשימת המוצרים לפי קטגוריה, סוג מודעה, טווח מחירים ומצב המוצר
+ */
+
 import classes from "./filterSlidebar.module.css";
 import { useState } from "react";
 
 function FilterSlidebar({ isOpen, onClose, setFilters }) {
+  // ניהול שדות הסינון הנבחרים
   const [productstatus, setProductStatus] = useState("");
   const [priceRange, setPriceRange] = useState({ min: 0, max: 500 });
   const [listingType, setListingType] = useState("sale");
   const [category, setCategory] = useState("");
 
+  // החלת הסינונים הנבחרים על רשימת המוצרים וסגירת הסרגל
   const handleApplyFilters = () => {
     setFilters({
       category,
@@ -14,14 +21,15 @@ function FilterSlidebar({ isOpen, onClose, setFilters }) {
       productstatus,
       priceRange: { min: priceRange.min, max: priceRange.max },
     });
-    onClose(false) ;
+    onClose(false);
   };
 
+  // איפוס כל שדות הסינון לברירת המחדל
   const handleResetFilters = () => {
     setCategory("");
     setListingType("sale");
     setProductStatus("");
-    
+
     setFilters({
       category: "",
       listingType: "sale",
@@ -36,12 +44,14 @@ function FilterSlidebar({ isOpen, onClose, setFilters }) {
 
   return (
     <>
+      {/* שכבת רקע כהה לסגירת הסרגל בלחיצה בחוץ */}
       {isOpen && <div className={classes.overlay} onClick={onClose}></div>}
       <div
         className={`${classes.sidebar} ${
           isOpen ? classes.open : classes.close
         }`}
       >
+        {/* כותרת וכפתור סגירה */}
         <div className={classes.header}>
           <h2>סינון</h2>
           <button className={classes.closeBtn} onClick={onClose}>
@@ -49,6 +59,7 @@ function FilterSlidebar({ isOpen, onClose, setFilters }) {
           </button>
         </div>
 
+        {/* בחירת קטגוריה */}
         <div className={classes.filterGroup}>
           <label>קטגוריה</label>
           <select
@@ -70,6 +81,7 @@ function FilterSlidebar({ isOpen, onClose, setFilters }) {
           </select>
         </div>
 
+        {/* בחירת סוג מודעה (מכירה / תרומה) */}
         <div className={classes.filterGroup}>
           <label>סוג המודעה</label>
           <select
@@ -82,6 +94,7 @@ function FilterSlidebar({ isOpen, onClose, setFilters }) {
           </select>
         </div>
 
+        {/* בחירת טווח מחירים במחוון (מוצג רק עבור מודעות מכירה) */}
         {listingType === "sale" && (
           <div className={classes.filterGroup}>
             <label>
@@ -122,6 +135,7 @@ function FilterSlidebar({ isOpen, onClose, setFilters }) {
           </div>
         )}
 
+        {/* בחירת מצב המוצר */}
         <div className={classes.filterGroup}>
           <label>מצב</label>
           <select
@@ -139,13 +153,16 @@ function FilterSlidebar({ isOpen, onClose, setFilters }) {
           </select>
         </div>
 
+        {/* כפתורי פעולה: החלת סינון ואיפוס */}
         <button className={classes.applyBtn} onClick={handleApplyFilters}>
           החל סינון
         </button>
 
         <button
           className={classes.resetBtn}
-          onClick={() => {handleResetFilters()}}
+          onClick={() => {
+            handleResetFilters();
+          }}
         >
           איפוס סינון
         </button>

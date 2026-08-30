@@ -1,8 +1,12 @@
+/**
+ * מודול: מנהל התחברות למסד הנתונים
+ * תפקיד: יצירה וניהול של מאגר חיבורים יחיד למסד הנתונים עבור כל המערכת
+ */
+
 const mysql = require("mysql2");
-
 let pool;
-
 const dbSingleton = {
+  // החזרת מאגר החיבורים הקיים או יצירת מאגר חדש במידה ואינו קיים
   getConnection: () => {
     if (!pool) {
       pool = mysql.createPool({
@@ -20,5 +24,4 @@ const dbSingleton = {
     return pool;
   },
 };
-
 module.exports = dbSingleton;

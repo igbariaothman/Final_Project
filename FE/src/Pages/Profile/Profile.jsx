@@ -1,3 +1,8 @@
+/**
+ * מודול: מסך פרופיל והגדרות משתמש
+ * תפקיד: צפייה בפרטי החשבון, עדכון שם משתמש, העלאת תמונת פרופיל ושינוי סיסמה
+ */
+
 import { useState, useRef } from "react";
 import { useUserContext } from "../../context/UserContext";
 import classes from "./Profile.module.css";
@@ -9,7 +14,9 @@ function Profile() {
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [usernameInput, setUsernameInput] = useState(currentUser?.username || "");
   const [selectedFile, setSelectedFile] = useState(null);
-  const [previewImage, setPreviewImage] = useState(currentUser?.profileImage ? `http://localhost:5000${currentUser.profileImage}` : null);
+  const [previewImage, setPreviewImage] = useState(
+    currentUser?.profileImage ? `http://localhost:5000${currentUser.profileImage}` : null
+  );
   const fileInputRef = useRef(null);
 
   // עריכת סיסמה
@@ -18,10 +25,11 @@ function Profile() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // הודעות
+  // הודעות סטטוס וחיווי למשתמש
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
 
+  // טיפול בבחירת קובץ תמונה מקומי ויצירת תצוגה מקדימה
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -30,6 +38,7 @@ function Profile() {
     }
   };
 
+  // שמירת עדכוני הפרופיל (שם משתמש ותמונה) בשרת
   const handleSaveProfile = async () => {
     setMessage("");
     const formData = new FormData();
@@ -61,6 +70,7 @@ function Profile() {
     }
   };
 
+  // אימות ושליחת בקשת שינוי סיסמה לשרת
   const handleChangePassword = async () => {
     setMessage("");
 
@@ -114,8 +124,12 @@ function Profile() {
   return (
     <div className={classes.profilePage}>
       <div className={classes.profileCard}>
+        {/* אזור תמונת פרופיל ושם משתמש */}
         <div className={classes.avatarSection}>
-          <div className={classes.avatarWrapper} onClick={() => isEditingProfile && fileInputRef.current.click()}>
+          <div
+            className={classes.avatarWrapper}
+            onClick={() => isEditingProfile && fileInputRef.current.click()}
+          >
             {previewImage || currentUser?.profileImage ? (
               <img
                 src={previewImage || `http://localhost:5000${currentUser?.profileImage}`}
@@ -144,14 +158,14 @@ function Profile() {
           </span>
         </div>
 
-        {/* הודעות סטטוס */}
+        {/* הודעות סטטוס והתראות */}
         {message && (
           <p className={messageType === "success" ? classes.successMsg : classes.errorMsg}>
             {message}
           </p>
         )}
 
-        {/* עריכת פרופיל (שם משתמש) */}
+        {/* טופס עריכת פרטי פרופיל או הצגתם במצב קריאה */}
         {isEditingProfile ? (
           <div className={classes.passwordForm}>
             <h3 className={classes.passwordTitle}>עריכת פרטי פרופיל</h3>
@@ -165,8 +179,18 @@ function Profile() {
               />
             </div>
             <div className={classes.btnRow}>
-              <button className={classes.saveBtn} onClick={handleSaveProfile}>שמור פרטים</button>
-              <button className={classes.cancelBtn} onClick={() => { setIsEditingProfile(false); setMessage(""); }}>ביטול</button>
+              <button className={classes.saveBtn} onClick={handleSaveProfile}>
+                שמור פרטים
+              </button>
+              <button
+                className={classes.cancelBtn}
+                onClick={() => {
+                  setIsEditingProfile(false);
+                  setMessage("");
+                }}
+              >
+                ביטול
+              </button>
             </div>
           </div>
         ) : (
@@ -188,16 +212,28 @@ function Profile() {
           </div>
         )}
 
-        {/* כפתורי פעולות */}
+        {/* כפתורי מעבר למצבי עריכה */}
         <div className={classes.actionButtonsRow}>
           {!isEditingProfile && !isEditingPassword && (
-            <button className={classes.editBtn} onClick={() => { setIsEditingProfile(true); setMessage(""); }}>
+            <button
+              className={classes.editBtn}
+              onClick={() => {
+                setIsEditingProfile(true);
+                setMessage("");
+              }}
+            >
               עריכת פרופיל ותמונה ✏️
             </button>
           )}
 
           {!isEditingPassword && !isEditingProfile && (
-            <button className={classes.editBtn} onClick={() => { setIsEditingPassword(true); setMessage(""); }}>
+            <button
+              className={classes.editBtn}
+              onClick={() => {
+                setIsEditingPassword(true);
+                setMessage("");
+              }}
+            >
               שינוי סיסמה 🔒
             </button>
           )}
@@ -235,8 +271,18 @@ function Profile() {
               />
             </div>
             <div className={classes.btnRow}>
-              <button className={classes.saveBtn} onClick={handleChangePassword}>שמור סיסמה</button>
-              <button className={classes.cancelBtn} onClick={() => { setIsEditingPassword(false); setMessage(""); }}>ביטול</button>
+              <button className={classes.saveBtn} onClick={handleChangePassword}>
+                שמור סיסמה
+              </button>
+              <button
+                className={classes.cancelBtn}
+                onClick={() => {
+                  setIsEditingPassword(false);
+                  setMessage("");
+                }}
+              >
+                ביטול
+              </button>
             </div>
           </div>
         )}
